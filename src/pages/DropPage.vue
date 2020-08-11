@@ -9,7 +9,7 @@
 				</q-img>
 			</div>
 			<div v-else class="row q-mt-sm q-gutter-sm">
-				<drop-item v-for="(dropItem, key) in drop.items" :key="key" :dropId="dropId" :drop="drop" :dropItemId="key" :dropItem="dropItem"/>
+				<drop-item v-for="(dropItem, key) in drop.items" :key="key" :dropItemId="key" :dropItem="dropItem" :displayType="thumb"/>
 			</div>
 		</div>
 		<div v-else>Loading</div>
@@ -19,7 +19,7 @@
 <script>
 	import { date } from 'quasar'
 	import { mapState, mapGetters, mapActions } from 'vuex'
-	import { DropStatus } from '../constants/Constants.js';
+	import { DropItemDisplayType, DropStatus } from '../constants/Constants.js';
 	import { getStartDateText } from '../components/Drop/drop-util';
 
 	export default {
@@ -35,6 +35,7 @@
 	  	computed: {
 			...mapGetters('auth', ['loggedIn']),
 			...mapGetters('drop', ['getDrop']),
+			thumb() { return DropItemDisplayType.THUMB },
 			drop() { return this.getDrop(this.dropId)},
 			isPreDrop() { return this.drop.status == DropStatus.PREDROP },
 			startDateText() { return getStartDateText(this.drop) }

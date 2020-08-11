@@ -38,7 +38,7 @@
 		},
 		created() {
 			this.dropId = this.$route.params.dropId
-			this.dropItemId = this.$route.params.dropItemId
+			this.dropItemId = this.$route.params.itemId
 			console.log("BidsAdminPage: dropId=" + this.dropId + ", dropItemId=" + this.dropItemId)
       },
 		computed: {

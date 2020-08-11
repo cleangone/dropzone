@@ -1,50 +1,37 @@
 <template>
-	<q-page class="q-pa-md b-pink">
+	<q-page class="q-pa-md" :class="pink"> 
 		<a style="cursor: pointer; text-decoration: underline" v-on:click="navBack()">Back</a>
-		<div v-if="drop">
-			<div class="row q-mt-sm text-h6">{{ drop.name }}</div>
-			<div v-if="isPreDrop" class="row q-mt-sm" >
-				<q-img :src="drop.imageUrl ? drop.imageUrl : 'statics/image-placeholder.png'" basic contain>
-					<div class="absolute-bottom text-h6">Drops: {{ startDateText }}</div>
-				</q-img>
-			</div>
-			<div v-else class="row q-mt-sm q-gutter-sm">
-				<drop-item v-for="(dropItem, key) in drop.items" :key="key" :dropId="dropId" :drop="drop" :dropItemId="key" :dropItem="dropItem"/>
-			</div>
-		</div>
-		<div v-else>Loading</div>
+		<drop-item :dropItemId="dropItemId" :dropItem="dropItem" :displayType="full" class="q-mt-md"/>	
 	</q-page>
 </template>
 
 <script>
 	import { date } from 'quasar'
 	import { mapState, mapGetters, mapActions } from 'vuex'
-	import { DropStatus } from '../constants/Constants.js';
-	import { getStartDateText } from '../components/Drop/drop-util';
-
+	import { DropItemDisplayType, DropStatus } from '../constants/Constants.js';
+	
 	export default {
 		data() {
 			return {				
-				dropId: 0,
-				showModal: false,
+				dropItemId: "",
         }
 		},
 		created() {
-			this.dropId = this.$route.params.dropId
+			this.dropItemId = this.$route.params.itemId
       },
 	  	computed: {
 			...mapGetters('auth', ['loggedIn']),
-			...mapGetters('drop', ['getDrop']),
-			drop() { return this.getDrop(this.dropId)},
-			isPreDrop() { return this.drop.status == DropStatus.PREDROP },
-			startDateText() { return getStartDateText(this.drop) }
+			...mapGetters('drop', ['getDropId', 'getDropItem']),
+			...mapGetters('color', ['red', 'pink', 'orange', 'yellow', 'blue', 'green', 'indigo', 'purple' ]),
+			full() { return DropItemDisplayType.FULL },
+			dropId() { return this.getDropId(this.dropItemId)},
+			dropItem() { return this.getDropItem(this.dropId, this.dropItemId) },
 		},
 		methods: {
 			navBack() { this.$router.go(-1) },
 		},
 		components: {
 	  		'drop-item' : require('components/DropItem/DropItem.vue').default,
-	  		'modal-add-edit' : require('components/DropItem/ModalAddEdit.vue').default
 	  	}
 	}
 

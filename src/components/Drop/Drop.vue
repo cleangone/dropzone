@@ -1,6 +1,6 @@
 <template>
 	<q-card class="card">
-		<router-link :to="{ name: 'DropPage', params: { dropId: dropId } }">
+		<router-link :to="{ name: dropPage, params: { dropId: dropId } }">
 			<q-img :src="drop.imageUrl ? drop.imageUrl : 'statics/image-placeholder.png'" basic contain>
 				<div class="absolute-bottom text-h6">{{ drop.name }}</div>
 				
@@ -24,7 +24,7 @@
 
 <script>
 	import { mapState, mapGetters, mapActions } from 'vuex'
-	import { DropStatus } from '../../constants/Constants.js';
+	import { Page, DropStatus } from '../../constants/Constants.js';
 	import { getStartDateText } from './drop-util';
 
 	export default {
@@ -41,6 +41,7 @@
 			...mapGetters('color', ['purple']),
 			userIsAdmin() { return this.isAdmin(this.userId) },
 			isPreDrop() { return this.drop.status == DropStatus.PREDROP },
+			dropPage() { return Page.DROP },
 			startDateText() { return getStartDateText(this.drop) },
     	},
 		components: {

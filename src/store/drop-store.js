@@ -284,10 +284,28 @@ const getters = {
         return drop
     },
     getDropItem: state => (dropId, dropItemId) => {
-        console.log("getDropItem: dropId", dropId) 
-        console.log("getDropItem: dropItemId", dropItemId) 
+        // console.log("getDropItem: dropId", dropId) 
+        // console.log("getDropItem: dropItemId", dropItemId) 
 
         return state.drops[dropId].items[dropItemId]
+    },
+    getDropId: state => dropItemId => {
+        // bad idea - replace with map in mutations
+        // console.log("getDropId: dropItemId", dropItemId) 
+        let returnDropId = ""
+        if (Object.keys(state.drops).length > 0) { 
+            Object.keys(state.drops).forEach(dropId => {
+                let drop = state.drops[dropId]
+                // console.log("getDropId: checking drop", drop) 
+                if (drop.items && Object.keys(drop.items) && Object.keys(drop.items).length > 0) { 
+                    Object.keys(drop.items).forEach(itemId => { 
+                        if (itemId == dropItemId) { returnDropId = dropId }
+                    })
+                }
+            })
+        }
+
+        return returnDropId
     },
     getLiveDropItems: state => {
         console.log("getLiveDropItems") 

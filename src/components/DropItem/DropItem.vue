@@ -1,85 +1,104 @@
 <template>
-	<q-card v-if="hasImageUrl" class="q-pt-xs q-px-xs" :class="textBgColor">
-		<drop-item-image :dropItem="dropItem" height="250px" vImageWidth="150px" hImageWidth="300px"/>
-		<q-card-section class="q-pa-xs">
-			<strong>{{dropItem.name}}</strong>
-			<div v-if="dropItem.price">
-				<div>{{ priceText }}</div>
-				<div v-if="userIsBuyer" class="text-bold">You are the buyer</div> 
-				<div v-if="userIsWinningBidder" class="text-bold">You are the winning bidder</div> 
+	<div>
+		<div v-if="isMini">
+			<q-card v-if="hasImageUrl" class="q-pt-xs q-px-xs" :class="textBgColor">
+				<drop-item-thumb :dropItemId="dropItemId" :dropItem="dropItem" vImageWidth="125px" hImageWidth="250px" />
+				<q-card-section class="text-caption q-pa-xs">
+					<div>{{dropItem.name}}</div>
+					<div v-if="priceTextBgColor" :class="priceTextBgColor" class="text-bold q-px-xs">{{ priceTextMini }}</div>	
+					<div v-else>{{ priceTextMini }}</div>	
+					<drop-item-timer v-if="isDropping" :dropItemId="dropItemId" :dropItem="dropItem"/>
+				</q-card-section>	
+			</q-card>
+		</div>
+		<div v-else-if="isThumb">
+			<q-card v-if="hasImageUrl" class="q-pt-xs q-px-xs" :class="textBgColor">
+				<drop-item-thumb :dropItemId="dropItemId" :dropItem="dropItem" vImageWidth="150px" hImageWidth="300px"/>
+				<q-card-section class="text-caption q-pa-xs">
+					<strong>{{dropItem.name}}</strong>
+					<div v-if="dropItem.price">
+						<div>{{ priceText }}</div>
+						<div v-if="userIsBuyer" class="text-bold">You are the buyer</div> 
+						<div v-if="userIsWinningBidder" class="text-bold">You are the winning bidder</div> 
 
-				<div v-if="isDropping">
-					<div v-if="timerSeconds > 0"><div>Dropping ({{ timerSeconds }})</div></div>
-					<div v-else>Dropping</div> 
-					
-					<div v-if="userIsHighBidder"  class="text-bold bg-green q-px-xs">You are High Bidder</div>
-					<div v-else-if="userIsOutbid" class="text-bold bg-red   q-px-xs">You have been outbid</div> 
-				</div> 
-			</div> 
-		</q-card-section>	
-
-		<q-card-actions class="q-my-none q-px-xs q-pb-xs q-pt-none" :class="blue">
-			<span v-if="isAvailable" class="col">
-				<span v-if="loggedIn" class="col">
-					<q-btn v-if="isBid" @click="promptToBid()" :label="itemSaleType" color="primary" small/>
-					<q-btn v-else-if="isBuy" @click="promptToBuy()" :label="itemSaleType" color="primary" small/>
-				</span>
-				<span v-else class="col">
-					<q-btn @click="login()" :label="'Login to ' + itemSaleType" color="primary" medium/>
-				</span>
-			</span>
-
-			<span v-if="userIsAdmin" class="col" align="right">
-				<q-btn @click="showEditModal = true" icon="edit" color="primary" flat small/>
-			</span>
-		</q-card-actions>
-
-		<q-dialog v-model="showEditModal">
-			<modal-add-edit type="edit" :dropId="dropId" :dropItemId ="dropItemId" :dropItem ="dropItem" @close="showEditModal=false" />
-		</q-dialog>
-  	</q-card>
+						<div v-if="isDropping">
+							<drop-item-timer :dropItemId="dropItemId" :dropItem="dropItem"/>
+							<div v-if="userIsHighBidder"  class="text-bold bg-green q-px-xs">You are High Bidder</div>
+							<div v-else-if="userIsOutbid" class="text-bold bg-red   q-px-xs">You have been outbid</div> 
+						</div> 
+					</div> 
+				</q-card-section>	
+				<drop-item-actions :dropItemId="dropItemId" :dropItem="dropItem"/>
+			</q-card>
+		</div>
+		
+		<div v-else>
+			<q-page class="q-pt-sm q-px-sm" :class="textBgColor"> 
+				<q-card-section class="bg-white">					
+					<q-img v-if="dropItem.isHorizontal" :src="dropItem.imageUrl" style="max-width: 700px; max-height: 1000px" contains/>
+					<q-img v-else   							:src="dropItem.imageUrl" style="max-width: 500px; max-height: 1000px" contains/>
+				
+				</q-card-section>	
+				<q-card-section class="text-subtitle2 q-pa-xs q-mt-sm">
+					<strong>{{dropItem.name}}</strong>
+					<div v-if="dropItem.price">
+						<div>{{ priceText }}</div>
+						<div v-if="userIsBuyer" class="text-bold">You are the buyer</div> 
+						<div v-if="userIsWinningBidder" class="text-bold">You are the winning bidder</div> 
+						<div v-if="isDropping">
+							<drop-item-timer :dropItemId="dropItemId" :dropItem="dropItem"/>
+							<div v-if="userIsHighBidder"  class="text-bold bg-green q-px-xs">You are High Bidder</div>
+							<div v-else-if="userIsOutbid" class="text-bold bg-red   q-px-xs">You have been outbid</div> 
+						</div> 
+					</div> 
+				</q-card-section>	
+				
+				<drop-item-actions :dropItemId="dropItemId" :dropItem="dropItem"/>
+			</q-page>
+		</div>
+  	</div>
 </template>
 
 <script>
-	import { SaleType, DropItemStatus } from '../../constants/Constants.js';
+	import { DropItemDisplayType, SaleType, DropItemStatus } from '../../constants/Constants.js';
 	import { date } from 'quasar'
 	import { mapState, mapGetters, mapActions } from 'vuex'
 	
-	var timeouts = {};
-	
 	export default {
-		props: ['dropId', 'drop', 'dropItemId', 'dropItem'], 
+		props: ['dropItemId', 'dropItem', 'displayType'], 
 		data() {
 			return {
-				showEditModal: false,
-				timerSeconds: 0
+				showEditModal: false
 			}
 		},
 		computed: {
 			...mapState('auth', ['userId']),
 			...mapGetters('auth', ['loggedIn']),
 			...mapGetters('user', ['isAdmin']),
-			...mapGetters('drop', ['getDrop']),
+			...mapGetters('drop', ['getDropId', 'getDrop']),
 			...mapGetters('color', ['red', 'pink', 'orange', 'yellow', 'blue', 'green', 'indigo', 'purple' ]),
 			
+			isMini() { return DropItemDisplayType.MINI  == this.displayType },
+			isThumb() { return DropItemDisplayType.THUMB == this.displayType },
+			dropId() { return this.getDropId(this.dropItemId) },
+			drop() { return this.getDrop(this.dropId) },
 			hasImageUrl() { return (this.dropItem.imageUrl ? true : false) },
 			textBgColor() {
 				if (this.isHoldSold) { return (this.userIsBuyer || this.userIsHighBidder ? "bg-green" : "bg-red-5") }
 				else if (this.isDropping) { return "bg-yellow" }
 			},
+			imageWidth() { return ("width: " + (this.dropItem.isHorizontal ? this.hImageWidth : this.vImageWidth)) },		
 			imageUrl() { return this.dropItem.imageUrl ? this.dropItem.imageUrl : 'statics/image-placeholder.png' },
 			itemSaleType() { return (this.dropItem.saleType == SaleType.DEFAULT ? this.drop.defaultSaleType : this.dropItem.saleType) },
 			style() { return (this.dropItem.isHorizontal ? "width: 300px" : "width: 200px") },			
 			userIsAdmin() { return this.isAdmin(this.userId) },
-			isAvailable() { return this.dropItem.status != DropItemStatus.HOLD && this.dropItem.status != DropItemStatus.SOLD },
 			isHoldSold() { return this.dropItem.status == DropItemStatus.HOLD || this.dropItem.status == DropItemStatus.SOLD },
 			isDropping() { return this.dropItem.status == DropItemStatus.DROPPING },
 			isBid() { return this.itemSaleType == SaleType.BID },
 			isBuy() { return this.itemSaleType == SaleType.BUY },			
-			dropDoneDate() { return this.dropItem.dropDoneDate ? this.dropItem.dropDoneDate : 0 },
-			showCountdown() { return this.isDropping && this.timerCount > 0 },
 			numberOfBids() { return this.dropItem.bids ? Object.keys(this.dropItem.bids).length : 0 },
 			priceCurr() { return this.dropItem.currPrice > this.dropItem.price ? this.dropItem.currPrice : this.dropItem.price },
+			
 			priceFull() { return "$" + this.priceCurr },	
 			priceText() {
 				if (this.dropItem.status == DropItemStatus.SOLD) { return DropItemStatus.SOLD }
@@ -88,6 +107,20 @@
 					return "Price: " + this.priceFull + (this.numberOfBids > 0 ? " (" + this.numberOfBids +" Bids)" : "")
 				}
 				return "Price: " + this.priceFull
+			},
+			priceTextMini() {
+				if (this.dropItem.status == DropItemStatus.SOLD) { return DropItemStatus.SOLD }
+				let price = "$" + this.priceCurr
+				if (this.dropItem.status == DropItemStatus.HOLD) { price += (" (" + DropItemStatus.HOLD + ")") }
+				else if (this.dropItem.status == DropItemStatus.DROPPING) { 
+					price += ((this.numberOfBids > 0 ? " (" + this.numberOfBids +" Bids)" : ""))
+				}
+				return price
+			},
+			priceTextBgColor() { 
+				if (this.isDropping && this.userIsHighBidder)  { return "bg-green" }
+				else if (this.isDropping && this.userIsOutbid) { return "bg-red" }
+				else  {return "" }
 			},
 			userIsBuyer() { return this.loggedIn && (this.dropItem.buyerId == this.userId) },
 			userIsWinningBidder() { return this.loggedIn && this.isHoldSold && (this.dropItem.currBidderId == this.userId) },
@@ -104,76 +137,13 @@
 				return outbid
 			},
     	},
-		methods: {
-			...mapActions('drop', ['updateDropItem', 'deleteDropItem', 'submitBid', 'submitBuy', 'setWinningBid']),
-			displayImage() { 
-				console.log("displayImage") 
-			},
-			promptToBid() {
-				let bidAmount = this.dropItem.currPrice ? this.dropItem.currPrice + 25 : this.dropItem.price
-				
-				this.$q.dialog({title: 'Confirm', message: 'Bid $' + bidAmount + ' on ' + this.dropItem.name + '?', persistent: true,			
-	        		ok: { push: true }, cancel: { push: true, color: 'grey' }
-				}).onOk(() => {
-					this.submitBid({ dropId: this.dropId, dropItemId: this.dropItemId, userId: this.userId, bidAmount: bidAmount }) 
-				})
-			},
-			promptToBuy() {
-				this.$q.dialog({title: 'Confirm', message: 'Buy ' + this.dropItem.name + ' for ' + this.dropItem.price + '?', persistent: true,			
-	        		ok: { push: true }, cancel: { push: true, color: 'grey' }
-				}).onOk(() => {
-					this.submitBuy({ dropId: this.dropId, dropItemId: this.dropItemId, userId: this.userId  }) 
-				})
-			},
-			setTimerSeconds() {
-				// console.log("setTimerSeconds")
-				let nowTime = new Date().getTime()
-				let dropDoneTime = this.dropItem.dropDoneDate ? this.dropItem.dropDoneDate : 0
-				if (dropDoneTime == 0 || dropDoneTime < nowTime) { 
-					this.timerSeconds = -1
-					return
-				}
-
-				this.timerSeconds = Math.floor((dropDoneTime - nowTime)/1000)
-			},
-			dropTimerExpired() { 
-				console.log("dropTimerExpired")
-				if (this.dropItem.status != DropItemStatus.HOLD) {
-					this.setWinningBid({ dropId: this.dropId, dropItemId: this.dropItemId })
-				}
-			}
-		},
 		filters: {
 			formatPrice(priceObj) { return "$" + priceObj + (String(priceObj).includes(".") ? "" : ".00") }
 		},	
-		watch: {
-			dropDoneDate: { handler(value) { this.setTimerSeconds() }}, // data is twitchy - watch will report blips not in db
-			timerSeconds: { handler(value) {
-				// console.log("watch timerSeconds", value)
-				let timeout = timeouts[this.dropItemId]
-				if (timeout) { clearTimeout(timeout) }
-				
-				if (value > 0) {
-					// console.log("Timer changed " + value)
-					timeouts[this.dropItemId] = setTimeout(() => { this.timerSeconds-- }, 1000) 
-				}
-				else if (value == 0) {
-					// todo - work around for now - firebase function will do this 
-					// workaround is high bidder marks item Hold, but it won't be hold if the high bidder is not on the page
-					// fallback is to have others mark it after a brief delay which allows for high bidder to do so
-					if (this.userIsHighBidder) { this.dropTimerExpired() }
-					else { setTimeout(() => { this.setDropItemHold() }, 1000) }
-				}
-				// else { console.log("Timer cancelled") }
-			}}
-      },
 		components: {
-			'drop-item-image' : require('components/DropItem/DropItemImage.vue').default,
-			'modal-image' : require('components/DropItem/ModalImage.vue').default,
-			'modal-add-edit' : require('components/DropItem/ModalAddEdit.vue').default
-		},
-		mounted() {
-			this.setTimerSeconds() 
+			'drop-item-actions' : require('components/DropItem/DropItemActions.vue').default,
+			'drop-item-thumb' : require('components/DropItem/DropItemThumb.vue').default,
+			'drop-item-timer' : require('components/DropItem/DropItemTimer.vue').default
 		}
 	}
 

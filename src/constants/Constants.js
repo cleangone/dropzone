@@ -1,4 +1,15 @@
 
+export const Page = {
+   DROP: 'DropPage',
+   ITEM: 'ItemPage',
+}
+
+export const DropItemDisplayType = {
+   MINI: 'MiniThumbnail',
+   THUMB: 'Thumbnail',
+   FULL: 'Full'
+}
+
 export const SaleType = {
    DEFAULT: 'Default',
    BID: 'Bid',
