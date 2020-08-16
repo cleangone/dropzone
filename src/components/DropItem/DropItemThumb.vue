@@ -1,6 +1,6 @@
-<template>
+<template >
 	<router-link :to="{ name: itemPage, params: { itemId: dropItemId } }">
-		<q-img :src="dropItem.imageUrl" :style="imageWidth" basic contain/>
+		<q-img :src="dropItem.imageUrl" :style="imageWidth" class="image-centered" basic contain/>
 	</router-link>
 </template>
 
@@ -16,6 +16,14 @@
 		}
 	}
 </script>
+
+<style>
+	.image-centered {
+		display: block; 
+		margin-left: auto; 
+		margin-right: auto; 
+	}
+</style>
 
 
 

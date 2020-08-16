@@ -9,6 +9,10 @@
 				<q-btn @click="login()" :label="'Login to ' + itemSaleType" color="primary" medium/>
 			</span>
 		</span>
+		<span v-if="loggedIn" class="col">
+				<q-btn v-if="isLiked" icon="favorite"        @click="unlike" flat small/>
+				<q-btn v-else         icon="favorite_border" @click="like"   flat small/>
+		</span>
 		<span v-if="userIsAdmin" class="col" align="right">
 			<q-btn @click="showEditModal = true" icon="edit" color="primary" flat small/>
 		</span>
@@ -36,7 +40,7 @@
 		computed: {
 			...mapState('auth', ['userId']),
 			...mapGetters('auth', ['loggedIn']),
-			...mapGetters('user', ['isAdmin']),
+			...mapGetters('user', ['isAdmin', 'getLikes']),
 			...mapGetters('drop', ['getDropId', 'getDrop']),
 			...mapGetters('color', ['red', 'pink', 'orange', 'yellow', 'blue', 'green', 'indigo', 'purple' ]),
 			
@@ -44,12 +48,16 @@
 			drop() { return this.getDrop(this.dropId) },
 			itemSaleType() { return (this.dropItem.saleType == SaleType.DEFAULT ? this.drop.defaultSaleType : this.dropItem.saleType) },
 			userIsAdmin() { return this.isAdmin(this.userId) },
+			likes() { return this.getLikes(this.userId) },
 			isHoldSold() { return this.dropItem.status == DropItemStatus.HOLD || this.dropItem.status == DropItemStatus.SOLD },
 			isBid() { return this.itemSaleType == SaleType.BID },
-			isBuy() { return this.itemSaleType == SaleType.BUY },			
+			isBuy() { return this.itemSaleType == SaleType.BUY },	
+			isLiked() { return this.likes && Object.keys(this.likes).includes(this.dropItemId)},		
 		},
 		methods: {
 			...mapActions('drop', ['submitBid', 'submitBuy', 'setWinningBid']),
+			...mapActions('user', ['addLike', 'removeLike']),
+			
 			promptToBid() {
 				let bidAmount = this.dropItem.currPrice ? this.dropItem.currPrice + 25 : this.dropItem.price
 				
@@ -66,6 +74,8 @@
 					this.submitBuy({ dropId: this.dropId, dropItemId: this.dropItemId, userId: this.userId  }) 
 				})
 			},
+			like() { this.addLike({ userId: this.userId, dropItemId: this.dropItemId, dropItemName: this.dropItem.name,  }) },
+			unlike() { this.removeLike({ userId: this.userId, dropItemId: this.dropItemId, dropItemName: this.dropItem.name,  }) },
 		},
 		filters: {
 			formatPrice(priceObj) { return "$" + priceObj + (String(priceObj).includes(".") ? "" : ".00") }

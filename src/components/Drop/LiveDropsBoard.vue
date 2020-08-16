@@ -5,7 +5,6 @@
 			<!-- <drop-item-mini v-for="(dropItem, key) in getLiveDropItems" :key="key" :dropItemId="key" :dropItem="dropItem"/> -->
 			<drop-item v-for="(dropItem, key) in getLiveDropItems" :key="key" :dropItemId="key" :dropItem="dropItem" :displayType="mini"/>
 		</div>
-	
   	</div> 
 </template>
 

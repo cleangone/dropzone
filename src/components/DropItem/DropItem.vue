@@ -1,8 +1,8 @@
 <template>
 	<div>
 		<div v-if="isMini">
-			<q-card v-if="hasImageUrl" class="q-pt-xs q-px-xs" :class="textBgColor">
-				<drop-item-thumb :dropItemId="dropItemId" :dropItem="dropItem" vImageWidth="125px" hImageWidth="250px" />
+			<q-card v-if="hasImageUrl" class="q-pt-xs q-px-xs" style="min-height: 250px;" :class="textBgColor">				
+				<drop-item-thumb :dropItemId="dropItemId" :dropItem="dropItem" vImageWidth="125px" hImageWidth="250px"/>
 				<q-card-section class="text-caption q-pa-xs">
 					<div>{{dropItem.name}}</div>
 					<div v-if="priceTextBgColor" :class="priceTextBgColor" class="text-bold q-px-xs">{{ priceTextMini }}</div>	
@@ -12,7 +12,7 @@
 			</q-card>
 		</div>
 		<div v-else-if="isThumb">
-			<q-card v-if="hasImageUrl" class="q-pt-xs q-px-xs" :class="textBgColor">
+			<q-card v-if="hasImageUrl" class="q-pt-xs q-px-xs" style="min-height: 300px;" :class="textBgColor">
 				<drop-item-thumb :dropItemId="dropItemId" :dropItem="dropItem" vImageWidth="150px" hImageWidth="300px"/>
 				<q-card-section class="text-caption q-pa-xs">
 					<strong>{{dropItem.name}}</strong>
@@ -20,7 +20,6 @@
 						<div>{{ priceText }}</div>
 						<div v-if="userIsBuyer" class="text-bold">You are the buyer</div> 
 						<div v-if="userIsWinningBidder" class="text-bold">You are the winning bidder</div> 
-
 						<div v-if="isDropping">
 							<drop-item-timer :dropItemId="dropItemId" :dropItem="dropItem"/>
 							<div v-if="userIsHighBidder"  class="text-bold bg-green q-px-xs">You are High Bidder</div>
@@ -33,11 +32,13 @@
 		</div>
 		
 		<div v-else>
-			<q-page class="q-pt-sm q-px-sm" :class="textBgColor"> 
-				<q-card-section class="bg-white">					
-					<q-img v-if="dropItem.isHorizontal" :src="dropItem.imageUrl" style="max-width: 700px; max-height: 1000px" contains/>
-					<q-img v-else   							:src="dropItem.imageUrl" style="max-width: 500px; max-height: 1000px" contains/>
-				
+			<q-page class="q-pa-sm q-px-sm" :class="textBgColor"> 
+				<q-card-section class="bg-white column">					
+					<!-- todo - class="image-vertical" class="image-horizontal" not working -->
+					<q-img v-if="dropItem.isHorizontal" :src="dropItem.imageUrl" 
+						style="display: block; margin-left: auto; margin-right: auto; max-width: 700px; max-height: 1000px" contains/>
+					<q-img v-else :src="dropItem.imageUrl" class="image-vertical"
+						style="display: block; margin-left: auto; margin-right: auto; max-width: 500px; max-height: 1000px" contains/>
 				</q-card-section>	
 				<q-card-section class="text-subtitle2 q-pa-xs q-mt-sm">
 					<strong>{{dropItem.name}}</strong>
@@ -52,7 +53,6 @@
 						</div> 
 					</div> 
 				</q-card-section>	
-				
 				<drop-item-actions :dropItemId="dropItemId" :dropItem="dropItem"/>
 			</q-page>
 		</div>
@@ -155,15 +155,20 @@
 </script>
 
 <style>
-	.card {
-		
-		max-width: 500px;
-		
-		transition: background 0.3s;
+	.image-vertical {
+		display: block; 
+		margin-left: auto; 
+		margin-right: auto; 
+		max-width: 500px; 
+		max-height: 1000px;
 	}
-	.card-clickable { cursor: pointer; }
-	.card-clickable:hover {
-		background: #bdbdbd!important;
+
+	.image-horizontal {
+		display: block; 
+		margin-left: auto; 
+		margin-right: auto; 
+		max-width: 700px; 
+		max-height: 1000px;
 	}
 </style>
 

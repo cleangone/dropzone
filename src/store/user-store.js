@@ -13,6 +13,8 @@ import { SaleType, DropItemStatus } from '../constants/Constants.js';
             action
             amount
             date
+        likes (id is dropItemId)
+            dropItemId
 */  
 
 const state = {
@@ -57,7 +59,26 @@ const actions = {
             })
         }
     },
-
+    addLike({ state }, payload) { 
+        console.log("actions.addLike", payload) 
+        let ref = getLikeRef(payload.userId, payload.dropItemId)
+        ref.set(payload.dropItemId, error => {
+            if (error) { 
+                console.error("addLike Error", error.message)
+                showNegativeNotify("Error liking: " + payload.dropItemName) 
+            }
+            else { showPositiveNotify(payload.dropItemName + " liked") } 
+        })
+    },
+    removeLike({ state }, payload) { 
+        console.log("actions.removeLike", payload) 
+        let ref = getLikeRef(payload.userId, payload.dropItemId)
+        ref.remove(error => {
+            if (error) { showNegativeNotify("Error: " + error.message) }
+            else { showPositiveNotify(payload.dropItemName + " unliked") } 
+        })
+    },
+    // 'user', ['addLike', 'removeLike']),
 	createUserFirebaseCallbacks({commit}) { 
         console.log("createUserFirebaseCallbacks") 
 		let usersRef = firebaseDB.ref("users/") 
@@ -70,6 +91,7 @@ const actions = {
         usersRef.on('child_changed', snapshot => { commit('updateUser', createPayload(snapshot)) }) 
         usersRef.on('child_removed', snapshot => { commit('deleteUser', snapshot.key) })
     }
+    
 
 }
 
@@ -111,12 +133,16 @@ const getters = {
 
         return user
     },
+    getLikes: state => userId => { 
+        console.log("state.users[userId]", state.users[userId])
+        return state.users[userId].likes },
     isAdmin: state => userId => {
         return ( userId && state.users[userId] && state.users[userId].isAdmin )
     }
 }
 
-function getUserRef(userId) { return firebaseDB.ref("users/" + userId) }
+function getUserRef(userId)  { return firebaseDB.ref("users/" + userId) }
+function getLikeRef(userId, dropItemId) { return firebaseDB.ref("users/" + userId + "/likes/" + dropItemId) }
 function createPayload(snapshot) { return {id: snapshot.key, value: snapshot.val() } }
 function showPositiveNotify(msg) { Notify.create( {type: "positive", timeout: 1000, message: msg} )}
 function showNegativeNotify(msg) { Notify.create( {type: "negative", timeout: 5000, message: msg} )}
