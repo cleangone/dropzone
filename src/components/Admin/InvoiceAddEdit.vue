@@ -17,19 +17,19 @@
             <template v-slot:bottom-row >
                <q-tr>
                   <q-td class="text-bold bg-grey-2">Sub-Total</q-td>
-                  <q-td class="text-bold bg-grey-2">${{ invoiceToSubmit.subTotal }}</q-td>
+                  <q-td class="text-bold bg-grey-2">{{ subtotal }}</q-td>
                </q-tr>
                <q-tr>
                   <q-td class="text-bold bg-grey-2">Shipping</q-td>
-                  <q-td class="text-bold bg-grey-2">${{ invoiceToSubmit.shippingCharge }}</q-td>
+                  <q-td class="text-bold bg-grey-2">{{ shippingCharge }}</q-td>
                </q-tr>
                <q-tr v-if="invoiceToSubmit.priceAdjustment">
                   <q-td class="text-bold bg-grey-2">Adjustment</q-td>
-                  <q-td class="text-bold bg-grey-2">(${{ invoiceToSubmit.priceAdjustment }})</q-td>
+                  <q-td class="text-bold bg-grey-2">{{ priceAdjustment }}</q-td>
                </q-tr>
                <q-tr>
                   <q-td class="text-bold bg-grey-2">TOTAL</q-td>
-                  <q-td class="text-bold bg-grey-2">${{total}}</q-td>
+                  <q-td class="text-bold bg-grey-2">{{ total }}</q-td>
                </q-tr>
             </template>
          </q-table>
@@ -66,7 +66,6 @@
             invoiceError: null,
 				invoiceToSubmit: {
                userId: null,
-               userName: null, // first + last 
                items: [], // itemId, name, price
                status: InvoiceStatus.CREATED,
                subTotal: 0,
@@ -77,16 +76,19 @@
             visibleColumns: [ 'name', 'price'],
  				columns: [
         			{ name: 'name',  label: 'Item Name', align: 'left', field: 'name' },
-				 	{ name: 'price', label: 'Price',     align: 'left', field: 'price', format: val => val ? "$" + val : '' },
+				 	{ name: 'price', label: 'Price',     align: 'left', field: 'price', format: val => val ? dollars(val) : '' },
             ],
 			}
 		},
 		computed: {	
          isEdit() { return this.type == "edit" },	
-         total() { return this.invoiceToSubmit.subTotal + this.invoiceToSubmit.shippingCharge - this.invoiceToSubmit.priceAdjustment },	
+         subtotal() { return dollars(this.invoiceToSubmit.subTotal) },
+         shippingCharge() { return dollars(this.invoiceToSubmit.shippingCharge) },
+         priceAdjustment() { return "(" + dollars(this.invoiceToSubmit.priceAdjustment) + ")" },
+         total() { return dollars(this.invoiceToSubmit.subTotal + this.invoiceToSubmit.shippingCharge - this.invoiceToSubmit.priceAdjustment) },          
     	},
 		methods: {
-			...mapActions('invoice', ['createInvoice', 'updateInvoice']),
+			...mapActions('invoice', ['createInvoice', 'setInvoice']),
 			...mapActions('item', ['updateItem']),
 			submitForm() {
 				this.persistInvoice()
@@ -94,7 +96,7 @@
 			},
 			persistInvoice() {
             // console.log("persistInvoice", this.invoiceToSubmit)
-            if (this.isEdit) { this.updateInvoice(this.invoiceToSubmit)}
+            if (this.isEdit) { this.setInvoice(this.invoiceToSubmit)}
             else { 
                this.createInvoice(this.invoiceToSubmit)
                for (var item of this.items) {
@@ -116,10 +118,7 @@
                   return 
                }
 
-               if (this.invoiceToSubmit.userId == null) { 
-                  this.invoiceToSubmit.userId = item.buyerId 
-                  this.invoiceToSubmit.userName = item.buyerName
-               }
+               if (this.invoiceToSubmit.userId == null) { this.invoiceToSubmit.userId = item.buyerId }
                if (item.buyerId != this.invoiceToSubmit.userId) { 
                   this.invoiceError = "Not all items have the same buyer"
                   return 
@@ -136,6 +135,9 @@
 		}
    }
    
+   function dollars(number) {
+      return "$" + number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+   }
 </script>
 
 <style>

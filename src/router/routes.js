@@ -18,7 +18,8 @@ const routes = [
       { path: '/admin/items/:dropId', component: () => import('pages/Admin/ItemsAdminPage.vue') },      
       { path: '/admin/bids/:itemId',  component: () => import('pages/Admin/BidsAdminPage.vue') },    
       { path: '/admin/users',         component: () => import('pages/Admin/UsersAdminPage.vue') },  
-    ]
+      { path: '/admin/invoices',      component: () => import('pages/Admin/InvoicesAdminPage.vue') },  
+   ]
   }
 ]
 

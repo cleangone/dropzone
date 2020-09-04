@@ -90,7 +90,7 @@
 			isBid() { return this.itemSaleType == SaleType.BID },
 			isBuy() { return this.itemSaleType == SaleType.BUY },			
 			numberOfBids() { return this.item.bids ? Object.keys(this.item.bids).length : 0 },
-			currPrice() { return "$" + (this.item.buyPrice > this.item.startPrice ? this.item.buyPrice : this.item.startPrice) },
+			currPrice() { return dollars(this.item.buyPrice > this.item.startPrice ? this.item.buyPrice : this.item.startPrice) },
 			priceText() {
 				if (this.item.status == ItemStatus.SOLD) { return ItemStatus.SOLD }
 				else if (this.item.status == ItemStatus.HOLD) { return ItemStatus.HOLD + " (" + this.currPrice + ")"}
@@ -140,6 +140,10 @@
 			'item-timer' : require('components/Item/ItemTimer.vue').default
 		}
 	}
+
+   function dollars(number) {
+      return "$" + number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+   }
 
 	// todo - this is how you make a global function
 	function zeroPadded(num) {

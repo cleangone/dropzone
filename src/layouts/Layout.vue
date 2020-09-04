@@ -32,15 +32,16 @@
           <q-item-section><q-item-label>Login</q-item-label></q-item-section>
         </q-item> -->
         <div v-if="loggedIn">
-          <layout-item path="/account" label="My Account"        iconName="account_circle"/>
-          <layout-item path="/actions" label="My Bids/Purchases" iconName="monetization_on"/>           
-          <layout-item path="/checkout" label="Checkout"         iconName="shopping_cart"/>           
+            <layout-item path="/account" label="My Account"        iconName="account_circle"/>
+            <layout-item path="/actions" label="My Bids/Purchases" iconName="monetization_on"/>           
+            <layout-item path="/checkout" label="Checkout"         iconName="shopping_cart"/>           
         </div>
 
         <div v-if="userIsAdmin">
-          <q-item-label header>Admin</q-item-label>
-          <layout-item path="/admin/drops" label="Drop Admin" iconName="get_app"/>
-          <layout-item path="/admin/users" label="User Admin" iconName="group"/>
+            <q-item-label header>Admin</q-item-label>
+            <layout-item path="/admin/drops"    label="Drop Admin" iconName="get_app"/>
+            <layout-item path="/admin/users"    label="User Admin" iconName="group"/>
+            <layout-item path="/admin/invoices" label="Invoices"   iconName="shopping_cart"/>
         </div>
       </q-list>
     </q-drawer>

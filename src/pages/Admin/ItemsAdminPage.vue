@@ -16,10 +16,10 @@
 						<template v-slot:append><q-icon name="search"/></template>
 					</q-input>
 				</template>
-				<q-td slot="body-cell-actions" slot-scope="props" :props="props" auto-width>
-					<q-btn icon="edit"   @click="editItem(props.row.id)"                           size="sm" flat dense color="primary" />
-    				<q-btn icon="delete" @click="promptToDeleteItem(props.row.id, props.row.name)" size="sm" flat dense color="red" />
-  				</q-td>
+            <q-td slot="body-cell-actions" slot-scope="props" :props="props" auto-width>
+               <q-btn icon="edit"   @click="editItem(props.row.id)"                           size="sm" flat dense color="primary" />
+               <q-btn icon="delete" @click="promptToDeleteItem(props.row.id, props.row.name)" size="sm" flat dense color="red" />
+            </q-td> 
 			</q-table>
          <div class="q-mt-md">
 			   <q-btn v-if="!rowsSelected" @click="showAddModal=true" icon="add" unelevated color="primary"/>
@@ -54,15 +54,14 @@
 				itemIdToEdit: '',
             tableDataFilter: '',
             selectedRowItems: [],
-				visibleColumns: [ 'name', 'saleType', 'buyerName', 'startPrice', 'buyPrice', 'bids', 'status', 'actions'],
+				visibleColumns: [ 'name', 'saleType', 'buyerId', 'startPrice', 'buyPrice', 'bids', 'status', 'actions'],
  				columns: [
         			{ name: 'id', field: 'id' },
 				 	{ name: 'name',       label: 'Name',        align: 'left',   field: 'name',       sortable: true },
 				 	{ name: 'saleType',   label: 'Sale Type',   align: 'center', field: 'saleType',   sortable: true },
-					{ name: 'buyerId',    label: 'BuyerId',     align: 'left',   field: 'buyerId',    sortable: true },
-					{ name: 'buyerName',  label: 'Buyer',       align: 'left',   field: 'buyerName',  sortable: true },
-					{ name: 'startPrice', label: 'Start Price', align: 'right',  field: 'startPrice', sortable: true, format: val => val ? "$" + val : '' },
-					{ name: 'buyPrice',   label: 'Final Price', align: 'right',  field: 'buyPrice',   sortable: true, format: val => val ? "$" + val : '' },
+					{ name: 'buyerId',    label: 'Buyer',       align: 'left',   field: 'buyerId',    sortable: true, format: val => this.userName(val) },
+					{ name: 'startPrice', label: 'Start Price', align: 'right',  field: 'startPrice', sortable: true, format: val => val ? dollars(val) : '' },
+					{ name: 'buyPrice',   label: 'Final Price', align: 'right',  field: 'buyPrice',   sortable: true, format: val => val ? dollars(val) : '' },
 					{ name: 'bids',       label: 'Bids',        align: 'center', field: 'bids',       sortable: true },
 					{ name: 'status',     label: 'Status',      align: 'center', field: 'status',     sortable: true },
 					{ name: 'actions' }
@@ -73,6 +72,7 @@
 		computed: {
          ...mapGetters('drop', ['getDrop']),
          ...mapGetters('item', ['itemsExist', 'getItemsInDrop']),
+			...mapGetters('user', ['getUserIdToName']),
 			drop() { return this.getDrop(this.dropId) },
          itemToEdit() { return this.itemIdToEdit ? getItem(this.items, this.itemIdToEdit) : null },
          items() { 
@@ -83,6 +83,7 @@
             return copies
          },
          rowsSelected() { return this.selectedRowItems.length > 0 },
+         userIdToName() { return this.getUserIdToName },
 			showInvoiceButton() { 
             if (this.selectedRowItems.length == 0) { return false } 
             
@@ -103,7 +104,8 @@
 				// console.log("editItem", itemId)
 				this.itemIdToEdit = itemId
 				this.showEditModal = true
-			},
+         },
+         userName(userId) { return this.userIdToName.get(userId) },
 			promptToDeleteItem(itemId, name) {
 				this.$q.dialog({title: 'Confirm', message: 'Delete ' + name + '?', persistent: true,			
 	        		ok: { push: true }, cancel: { push: true, color: 'grey' }
@@ -120,6 +122,10 @@
          
          if (!this.itemsExist) { this.bindItems() } 
       },
+   }
+
+   function dollars(number) {
+      return "$" + number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
    }
    
    function getItem(items, itemId) { 

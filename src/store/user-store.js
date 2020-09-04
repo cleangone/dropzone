@@ -4,6 +4,7 @@ import { firestore } from 'boot/firebase'
 /*
     user: 
       id (auth userId)    
+      authEmailCopy
       firstName
       lastName
       isAdmin   
@@ -103,9 +104,7 @@ const actions = {
 function collection() { return firestore.collection('users') }
 
 const getters = {
-   getUsers: state => { 
-      // console.log("getUsers - " + state.users.length + " users")
-      return state.users },
+   getUsers: state => { return state.users },
    getUser: state => userId => {
       // console.log("getUser - " + state.users.length + " users")
       for (var user of state.users) {
@@ -116,7 +115,17 @@ const getters = {
    isAdmin: state => userId => { 
       let user = getters.getUser(userId)
       return user ? user.isAdmin : false
-   }
+   },
+   getUserIdToName() {
+      let userIdToName = new Map()
+      state.users.forEach(user => { 
+         let userName = (user.firstName || user.lastName) ?
+            (user.firstName ? user.firstName : "") + (user.firstName && user.lastName ? " " : "") + (user.lastName ? user.lastName : "") :
+            user.authEmailCopy
+         userIdToName.set(user.id, userName)
+      })
+      return userIdToName
+   },
    //  hasUsers: state => { 
    //      console.log("hasUsers") 
    //      return Object.keys(state.users).length > 0 

@@ -6,8 +6,7 @@ import { uid } from 'quasar'
    invoice
       id
       userId
-      userName
-      createdDate
+      updatedDate
       items[] - id, name, price
       status: created, sent, paid, shipped
       subTotal
@@ -27,13 +26,16 @@ const actions = {
    createInvoice: firestoreAction((context, invoice) => {
       console.log("createInvoice", invoice)
       invoice.id = uid()
-      invoice.createdDate = Date.now()
+      invoice.updatedDate = Date.now()
       invoice.total = invoice.subTotal + invoice.shippingCharge - invoice.priceAdjustment 
    
       collection().doc(invoice.id).set(invoice)
    }),
-   updateInvoice: firestoreAction((context, invoice) => {
-      console.log("updateInvoice", invoice)
+   setInvoice: firestoreAction((context, invoice) => {
+      console.log("setInvoice", invoice)
+      invoice.updatedDate = Date.now()
+      invoice.total = invoice.subTotal + invoice.shippingCharge - invoice.priceAdjustment 
+   
       collection().doc(invoice.id).set(invoice)
    }),
    deleteInvoice: firestoreAction((context, id) => { 
@@ -46,9 +48,7 @@ function collection() { return firestore.collection('invoices') }
 
 const getters = {
    invoicesExist: state => { return state.invoices && state.invoices.length > 0 },
-   getInvoices: state => { 
-      return state.invoices
-   },
+   getInvoices: state => { return state.invoices },
    getInvoice: state => invoiceId => {
       for (var invoice of state.invoices) {
          if (invoice.id == invoiceId) { return invoice }
