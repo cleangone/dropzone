@@ -1,6 +1,6 @@
 <template>
 	<q-card-actions class="q-my-none q-px-xs q-pb-xs q-pt-none" :class="blue">
-		<span v-if="!isHoldSold" class="col">
+		<span v-if="isAvailable" class="col">
 			<span v-if="loggedIn" class="col">
 				<q-btn v-if="isBid"      @click="promptToBid()" :label="itemSaleType" color="primary" small/>
 				<q-btn v-else-if="isBuy" @click="promptToBuy()" :label="itemSaleType" color="primary" small/>
@@ -9,12 +9,11 @@
 				<q-btn @click="login()" :label="'Login to ' + itemSaleType" color="primary" medium/>
 			</span>
 		</span>
-		<!-- <span v-if="loggedIn" class="col">
-				<q-btn v-if="isLiked" icon="favorite" @click="unlike" flat small/>
-				<q-btn v-else icon="favorite_border"  @click="like"   flat small/>
-		</span> -->
-		<span v-if="userIsAdmin" class="col" align="right">
-			<q-btn @click="showEditModal = true" icon="edit" color="primary" flat small/>
+		<span v-if="loggedIn" class="col" align="right">
+			<q-btn v-if="isLiked" icon="favorite" @click="unlike" flat small dense/>
+			<q-btn v-else  icon="favorite_border" @click="like"   flat small dense/>
+
+			<q-btn v-if="userIsAdmin" @click="showEditModal=true" icon="edit" flat small dense/>
 		</span>
 		<q-dialog v-model="showEditModal">
 			<item-add-edit type="edit" :item ="item" @close="showEditModal=false" />
@@ -47,18 +46,14 @@
          itemSaleType() { return (this.item.saleType == SaleType.DEFAULT ? this.drop.defaultSaleType : this.item.saleType) },
          user() { return this.getUser(this.userId)},
          userIsAdmin() { return this.user && this.user.isAdmin },
-			// likes() { return this.getLikes(this.userId) },
-			isHoldSold() { return this.item.status == ItemStatus.HOLD || this.item.status == ItemStatus.SOLD },
+			isAvailable() { return this.item.status == ItemStatus.AVAILABLE || this.item.status == ItemStatus.DROPPING },
 			isBid() { return this.itemSaleType == SaleType.BID },
 			isBuy() { return this.itemSaleType == SaleType.BUY },	
-			isLiked() { 
-            return true
-            // return this.likes && Object.keys(this.likes).includes(this.dropItemId)
-         },		
+			isLiked() { return this.user.likedItemIds  &&  this.user.likedItemIds.includes(this.item.id) },		
 		},
 		methods: {
 			...mapActions('action', ['submitBid', 'submitPurchaseRequest']),
-			// ...mapActions('user', ['addLike', 'removeLike']),
+			...mapActions('user', ['setLikes']),
 			promptToBid() {
 				let bidAmount = this.item.buyPrice ? this.item.buyPrice + 25 : this.item.startPrice
 				this.$q.dialog({title: 'Confirm', message: 'Bid $' + bidAmount + ' on ' + this.item.name + '?', persistent: true,			
@@ -74,8 +69,17 @@
 					this.submitPurchaseRequest({ itemId: this.item.id, userId: this.userId }) 
 				})
 			},
-			// like() { this.addLike({ userId: this.userId, dropItemId: this.dropItemId, dropItemName: this.dropItem.name,  }) },
-			// unlike() { this.removeLike({ userId: this.userId, dropItemId: this.dropItemId, dropItemName: this.dropItem.name,  }) },
+			like() { 
+            let likedItemIds = this.user.likedItemIds ? [...this.user.likedItemIds] : []
+            likedItemIds.push(this.item.id) 
+            this.setLikes({ id: this.user.id, likedItemIds: likedItemIds }) 
+         },
+			unlike() { 
+            // todo - ugly
+            let likedItemIds = []
+            this.user.likedItemIds.forEach(likedItemId => { if (likedItemId != this.item.id) { likedItemIds.push(likedItemId)} })
+            this.setLikes({ id: this.user.id, likedItemIds: likedItemIds }) 
+         },
 		},
 		filters: {
 			formatPrice(priceObj) { return "$" + priceObj + (String(priceObj).includes(".") ? "" : ".00") }

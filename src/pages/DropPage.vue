@@ -10,7 +10,7 @@
 				</q-img>
 			</div>
 			<div v-else class="row q-mt-sm q-gutter-sm">
-				<item v-for="(item, key) in dropItems" :key="key" :item="item" :displayType="thumb"/>
+				<item v-for="(item, key) in items" :key="key" :item="item" :displayType="thumb"/>
 			</div>
 		</div>
 		<div v-else>Loading</div>
@@ -34,28 +34,24 @@
 			this.dropId = this.$route.params.dropId
       },
 	  	computed: {
-			// ...mapState('auth', ['userId']),
-			...mapGetters('auth', ['loggedIn']),
-			// ...mapGetters('user', ['isAdmin', 'getLikes']),
+			...mapGetters('auth', ['loggedIn', 'userId']),
+			...mapGetters('user', ['getUser']),
 			...mapGetters('drop', ['getDrop']),
 			...mapGetters('item', ['getItemsInDrop']),
 			thumb() { return ItemDisplayType.THUMB },
-			drop() { return this.getDrop(this.dropId)},
-			likes() { return this.getLikes(this.userId)},
-			// dropItems () {
-			// 	let items = {}
-			// 	if (this.showOnlyLikedItems) {
-			// 		if (this.likes && this.drop.items) { 
-			// 			let likedDropItemIds = Object.keys(this.likes)
-			// 			Object.keys(this.drop.items).forEach(key => {
-			// 				if (likedDropItemIds.includes(key)) { items[key] = this.drop.items[key] }
-			// 			})
-			// 		}
-			// 	}
-			// 	else { items = this.drop.items }
-			// 	return items
-         // },
-         dropItems () { return this.getItemsInDrop(this.dropId) },
+			drop() { return this.getDrop(this.dropId) },
+			user() { return this.getUser(this.userId) },
+         items () { 
+            let items = this.getItemsInDrop(this.dropId) 
+            if (!this.showOnlyLikedItems) { return items }
+            if (!this.user.likedItemIds) { return [] } // no liked items
+
+            let likedItems = []
+            items.forEach(item => { 
+               if (this.user.likedItemIds.includes(item.id)) { likedItems.push(item) }
+		      })
+				return likedItems
+         },
 			isPreDrop() { return this.drop.status == DropStatus.PREDROP },
 			startDateText() { return getStartDateText(this.drop) },
 			showLabel() { return this.showOnlyLikedItems ? "Show liked": "Show all" }

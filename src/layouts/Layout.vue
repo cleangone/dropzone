@@ -27,10 +27,6 @@
         <q-item-label header>Navigation</q-item-label>
         <layout-item path="/" label="Drops" iconName="home"/>
 
-        <!-- <q-item clickable to="/auth" exact>
-          <q-item-section avatar><q-icon name="account_circle" /></q-item-section>
-          <q-item-section><q-item-label>Login</q-item-label></q-item-section>
-        </q-item> -->
         <div v-if="loggedIn">
             <layout-item path="/account"  label="My Account"        iconName="account_circle"/>
             <layout-item path="/actions"  label="My Bids/Purchases" iconName="monetization_on"/>           

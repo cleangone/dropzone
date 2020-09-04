@@ -8,6 +8,7 @@ import { firestore } from 'boot/firebase'
       firstName
       lastName
       isAdmin   
+      likedItemIds []
 */  
 
 // import Vue from 'vue'
@@ -43,62 +44,11 @@ const actions = {
    setUser: firestoreAction((context, user) => {
       console.log("setUser", user)
       collection().doc(user.id).set(user)
-   })
-
-	// create/update
-	// updateUser({ state }, payload) { 
-   //      console.log("actions.updateUser", payload) 
-   //      let ref = getUserRef(payload.id)
-
-   //      if (state.users[payload.id]) {
-   //          console.log("actions.updateUser: update") 
-   //          ref.update(payload.user, error => {
-   //              if (error) { showNegativeNotify("Error: " + error.message) }
-   //              else { showPositiveNotify("Account updated") } 
-   //          }) 
-   //      }
-   //      else {
-   //          console.log("actions.updateUser: create") 
-   //          ref.set(payload.user, error => {
-   //              if (error) { showNegativeNotify("Error creating user: " + error.message) }
-   //              else { showPositiveNotify("Account updated") } 
-   //          })
-   //      }
-   //  },
-   //  addLike({ state }, payload) { 
-   //      console.log("actions.addLike", payload) 
-   //      let ref = getLikeRef(payload.userId, payload.dropItemId)
-   //      ref.set(payload.dropItemId, error => {
-   //          if (error) { 
-   //              console.error("addLike Error", error.message)
-   //              showNegativeNotify("Error liking: " + payload.dropItemName) 
-   //          }
-   //          else { showPositiveNotify(payload.dropItemName + " liked") } 
-   //      })
-   //  },
-   //  removeLike({ state }, payload) { 
-   //      console.log("actions.removeLike", payload) 
-   //      let ref = getLikeRef(payload.userId, payload.dropItemId)
-   //      ref.remove(error => {
-   //          if (error) { showNegativeNotify("Error: " + error.message) }
-   //          else { showPositiveNotify(payload.dropItemName + " unliked") } 
-   //      })
-   //  },
-   //  // 'user', ['addLike', 'removeLike']),
-	// createUserFirebaseCallbacks({commit}) { 
-   //      console.log("createUserFirebaseCallbacks") 
-	// 	let usersRef = firebaseDB.ref("users/") 
-   //      usersRef.once('value', 
-   //          snapshot => { commit('setUsersDownloaded', true) },
-	// 		error => { console.log("ref.once error", error.message) }
-	// 	)
-        
-   //      usersRef.on('child_added', snapshot => { commit('addUser', createPayload(snapshot)) })
-   //      usersRef.on('child_changed', snapshot => { commit('updateUser', createPayload(snapshot)) }) 
-   //      usersRef.on('child_removed', snapshot => { commit('deleteUser', snapshot.key) })
-   //  }
-    
-
+   }),
+   setLikes: firestoreAction((context, user) => {
+      console.log("setLikes", user.likedItemIds) 
+      collection().doc(user.id).update({ likedItemIds: user.likedItemIds })
+   }),
 }
 
 function collection() { return firestore.collection('users') }
