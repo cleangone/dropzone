@@ -72,7 +72,7 @@
                shippingCharge: 25,
                priceAdjustment: 0,
             },
-            statusOptions: [ InvoiceStatus.CREATED, InvoiceStatus.SENT, InvoiceStatus.PAID, InvoiceStatus.SHIPPED ],
+            statusOptions: [ InvoiceStatus.CREATED, InvoiceStatus.UPDATED, InvoiceStatus.PAID, InvoiceStatus.SHIPPED ],
             visibleColumns: [ 'name', 'price'],
  				columns: [
         			{ name: 'name',  label: 'Item Name', align: 'left', field: 'name' },

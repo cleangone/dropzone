@@ -1,6 +1,8 @@
 import { firestoreAction } from 'vuexfire'
 import { firestore } from 'boot/firebase'
 import { uid } from 'quasar'
+import { InvoiceStatus } from 'src/utils/Constants.js'
+   
 
 /*
    invoice
@@ -8,7 +10,7 @@ import { uid } from 'quasar'
       userId
       updatedDate
       items[] - id, name, price
-      status: created, sent, paid, shipped
+      status: created, updated, sent, paid, shipped
       subTotal
       shippingCharge
       priceAdjustment
@@ -26,14 +28,14 @@ const actions = {
    createInvoice: firestoreAction((context, invoice) => {
       console.log("createInvoice", invoice)
       invoice.id = uid()
-      invoice.updatedDate = Date.now()
+      invoice.createdDate = Date.now()
       invoice.total = invoice.subTotal + invoice.shippingCharge - invoice.priceAdjustment 
    
       collection().doc(invoice.id).set(invoice)
    }),
    setInvoice: firestoreAction((context, invoice) => {
       console.log("setInvoice", invoice)
-      invoice.updatedDate = Date.now()
+      if (invoice.status == InvoiceStatus.SENT) { invoice.status = InvoiceStatus.UPDATED }
       invoice.total = invoice.subTotal + invoice.shippingCharge - invoice.priceAdjustment 
    
       collection().doc(invoice.id).set(invoice)

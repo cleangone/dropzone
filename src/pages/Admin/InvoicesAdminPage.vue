@@ -57,13 +57,13 @@
 	  	   return {
 			   showEditModal: false,
 				tableDataFilter: '',
-            visibleColumns: ['userId', 'total', 'status', 'updatedDate'],
+            visibleColumns: ['userId', 'total', 'status', 'sentDate'],
  				columns: [
                { name: 'id', field: 'id' },                 
-               { name: 'userId',      label: 'User',   align: 'left',   field: 'userId',      sortable: true, format: val => this.userName(val)  },
-					{ name: 'total',       label: 'Total',  align: 'right',  field: 'total',       sortable: true, format: val => val ? dollars(val) : '' },
-					{ name: 'status',      label: 'Status', align: 'center', field: 'status',      sortable: true },
-               { name: 'updatedDate', label: 'Date',   align: 'left',   field: 'updatedDate', sortable: true, format: val => val ? formatDateTime(val) : '' },
+               { name: 'userId',   label: 'User',   align: 'left',   field: 'userId',   sortable: true, format: val => this.userName(val)  },
+					{ name: 'total',    label: 'Total',  align: 'right',  field: 'total',    sortable: true, format: val => val ? dollars(val) : '' },
+					{ name: 'status',   label: 'Status', align: 'center', field: 'status',   sortable: true },
+               { name: 'sentDate', label: 'Date',   align: 'left',   field: 'sentDate', sortable: true, format: val => val ? formatDateTime(val) : '' },
             ],
             pagination: { rowsPerPage: 30 },
             invoiceIdToEdit: '',

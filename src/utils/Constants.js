@@ -24,6 +24,7 @@ export const DropStatus = {
 
 export const InvoiceStatus = {
    CREATED: 'Created',
+   UPDATED: 'Updated',
    SENT:    'Sent',
    PAID:    'Paid',
    SHIPPED: 'Shipped',
