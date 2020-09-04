@@ -51,6 +51,14 @@ function collection() { return firestore.collection('invoices') }
 const getters = {
    invoicesExist: state => { return state.invoices && state.invoices.length > 0 },
    getInvoices: state => { return state.invoices },
+   getUserInvoices: state => userId => {
+      let userInvoices = []
+      for (var invoice of state.invoices) {
+         if (invoice.userId == userId) { userInvoices.push(invoice) }
+      }
+
+      return userInvoices
+   },
    getInvoice: state => invoiceId => {
       for (var invoice of state.invoices) {
          if (invoice.id == invoiceId) { return invoice }

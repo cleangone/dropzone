@@ -27,21 +27,22 @@
 	import { mapState, mapActions } from 'vuex'
 	
 	export default {
-		props: ['userId', 'user'],
+		props: ['user'],
 		data() {
 			return {
 				userToUpdate: {},
 			}
 		},
 		methods: {
-			...mapActions('user', ['updateUser']),
+			...mapActions('user', ['setUser']),
 			submitUpdate() {
 				console.log("submitForm")
-				this.$emit('close')
-				this.updateUser({ id: this.userId, user: this.userToUpdate })
+            this.setUser(this.userToUpdate)
+            this.$emit('close')
 			}
 		},
 		mounted() {
+         console.log("UserEdit mounted",  this.user)
 			setTimeout(() => { this.userToUpdate = Object.assign({}, this.user) }, 100)  // user param update propagating as modal being popped up
 		}
 	}

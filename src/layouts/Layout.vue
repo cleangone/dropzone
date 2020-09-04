@@ -13,7 +13,7 @@
           <q-menu content-class="bg-grey-4 ">
             <q-list dense style="min-width: 100px">
               <q-item clickable to="/account" v-close-popup><q-item-section style="bg-black">Account</q-item-section></q-item>
-              <q-item clickable to="/actions"  v-close-popup><q-item-section style="bg-black">Bids/Buys</q-item-section></q-item>
+              <q-item clickable to="/invoices"  v-close-popup><q-item-section style="bg-black">Invoices</q-item-section></q-item>
               <q-item clickable v-close-popup><q-item-section @click="logoutUser">Logout</q-item-section></q-item>
             </q-list>
           </q-menu>
@@ -32,9 +32,9 @@
           <q-item-section><q-item-label>Login</q-item-label></q-item-section>
         </q-item> -->
         <div v-if="loggedIn">
-            <layout-item path="/account" label="My Account"        iconName="account_circle"/>
-            <layout-item path="/actions" label="My Bids/Purchases" iconName="monetization_on"/>           
-            <layout-item path="/checkout" label="Checkout"         iconName="shopping_cart"/>           
+            <layout-item path="/account"  label="My Account"        iconName="account_circle"/>
+            <layout-item path="/actions"  label="My Bids/Purchases" iconName="monetization_on"/>           
+            <layout-item path="/invoices" label="Invoices"          iconName="shopping_cart"/>           
         </div>
 
         <div v-if="userIsAdmin">

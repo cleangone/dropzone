@@ -13,7 +13,7 @@
 			</q-table>
 		</div>
 		<q-dialog v-model="showEditModal">
-			<modal-edit-user :userId="userIdToEdit" :user="userToEdit" @close="showEditModal=false" />
+			<user-edit :user="userToEdit" @close="showEditModal=false" />
 		</q-dialog>
   	</q-page>
 </template>
@@ -40,18 +40,18 @@
 			}
 		},
 		computed: {
-			...mapGetters('user', ['getUsers']),
-			userToEdit() { return this.getUsers[this.userIdToEdit] },
+			...mapGetters('user', ['getUsers', 'getUser']),
+			userToEdit() { return this.getUser(this.userIdToEdit) },
 		},
 		methods: {
 			edit(userId) {
-				console.log("edit", userId)
+				// console.log("edit", userId)
 				this.userIdToEdit = userId
 				this.showEditModal = true
 			}
 		},
 		components: {
-			'modal-edit-user' : require('components/Admin/ModalEditUser.vue').default
+			'user-edit' : require('components/Admin/UserEdit.vue').default
 		},
 	}
 
