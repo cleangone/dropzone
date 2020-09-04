@@ -9,7 +9,7 @@
         <span class="col absolute-center text-h5">Dropzone</span>
         <q-btn label="" dense flat class="col" />
               
-        <q-btn v-if="loggedIn" icon-right="account_circle" :label="userFirstName" flat dense >
+        <q-btn v-if="loggedIn" icon-right="account_circle" :label="userDisplayName" flat dense >
           <q-menu content-class="bg-grey-4 ">
             <q-list dense style="min-width: 100px">
               <q-item clickable to="/account" v-close-popup><q-item-section style="bg-black">Account</q-item-section></q-item>
@@ -18,7 +18,7 @@
             </q-list>
           </q-menu>
         </q-btn>        
-        <q-btn v-else icon-right="account_circle" to="/auth" label="Login" dense flat />
+        <q-btn v-else icon-right="account_circle" to="/auth/login" label="Login" dense flat />
       </q-toolbar>
     </q-header>
 
@@ -39,8 +39,8 @@
 
         <div v-if="userIsAdmin">
           <q-item-label header>Admin</q-item-label>
-          <layout-item path="/drops" label="Drop Admin" iconName="get_app"/>
-          <layout-item path="/users" label="User Admin" iconName="group"/>
+          <layout-item path="/admin/drops" label="Drop Admin" iconName="get_app"/>
+          <layout-item path="/admin/users" label="User Admin" iconName="group"/>
         </div>
       </q-list>
     </q-drawer>
@@ -60,31 +60,37 @@
 </template>
 
 <script>
-  import { mapState, mapGetters, mapActions } from 'vuex'
-  import { openURL } from 'quasar'
+   import { mapGetters, mapActions } from 'vuex'
+   // import { openURL } from 'quasar'
 
-  export default {
-    name: 'MyLayout',
-    data () {
-      return {
-        leftDrawerOpen: this.$q.platform.is.desktop,
-      }
-    },
-    computed: {
-      ...mapState('auth', ['userId']),
-			...mapGetters('auth', ['loggedIn']),
-      ...mapGetters('user', ['getUser']),
-      user() { return this.getUser(this.userId)},
-      userIsAdmin() { return this.loggedIn && this.user.isAdmin },
-      userFirstName() { return this.user.firstName }
-    },
-    methods: {
-      ...mapActions('auth', ['logoutUser']),
-      openURL
-    },
-    components: {
-			'layout-item' : require('layouts/LayoutItem.vue').default
-		},
+   export default {
+      name: 'MyLayout',
+      data () {
+         return {
+         leftDrawerOpen: this.$q.platform.is.desktop,
+         }
+      },
+      computed: {
+         ...mapGetters('auth', ['userId', 'loggedIn']),
+         ...mapGetters('user', ['getUser', 'isAdmin']),
+         user() { return this.getUser(this.userId)},
+         userIsAdmin() { return this.user && this.user.isAdmin },
+         userDisplayName() { return this.user.firstName ? this.user.firstName : this.user.authEmailCopy },
+      },
+      methods: {
+         ...mapActions('auth', ['logoutUser']),
+         ...mapActions('user', ['bindUsers']),
+         logout() {        
+            this.logoutUser()
+            if (this.$route.path != "/") { this.$router.push("/") }
+         },
+      },
+      components: {
+         'layout-item' : require('layouts/LayoutItem.vue').default
+      },
+      created() {
+         this.bindUsers()
+      },
   }
 </script>
 

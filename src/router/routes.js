@@ -1,21 +1,23 @@
-import { Page } from '../constants/Constants.js';
+import { Route } from 'src/utils/Constants.js';
 
 const routes = [
   {
     path: '/',
     component: () => import('layouts/Layout.vue'),
     children: [
-      { path: '',          component: () => import('pages/HomePage.vue') },
-      { path: '/auth',     component: () => import('pages/AuthPage.vue') },
-      { path: '/drop/:dropId', name: Page.DROP, component: () => import('pages/DropPage.vue') },
-      { path: '/item/:itemId', name: Page.ITEM, component: () => import('pages/ItemPage.vue') },      
-      { path: '/account',  component: () => import('pages/User/AccountPage.vue') },
-      { path: '/actions',  component: () => import('pages/User/ActionsPage.vue') },
-      { path: '/checkout', component: () => import('pages/User/CheckoutPage.vue') },
-      { path: '/users',    component: () => import('pages/Admin/UsersAdminPage.vue') },
-      { path: '/drops',    component: () => import('pages/Admin/DropsAdminPage.vue') },      
-      { path: '/dropitems/:dropId',    component: () => import('pages/Admin/DropItemsAdminPage.vue') },      
-      { path: '/bids/:dropId/:itemId', component: () => import('pages/Admin/BidsAdminPage.vue') },      
+      { path: '',               component: () => import('pages/HomePage.vue') },
+      { path: '/auth/login',    component: () => import('pages/Auth/LoginRegisterPage.vue'),  name: Route.LOGIN   },
+      { path: '/auth/register', component: () => import('pages/Auth/LoginRegisterPage.vue'),  name: Route.REGISTER },
+      { path: '/auth/forgot',   component: () => import('pages/Auth/ForgotPasswordPage.vue'), name: Route.FORGOT },
+      { path: '/drop/:dropId',  component: () => import('pages/DropPage.vue'),                name: Route.DROP, },
+      { path: '/item/:itemId',  component: () => import('pages/ItemPage.vue'),                name: Route.ITEM, },      
+      { path: '/account',       component: () => import('pages/User/AccountPage.vue') },
+      { path: '/actions',       component: () => import('pages/User/ActionsPage.vue') },
+      { path: '/checkout',      component: () => import('pages/User/CheckoutPage.vue') },
+      { path: '/admin/drops',         component: () => import('pages/Admin/DropsAdminPage.vue') },      
+      { path: '/admin/items/:dropId', component: () => import('pages/Admin/ItemsAdminPage.vue') },      
+      { path: '/admin/bids/:itemId',  component: () => import('pages/Admin/BidsAdminPage.vue') },    
+      { path: '/admin/users',         component: () => import('pages/Admin/UsersAdminPage.vue') },  
     ]
   }
 ]

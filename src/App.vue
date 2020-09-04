@@ -10,13 +10,13 @@
   export default {
     methods: {
       ...mapActions('auth', ['handleAuthStateChange']),
-      ...mapActions('drop', ['createFirebaseCallbacks']),
-      ...mapActions('user', ['createUserFirebaseCallbacks'])
+      // ...mapActions('drop', ['createFirebaseCallbacks']),
+      // ...mapActions('user', ['createUserFirebaseCallbacks'])
     },
     mounted() {
       console.log("App.mounted")
-      this.createFirebaseCallbacks()
-      this.createUserFirebaseCallbacks()
+      // this.createFirebaseCallbacks()
+      // this.createUserFirebaseCallbacks()
       this.handleAuthStateChange()
     }
 }

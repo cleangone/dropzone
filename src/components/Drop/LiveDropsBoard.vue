@@ -2,17 +2,15 @@
 	<div class="column justify-center q-mt-md q-pa-sm rounded-borders bg-grey-4">
 		<div class="self-center text-h6">Drop Board</div>
 		<div class="row q-mt-xs q-gutter-xs">
-			<!-- <drop-item-mini v-for="(dropItem, key) in getLiveDropItems" :key="key" :dropItemId="key" :dropItem="dropItem"/> -->
-			<drop-item v-for="(dropItem, key) in getLiveDropItems" :key="key" :dropItemId="key" :dropItem="dropItem" :displayType="mini"/>
+			<item v-for="(item, key) in liveDropItems" :key="key" :item="item" :displayType="mini"/>
 		</div>
   	</div> 
 </template>
 
 <script>
 	import { mapState, mapGetters, mapActions } from 'vuex'
-	import { DropItemDisplayType, DropStatus } from '../../constants/Constants.js';
-	import { getStartDateText } from './drop-util';
-
+	import { DropStatus, ItemDisplayType } from 'src/utils/Constants.js';
+	
 	export default {
 		data() {
 			return {
@@ -20,11 +18,13 @@
 			}
 		},
 		computed: {
-			...mapGetters('drop', ['getLiveDropItems']),
-			mini() { return DropItemDisplayType.MINI }
+			...mapGetters('drop', ['getLiveDropIds']),
+			...mapGetters('item', ['getItemsInDrops']),
+         mini() { return ItemDisplayType.MINI },
+         liveDropItems() { return this.getItemsInDrops(this.getLiveDropIds) }
     	},
 		components: {
-			'drop-item' : require('components/DropItem/DropItem.vue').default
+			'item' : require('components/Item/Item.vue').default
 		}
 	}
 </script>

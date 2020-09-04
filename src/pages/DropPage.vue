@@ -10,7 +10,7 @@
 				</q-img>
 			</div>
 			<div v-else class="row q-mt-sm q-gutter-sm">
-				<drop-item v-for="(dropItem, key) in dropItems" :key="key" :dropItemId="key" :dropItem="dropItem" :displayType="thumb"/>
+				<item v-for="(item, key) in dropItems" :key="key" :item="item" :displayType="thumb"/>
 			</div>
 		</div>
 		<div v-else>Loading</div>
@@ -20,14 +20,13 @@
 <script>
 	import { date } from 'quasar'
 	import { mapState, mapGetters, mapActions } from 'vuex'
-	import { DropItemDisplayType, DropStatus } from '../constants/Constants.js';
-	import { getStartDateText } from '../components/Drop/drop-util';
-
+	import { DropStatus, ItemDisplayType } from 'src/utils/Constants.js'
+	import { getStartDateText } from 'src/utils/DateUtils'
+   
 	export default {
 		data() {
 			return {				
 				dropId: 0,
-				showModal: false,
 				showOnlyLikedItems: false
         }
 		},
@@ -35,26 +34,28 @@
 			this.dropId = this.$route.params.dropId
       },
 	  	computed: {
-			...mapState('auth', ['userId']),
+			// ...mapState('auth', ['userId']),
 			...mapGetters('auth', ['loggedIn']),
-			...mapGetters('user', ['isAdmin', 'getLikes']),
+			// ...mapGetters('user', ['isAdmin', 'getLikes']),
 			...mapGetters('drop', ['getDrop']),
-			thumb() { return DropItemDisplayType.THUMB },
+			...mapGetters('item', ['getItemsInDrop']),
+			thumb() { return ItemDisplayType.THUMB },
 			drop() { return this.getDrop(this.dropId)},
 			likes() { return this.getLikes(this.userId)},
-			dropItems () {
-				let items = {}
-				if (this.showOnlyLikedItems) {
-					if (this.likes && this.drop.items) { 
-						let likedDropItemIds = Object.keys(this.likes)
-						Object.keys(this.drop.items).forEach(key => {
-							if (likedDropItemIds.includes(key)) { items[key] = this.drop.items[key] }
-						})
-					}
-				}
-				else { items = this.drop.items }
-				return items
-			},
+			// dropItems () {
+			// 	let items = {}
+			// 	if (this.showOnlyLikedItems) {
+			// 		if (this.likes && this.drop.items) { 
+			// 			let likedDropItemIds = Object.keys(this.likes)
+			// 			Object.keys(this.drop.items).forEach(key => {
+			// 				if (likedDropItemIds.includes(key)) { items[key] = this.drop.items[key] }
+			// 			})
+			// 		}
+			// 	}
+			// 	else { items = this.drop.items }
+			// 	return items
+         // },
+         dropItems () { return this.getItemsInDrop(this.dropId) },
 			isPreDrop() { return this.drop.status == DropStatus.PREDROP },
 			startDateText() { return getStartDateText(this.drop) },
 			showLabel() { return this.showOnlyLikedItems ? "Show liked": "Show all" }
@@ -63,8 +64,7 @@
 			navBack() { this.$router.go(-1) },
 		},
 		components: {
-	  		'drop-item' : require('components/DropItem/DropItem.vue').default,
-	  		'modal-add-edit' : require('components/DropItem/ModalAddEdit.vue').default
+	  		'item' : require('components/Item/Item.vue').default,
 	  	}
 	}
 

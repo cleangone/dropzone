@@ -1,37 +1,35 @@
 <template>
 	<q-page class="q-pa-md" :class="pink"> 
 		<a style="cursor: pointer; text-decoration: underline" v-on:click="navBack()">Back</a>
-		<drop-item :dropItemId="dropItemId" :dropItem="dropItem" :displayType="full" class="q-mt-md"/>	
+		<item :item="item" :displayType="displayType" class="q-mt-md"/>	
 	</q-page>
 </template>
 
 <script>
 	import { date } from 'quasar'
 	import { mapState, mapGetters, mapActions } from 'vuex'
-	import { DropItemDisplayType, DropStatus } from '../constants/Constants.js';
+	import { ItemDisplayType, Colors } from 'src/utils/Constants.js'
 	
 	export default {
 		data() {
 			return {				
-				dropItemId: "",
+				itemId: "",
         }
 		},
 		created() {
-			this.dropItemId = this.$route.params.itemId
+			this.itemId = this.$route.params.itemId
       },
 	  	computed: {
-			...mapGetters('auth', ['loggedIn']),
-			...mapGetters('drop', ['getDropId', 'getDropItem']),
-			...mapGetters('color', ['red', 'pink', 'orange', 'yellow', 'blue', 'green', 'indigo', 'purple' ]),
-			full() { return DropItemDisplayType.FULL },
-			dropId() { return this.getDropId(this.dropItemId)},
-			dropItem() { return this.getDropItem(this.dropId, this.dropItemId) },
+			...mapGetters('item', ['getItem']),
+			...mapGetters('color', Colors),
+			displayType() { return ItemDisplayType.FULL },
+			item() { return this.getItem(this.itemId) },
 		},
 		methods: {
 			navBack() { this.$router.go(-1) },
 		},
 		components: {
-	  		'drop-item' : require('components/DropItem/DropItem.vue').default,
+	  		'item' : require('components/Item/Item.vue').default,
 	  	}
 	}
 

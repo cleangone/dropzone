@@ -6,7 +6,7 @@
 				:columns="columns" :visible-columns="visibleColumns" :data="bids" 
 				row-key="name" :filter="tableDataFilter" 
 				:pagination.sync="pagination"
-				:dense="$q.screen.lt.md" class="q-mb-sm">
+            :dense="$q.screen.lt.md" class="q-mb-sm">
 				<template v-slot:top-right>
 					<q-input borderless dense debounce="300" v-model="tableDataFilter" placeholder="Search">
 						<template v-slot:append><q-icon name="search"/></template>

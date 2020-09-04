@@ -11,33 +11,32 @@
 	          	val => val.length < 21 || 'Please use maximum 20 characters' ]" />
     	</div>
     	<div class="row q-mb-xs q-gutter-md">
-    		<q-input label="Start Date" v-model="dropToSubmit.startDate" mask="date" :rules="['date']" class="col" filled>
+    		<q-input label="Start Date" v-model="startDate" mask="date" :rules="['date']" class="col" filled>
             <template v-slot:append>
             <q-icon name="event" class="cursor-pointer">
                 <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                <q-date v-model="dropToSubmit.startDate" @input="() => $refs.qDateProxy.hide()" />
+                  <q-date v-model="startDate" @input="() => $refs.qDateProxy.hide()" />
                 </q-popup-proxy>
             </q-icon>
             </template>
         	</q-input>
-			<q-input label="Start Time (Pacific)" v-model="dropToSubmit.startTime" mask="time" :rules="['time']" class="col" filled>
+			<q-input :label="'Start Time ' + timezone" v-model="startTime" mask="time" :rules="['time']" class="col" filled>
             <template v-slot:append>
             <q-icon name="access_time" class="cursor-pointer">
                 <q-popup-proxy transition-show="scale" transition-hide="scale">
-                <q-time v-model="dropToSubmit.startTime" />
+                  <q-time v-model="startTime" />
                 </q-popup-proxy>
             </q-icon>
             </template>
         </q-input>
     	</div>
 		<div class="row q-mb-sm q-gutter-md">
-			<q-select label="Status" v-model="dropToSubmit.status" :options="statusOptions" class="col" filled/>
 			<q-select label="Default Sale Type" v-model="dropToSubmit.defaultSaleType" :options="saleTypeOptions" class="col" filled/>
-		</div>
-		<div class="row q-mb-sm q-gutter-md">
-			<q-input v-model.number="dropToSubmit.previewDuration" label="Preview Duration (secs)" type="number" filled class="col"/>
-			<q-input v-model.number="dropToSubmit.bidAdditionalTime" label="Bid Timer (secs)" type="number" filled class="col"/>
-		
+		   <q-input v-model.number="dropToSubmit.bidAdditionalTime" label="Bid Timer (secs)" type="number" filled class="col"/>
+      </div>
+		<div v-if="isEdit" class="row q-mb-sm q-gutter-md">
+         <q-select label="Status" v-model="dropToSubmit.status" :options="statusOptions" class="col" filled/>
+			<div class="col"/>
 		</div>	
 		<div class="row q-mb-sm items-center">
 	      <div class="col">
@@ -60,50 +59,53 @@
 <script>
 	import { date } from 'quasar'
 	import { mapState, mapActions } from 'vuex'
-	import QFirebaseUploader from '../QFirebaseUploader.js'
-	import { SaleType, DropStatus } from '../../constants/Constants.js'
+	import QFirebaseUploader from 'components/QFirebaseUploader.js'
+   import { SaleType, DropStatus } from 'src/utils/Constants.js'
+   import { localTimezone } from 'src/utils/DateUtils';
+
 	
 	export default {
-		props: ['type', 'id', 'drop'],
+		props: ['type', 'drop'],
 		data() {
 			return {
 				dropToSubmit: {
 					name: '',
-					startDate: date.formatDate(Date.now(), 'YYYY/MM/DD'),
-					startTime: '09:00',
-					status: '',
-					previewDuration: 15,
+					startDate: null,
+					status: DropStatus.PREDROP,
 					bidAdditionalTime: 60,
 					defaultSaleType: '',
 					imageUrl: ''
-				},
+            },
+            startDate: date.formatDate(Date.now(), 'YYYY/MM/DD'),
+            startTime: '09:00',
+            timezone: localTimezone(),
 				uploaderDisplayed: false,
 				statusOptions: [ DropStatus.PREDROP, DropStatus.LIVE, DropStatus.POSTDROP ],
 				saleTypeOptions: [ SaleType.BID, SaleType.BUY ]
 			}
 		},
 		computed: {
-			...mapState('auth', ['userId'])
+         isEdit() { return this.type == 'edit' },
     	},
 		methods: {
-			...mapActions('drop', ['createDrop', 'updateDrop']),
+			...mapActions('drop', ['createDrop', 'setDrop']),
 			submitForm() {
 				console.log("submitForm")
 				this.$refs.name.validate()
 
 				if (!this.$refs.name.hasError) {
-					this.$emit('close')
-					this.submitDrop()
+               this.submitDrop()
+               this.$emit('close')
 				}
 			},
 			submitDrop() {
-				if (this.type == 'add') {
-					console.log("submitDrop", this.dropToSubmit)
-					this.createDrop(this.dropToSubmit)
-				}
-				else { 
-					this.dropToSubmit.startDateTime = Date.now()
-					this.updateDrop({id: this.id, value: this.dropToSubmit }) }
+            let timezoneOffset = date.formatDate(new Date(), 'Z')
+            var isoDate = this.startDate.replace("/", "-").replace("/", "-")
+            let formattedStartDate = isoDate + "T" + this.startTime + ":00.000" + timezoneOffset 
+            this.dropToSubmit.startDate = new Date(formattedStartDate)
+            
+				if (this.type == 'add') { this.createDrop(this.dropToSubmit) }
+				else { this.setDrop(this.dropToSubmit) }
 			},
 			uploadCompleted(emit) {
 				console.log("uploadCompleted", emit)
@@ -115,11 +117,16 @@
     		QFirebaseUploader
   		},
 		mounted() {
-			if (this.type == 'edit') {
-				setTimeout(() => { this.dropToSubmit = Object.assign({}, this.drop) }, 100)  // param update propagating as modal being popped up
+			if (this.isEdit) {
+				setTimeout(() => { 
+               this.dropToSubmit = Object.assign({}, this.drop) 
+               let datetime = new Date(this.dropToSubmit.startDate.seconds * 1000)
+               this.startDate = date.formatDate(datetime, 'YYYY-MM-DD')
+               this.startTime = date.formatDate(datetime, 'HH:mm')
+            }, 100)  // param update propagating as modal being popped up
 			}
 		}
-	}
+   }
 </script>
 
 <style>

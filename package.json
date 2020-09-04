@@ -12,8 +12,10 @@
   "dependencies": {
     "@quasar/extras": "^1.0.0",
     "firebase": "^7.16.1",
+    "help": "^3.0.2",
     "quasar": "^1.0.0-beta.0",
-    "v-money": "^0.8.1"
+    "v-money": "^0.8.1",
+    "vuexfire": "^3.2.4"
   },
   "devDependencies": {
     "@quasar/app": "^1.0.0-beta.0",

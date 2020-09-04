@@ -1,9 +1,8 @@
 <template>
 	<q-card class="card">
-		<router-link :to="{ name: dropPage, params: { dropId: dropId } }">
+		<router-link :to="{ name: dropPageRoute, params: { dropId: drop.id } }">
 			<q-img :src="drop.imageUrl ? drop.imageUrl : 'statics/image-placeholder.png'" basic contain>
 				<div class="absolute-bottom text-h6">{{ drop.name }}</div>
-				
 			</q-img>
 		</router-link>
 		<q-card-section class="q-px-xs q-py-md" :class="purple">
@@ -13,40 +12,26 @@
 			</div>
 			<div v-else class="text-green text-bold">Drop is LIVE</div>
 		</q-card-section>		
-		<q-card-actions v-if="userIsAdmin" class="absolute-bottom q-pa-none">
-			<q-btn @click="showEditModal = true" icon="edit" color="blue" flat small class="col" align="right"/>
-		</q-card-actions>
-		<q-dialog v-model="showEditModal">
-			<modal-add-edit type="edit" :id="dropId" :drop ="drop" @close="showEditModal = false" />
-		</q-dialog>
   	</q-card> 
 </template>
 
 <script>
-	import { mapState, mapGetters, mapActions } from 'vuex'
-	import { Page, DropStatus } from '../../constants/Constants.js';
-	import { getStartDateText } from './drop-util';
+	import { mapGetters } from 'vuex'
+	import { Route, DropStatus } from 'src/utils/Constants.js';
+   import { getStartDateText } from 'src/utils/DateUtils'
+   
 
 	export default {
-		props: ['dropId', 'drop'],
-		data() {
-			return {
-				showEditModal: false
-			}
-		},
+		props: ['drop'],
 		computed: {
-			...mapState('auth', ['userId']),
-			...mapGetters('auth', ['loggedIn']),
-			...mapGetters('user', ['isAdmin']),
 			...mapGetters('color', ['purple']),
-			userIsAdmin() { return this.isAdmin(this.userId) },
 			isPreDrop() { return this.drop.status == DropStatus.PREDROP },
-			dropPage() { return Page.DROP },
-			startDateText() { return getStartDateText(this.drop) },
-    	},
-		components: {
-			'modal-add-edit' : require('components/Drop/ModalAddEdit.vue').default
-		}
+			dropPageRoute() { return Route.DROP },
+         startDateText() { 
+            console.log("startDateText", this.drop.startDate)
+            return getStartDateText(this.drop.startDate) 
+            },
+    	}
 	}
 </script>
 

@@ -1,27 +1,31 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import { vuexfireMutations } from 'vuexfire'
 
-import auth from './auth-store'
-import drop from './drop-store'
-import user from './user-store'
-import color from './color-store'
+import action  from './action-store'
+import auth    from './auth-store'
+import color   from './color-store'
+import invoice from './invoice-store'
+import item    from './item-store'
+import drop    from './drop-store'
+import user    from './user-store'
 
 Vue.use(Vuex)
 
-/*
- * If not building with SSR mode, you can
- * directly export the Store instantiation
- */
-
-export default function (/* { ssrContext } */) {
+export default function () {
   const Store = new Vuex.Store({
     modules: {
+      action,
       auth,
+      color,
       drop,
-      user,
-      color
+      invoice,
+      item,
+      user
     },
-
+    mutations: {
+      ...vuexfireMutations
+    },
     // enable strict mode (adds overhead!)
     // for dev mode only
     strict: process.env.DEV
