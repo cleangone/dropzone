@@ -12,6 +12,7 @@ const routes = [
       { path: '/drop/:dropId',  component: () => import('pages/DropPage.vue'),                name: Route.DROP, },
       { path: '/item/:itemId',  component: () => import('pages/ItemPage.vue'),                name: Route.ITEM, },      
       { path: '/account',       component: () => import('pages/User/AccountPage.vue') },
+      { path: '/favorites',     component: () => import('pages/User/FavoritesPage.vue') },
       { path: '/actions',       component: () => import('pages/User/ActionsPage.vue') },
       { path: '/invoices',      component: () => import('pages/User/InvoicesPage.vue') },
       { path: '/admin/drops',         component: () => import('pages/Admin/DropsAdminPage.vue') },      

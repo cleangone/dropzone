@@ -25,7 +25,7 @@
                   <div v-else-if="userIsOutbid" class="text-bold bg-red   q-px-xs">You have been outbid</div> 
                </div> 
 				</q-card-section>	
-				<item-actions :item="item"/>
+				<item-actions :item="item" :displayType="displayType"/>
 			</q-card>
 		</div>
 		<div v-else>
@@ -48,7 +48,7 @@
                   <div v-else-if="userIsOutbid" class="text-bold bg-red   q-px-xs">You have been outbid</div> 
                </div> 
 				</q-card-section>	
-				<item-actions :item="item"/>
+				<item-actions :item="item" :displayType="displayType"/>
 			</q-page>
 		</div>
   	</div>

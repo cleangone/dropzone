@@ -15,7 +15,6 @@
             <template v-slot:header="props">
                <q-tr :props="props">
                   <q-th auto-width /> <!-- expand button -->
-                  <q-th auto-width /> <!-- expand detail -->
                   <q-th v-for="col in props.cols" :key="col.name" :props="props">{{ col.label }}</q-th>
                </q-tr>
             </template>
@@ -25,7 +24,6 @@
                   <q-td auto-width>
                      <q-btn size="xs" color="primary" round dense @click="props.expand = !props.expand" :icon="props.expand ? 'remove' : 'add'" />
                   </q-td>
-                  <q-td/>
                   <q-td v-for="col in props.cols" :key="col.name" :props="props">{{ col.value }}</q-td>
                </q-tr>
                
@@ -50,10 +48,11 @@
 		data() {
 	  	   return {
 			   tableDataFilter: '',
-            visibleColumns: ['total', 'status', 'sentDate'],
+            visibleColumns: ['items', 'total', 'status', 'sentDate'],
  				columns: [
                { name: 'id', field: 'id' },                 
-               { name: 'total',    label: 'Total',  align: 'right',  field: 'total',    sortable: true, format: val => val ? dollars(val) : '' },
+               { name: 'items',    label: 'Items',  align: 'left',   field: 'items',    sortable: true, format: val => this.itemsText(val) },
+					{ name: 'total',    label: 'Total',  align: 'right',  field: 'total',    sortable: true, format: val => val ? dollars(val) : '' },
 					{ name: 'status',   label: 'Status', align: 'center', field: 'status',   sortable: true },
                { name: 'sentDate', label: 'Date',   align: 'left',   field: 'sentDate', sortable: true, format: val => val ? formatDateTime(val) : '' },
             ],
@@ -63,7 +62,13 @@
 		computed: {
          ...mapGetters('auth', ['userId']),
          ...mapGetters('invoice', ['invoicesExist', 'getUserInvoices', 'getInvoice']),
-         invoices() { return this.getUserInvoices(this.userId) },
+         invoices() { 
+            // make copies - vuex not happy with table minipulation of elements
+            let invoices = this.getUserInvoices(this.userId) 
+            let copies = []
+            invoices.forEach(invoice => { copies.push(Object.assign({}, invoice)) })
+            return copies
+         },
       },
 		methods: {
          ...mapActions('invoice', ['bindInvoices', 'deleteInvoice']),
@@ -79,6 +84,15 @@
             if (invoice.priceAdjustment) { details.push({ name: "Adjustment", price: "(" + dollars(invoice.priceAdjustment) + ")" }) }
 
             return details 
+         },
+         itemsText(invoiceItems) {  
+            let itemsText = ""
+            for (var item of invoiceItems) {
+               if (itemsText.length) { itemsText += ", " }
+               itemsText += item.name
+            }
+
+            return (itemsText.length > 30 ? itemsText.substring(0, 30) + "..." : itemsText)
          },
 		},
       created() {

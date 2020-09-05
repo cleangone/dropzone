@@ -34,6 +34,7 @@
                <template v-if="props.expand">
                   <q-tr v-for="detail in getInvoiceDetails(props.row.id)" :key="detail.name" :props="props">
                      <q-td />
+                     <q-td />
                      <q-td class="text-left bg-grey-2">{{ detail.name }}</q-td>
                      <q-td class="text-right bg-grey-2">{{ detail.price }}</q-td>
                   </q-tr>
@@ -57,10 +58,11 @@
 	  	   return {
 			   showEditModal: false,
 				tableDataFilter: '',
-            visibleColumns: ['userId', 'total', 'status', 'sentDate'],
+            visibleColumns: ['userName', 'items', 'total', 'status', 'sentDate'],
  				columns: [
                { name: 'id', field: 'id' },                 
-               { name: 'userId',   label: 'User',   align: 'left',   field: 'userId',   sortable: true, format: val => this.userName(val)  },
+               { name: 'userName', label: 'User',   align: 'left',   field: 'userName', sortable: true },
+					{ name: 'items',    label: 'Items',  align: 'left',   field: 'items',    sortable: true, format: val => this.itemsText(val) },
 					{ name: 'total',    label: 'Total',  align: 'right',  field: 'total',    sortable: true, format: val => val ? dollars(val) : '' },
 					{ name: 'status',   label: 'Status', align: 'center', field: 'status',   sortable: true },
                { name: 'sentDate', label: 'Date',   align: 'left',   field: 'sentDate', sortable: true, format: val => val ? formatDateTime(val) : '' },
@@ -71,15 +73,13 @@
 		},
 		computed: {
          ...mapGetters('invoice', ['invoicesExist', 'getInvoices', 'getInvoice']),
-         ...mapGetters('user', ['getUserIdToName']),
          invoiceToEdit() { return this.getInvoice(this.invoiceIdToEdit) },
          invoices() {
             let invs = this.getInvoices
             console.log("invoices", invs)
             return invs
          },
-         userIdToName() { return this.getUserIdToName },
-		},
+      },
 		methods: {
          ...mapActions('invoice', ['bindInvoices', 'deleteInvoice']),
          isDataCol(colName) { return (colName !== 'expand' && colName !== 'actions') },
@@ -95,7 +95,15 @@
 
             return details 
          },
-         userName(userId) { return this.userIdToName.get(userId) },
+         itemsText(invoiceItems) {  
+            let itemsText = ""
+            for (var item of invoiceItems) {
+               if (itemsText.length) { itemsText += ", " }
+               itemsText += item.name
+            }
+
+            return (itemsText.length > 30 ? itemsText.substring(0, 30) + "..." : itemsText)
+         },
          editInvoice(invoiceId) {
 				this.invoiceIdToEdit = invoiceId
 				this.showEditModal = true

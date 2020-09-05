@@ -56,7 +56,7 @@
 
 <script>
 	import { date } from 'quasar'
-   import { mapActions } from 'vuex'
+   import { mapGetters, mapActions } from 'vuex'
    import { ItemStatus, InvoiceStatus } from 'src/utils/Constants.js'
    
 	export default {
@@ -66,6 +66,7 @@
             invoiceError: null,
 				invoiceToSubmit: {
                userId: null,
+               userName: '',
                items: [], // itemId, name, price
                status: InvoiceStatus.CREATED,
                subTotal: 0,
@@ -81,6 +82,7 @@
 			}
 		},
 		computed: {	
+         ...mapGetters('user', ['getUser']),
          isEdit() { return this.type == "edit" },	
          subtotal() { return dollars(this.invoiceToSubmit.subTotal) },
          shippingCharge() { return dollars(this.invoiceToSubmit.shippingCharge) },
@@ -131,6 +133,12 @@
                this.invoiceToSubmit.items.push({ id: item.id, name: item.name, price: item.buyPrice })
                this.invoiceToSubmit.subTotal += item.buyPrice
             }
+
+            let user = this.getUser(this.invoiceToSubmit.userId)
+            this.invoiceToSubmit.userName = (user.firstName || user.lastName) ?
+               (user.firstName ? user.firstName : "") + (user.firstName && user.lastName ? " " : "") + (user.lastName ? user.lastName : "") :
+               user.authEmailCopy
+
          }
 		}
    }

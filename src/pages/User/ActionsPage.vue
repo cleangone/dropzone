@@ -18,30 +18,42 @@
 
 <script>
 	import { date } from 'quasar'
-	import { mapState, mapGetters, mapActions } from 'vuex'
+	import { mapGetters, mapActions } from 'vuex'
 
 	export default {
 		data() {
 	  		return {
 				tableDataFilter: '',
-				visibleColumns: [ 'name', 'action', 'amount', 'date'],
+				visibleColumns: [ 'name', 'action', 'amount', 'result', 'date'],
  				columns: [
-        			{ name: 'name',   label: 'Item Name', align: 'left',   field: 'itemName', sortable: true },
-				 	{ name: 'action', label: 'Action',    align: 'center', field: 'action', sortable: true },
-				 	{ name: 'amount', label: 'Amount',    align: 'right',  field: 'amount', sortable: true, format: val => "$" + val },
-					{ name: 'date',   label: 'Date',      align: 'center', field: 'date',   sortable: true, format: val => date.formatDate(val, 'MMM D, YYYY h:mm a') }
+        			{ name: 'name',   label: 'Item',   align: 'left',   field: 'itemName',     sortable: true },
+				 	{ name: 'action', label: 'Action', align: 'center', field: 'actionType',   sortable: true },
+				 	{ name: 'amount', label: 'Amount', align: 'right',  field: 'amount',       sortable: true, format: val => val ? dollars(val) : '' },
+					{ name: 'result', label: 'Result', align: 'center', field: 'actionResult', sortable: true },
+				 	{ name: 'date',   label: 'Date',   align: 'center', field: 'createdDate',  sortable: true, format: val => date.formatDate(val, 'MMM D, YYYY h:mm a') }
 				],
 			}
-		},
-		
+      },
 		computed: {
-			...mapState('auth', ['userId']),
-			...mapGetters('user', ['getUser']),
-			user() { return this.getUser(this.userId)},
+			...mapGetters('auth', ['userId']),
+         ...mapGetters('action', ['actionsExist', 'getUserActions']),
 			actions() { 
-				return this.user.actions ? Object.values(this.user.actions) : [] 
-			}
-		}
+            let actions = this.getUserActions(this.userId) 
+            let copies = []
+            actions.forEach(action => { copies.push(Object.assign({}, action)) })
+            return copies
+         },
+      },
+      methods: {
+         ...mapActions('action', ['bindActions']),
+      },
+      created() {
+         // console.log("ActionsPage")
+         if (!this.actionsExist) { this.bindActions() }
+      }
 	}
 
+   function dollars(number) {
+      return "$" + number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+   }
 </script>

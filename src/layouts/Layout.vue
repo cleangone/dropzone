@@ -28,9 +28,10 @@
         <layout-item path="/" label="Drops" iconName="home"/>
 
         <div v-if="loggedIn">
-            <layout-item path="/account"  label="My Account"        iconName="account_circle"/>
-            <layout-item path="/actions"  label="My Bids/Purchases" iconName="monetization_on"/>           
-            <layout-item path="/invoices" label="Invoices"          iconName="shopping_cart"/>           
+            <layout-item path="/account"   label="My Account"        iconName="account_circle"/>
+            <layout-item path="/favorites" label="Favorites"         iconName="favorite"/>    
+            <layout-item path="/actions"   label="My Bids/Purchases" iconName="monetization_on"/>           
+            <layout-item path="/invoices"  label="Invoices"          iconName="shopping_cart"/>           
         </div>
 
         <div v-if="userIsAdmin">

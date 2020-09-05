@@ -9,7 +9,7 @@
 				<q-btn @click="login()" :label="'Login to ' + itemSaleType" color="primary" medium/>
 			</span>
 		</span>
-		<span v-if="loggedIn" class="col" align="right">
+		<span v-if="showIcons" class="col" align="right">
 			<q-btn v-if="isLiked" icon="favorite" @click="unlike" flat small dense/>
 			<q-btn v-else  icon="favorite_border" @click="like"   flat small dense/>
 
@@ -23,13 +23,13 @@
 
 <script>
 	import { date } from 'quasar'
-	import { mapState, mapGetters, mapActions } from 'vuex'
-	import { ItemStatus, SaleType, Colors } from 'src/utils/Constants.js';
+	import { mapGetters, mapActions } from 'vuex'
+	import { ItemDisplayType, ItemStatus, SaleType, Colors } from 'src/utils/Constants.js';
 	
 	var timeouts = {};
 	
 	export default {
-		props: ['item'], 
+		props: ['item', 'displayType'], 
 		data() {
 			return {
 				showEditModal: false,
@@ -38,7 +38,7 @@
 		},
 		computed: {
 			...mapGetters('auth', ['loggedIn', 'userId']),
-			...mapGetters('user', ['getUser']), //'getLikes'
+			...mapGetters('user', ['getUser']),
 			...mapGetters('drop', ['getDrop']),
 			...mapGetters('color', Colors),
          
@@ -49,7 +49,8 @@
 			isAvailable() { return this.item.status == ItemStatus.AVAILABLE || this.item.status == ItemStatus.DROPPING },
 			isBid() { return this.itemSaleType == SaleType.BID },
 			isBuy() { return this.itemSaleType == SaleType.BUY },	
-			isLiked() { return this.user.likedItemIds  &&  this.user.likedItemIds.includes(this.item.id) },		
+      	showIcons() { return this.loggedIn &&  this.displayType == ItemDisplayType.FULL },		
+         isLiked() { return this.user.likedItemIds  &&  this.user.likedItemIds.includes(this.item.id) },		
 		},
 		methods: {
 			...mapActions('action', ['submitBid', 'submitPurchaseRequest']),
@@ -59,14 +60,16 @@
 				this.$q.dialog({title: 'Confirm', message: 'Bid $' + bidAmount + ' on ' + this.item.name + '?', persistent: true,			
 	        		ok: { push: true }, cancel: { push: true, color: 'grey' }
 				}).onOk(() => {
-					this.submitBid({ itemId: this.item.id, userId: this.userId, amount: bidAmount }) 
+					this.submitBid(
+                  { itemId: this.item.id, itemName: this.item.name, userId: this.userId, amount: bidAmount }) 
 				})
 			},
 			promptToBuy() {
 				this.$q.dialog({title: 'Confirm', message: 'Buy ' + this.item.name + ' for ' + this.item.startPrice + '?', persistent: true,			
 	        		ok: { push: true }, cancel: { push: true, color: 'grey' }
 				}).onOk(() => {
-					this.submitPurchaseRequest({ itemId: this.item.id, userId: this.userId }) 
+					this.submitPurchaseRequest(
+                  { itemId: this.item.id, itemName: this.item.name, userId: this.userId, amount: this.item.startPrice }) 
 				})
 			},
 			like() { 

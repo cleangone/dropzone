@@ -13,7 +13,7 @@ export const ActionStatus = {
 
 export const ActionType = {
    BID:          'Bid',
-   PURCHASE_REQ: 'PurchaseRequest',
+   PURCHASE_REQ: 'Purchase Request',
 }
 
 export const DropStatus = {

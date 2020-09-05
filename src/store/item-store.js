@@ -64,6 +64,17 @@ const getters = {
       dropsItems.sort((a, b) => (a.lastUserActivityDate > b.lastUserActivityDate) ? 1 : -1)
       return dropsItems
    },
+   getSpecifiedItems: state => itemIds => {   
+      // console.log("getDropsItems", dropIds)
+      let items = []
+      state.items.forEach(item => {
+         if (itemIds.includes(item.id) ) {
+            items.push(item)
+         }
+      })
+
+      return items
+   },
    getItem: state => itemId => { 
       for (var item of state.items) {
          if (item.id == itemId) { return item }
