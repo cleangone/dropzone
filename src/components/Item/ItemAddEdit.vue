@@ -84,6 +84,8 @@
                   this.itemToSubmit.buyPrice = 0 
                   this.itemToSubmit.bidderIds = []
                   this.itemToSubmit.currBidderId = ''
+                  this.itemToSubmit.currActionId = ''
+                  this.itemToSubmit.numberOfBids = 0
                   this.itemToSubmit.buyerId = ''
                   this.itemToSubmit.buyerName = ''
                   this.itemToSubmit.dropDoneDate = 0 

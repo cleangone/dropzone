@@ -42,8 +42,9 @@
 
 <script>
 	import { date } from 'quasar'
-	import { mapState, mapGetters, mapActions } from 'vuex'
-
+   import { mapGetters, mapActions } from 'vuex'
+   import { ItemStatus } from 'src/utils/Constants.js'
+	
 	export default {
 		data() {
 	  		return {
@@ -57,13 +58,13 @@
 				visibleColumns: [ 'name', 'saleType', 'buyerId', 'startPrice', 'buyPrice', 'bids', 'status', 'actions'],
  				columns: [
         			{ name: 'id', field: 'id' },
-				 	{ name: 'name',       label: 'Name',        align: 'left',   field: 'name',       sortable: true },
-				 	{ name: 'saleType',   label: 'Sale Type',   align: 'center', field: 'saleType',   sortable: true },
-					{ name: 'buyerId',    label: 'Buyer',       align: 'left',   field: 'buyerId',    sortable: true, format: val => this.userName(val) },
-					{ name: 'startPrice', label: 'Start Price', align: 'right',  field: 'startPrice', sortable: true, format: val => val ? dollars(val) : '' },
-					{ name: 'buyPrice',   label: 'Final Price', align: 'right',  field: 'buyPrice',   sortable: true, format: val => val ? dollars(val) : '' },
-					{ name: 'bids',       label: 'Bids',        align: 'center', field: 'bids',       sortable: true },
-					{ name: 'status',     label: 'Status',      align: 'center', field: 'status',     sortable: true },
+				 	{ name: 'name',       label: 'Name',        align: 'left',   field: 'name',         sortable: true },
+				 	{ name: 'saleType',   label: 'Sale Type',   align: 'center', field: 'saleType',     sortable: true },
+					{ name: 'buyerId',    label: 'Buyer',       align: 'left',   field: 'buyerId',      sortable: true, format: val => this.userName(val) },
+					{ name: 'startPrice', label: 'Start Price', align: 'right',  field: 'startPrice',   sortable: true, format: val => val ? dollars(val) : '' },
+					{ name: 'buyPrice',   label: 'Final Price', align: 'right',  field: 'buyPrice',     sortable: true, format: val => val ? dollars(val) : '' },
+					{ name: 'bids',       label: 'Bids',        align: 'center', field: 'numberOfBids', sortable: true },
+					{ name: 'status',     label: 'Status',      align: 'center', field: 'status',       sortable: true },
 					{ name: 'actions' }
             ],
             pagination: { rowsPerPage: 30 },
@@ -87,9 +88,10 @@
 			showInvoiceButton() { 
             if (this.selectedRowItems.length == 0) { return false } 
             
-            // selected rows have to have same buyer
+            // selected rows have same buyer and are not Sold
             let buyerId = null
             for (var rowItem of this.selectedRowItems) {
+               if (rowItem.status == ItemStatus.SOLD) { return false }
                if (!rowItem.buyerId) { return false }
                if (buyerId == null) { buyerId = rowItem.buyerId }
                if (rowItem.buyerId != buyerId) { return false }

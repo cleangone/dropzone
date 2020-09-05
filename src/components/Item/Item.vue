@@ -91,23 +91,8 @@
 			isBuy() { return this.itemSaleType == SaleType.BUY },			
 			numberOfBids() { return this.item.bids ? Object.keys(this.item.bids).length : 0 },
 			currPrice() { return dollars(this.item.buyPrice > this.item.startPrice ? this.item.buyPrice : this.item.startPrice) },
-			priceText() {
-				if (this.item.status == ItemStatus.SOLD) { return ItemStatus.SOLD }
-				else if (this.item.status == ItemStatus.HOLD) { return ItemStatus.HOLD + " (" + this.currPrice + ")"}
-				else if (this.item.status == ItemStatus.DROPPING) { 
-					return "Price: " + this.currPrice + (this.numberOfBids > 0 ? " (" + this.numberOfBids +" Bids)" : "")
-				}
-				return "Price: " + this.currPrice
-			},
-			priceTextMini() {
-				if (this.item.status == ItemStatus.SOLD) { return ItemStatus.SOLD }
-				let price = this.currPrice
-				if (this.item.status == ItemStatus.HOLD || this.item.status == ItemStatus.INVOICED) { price += (" (" + ItemStatus.HOLD + ")") }
-				else if (this.item.status == ItemStatus.DROPPING) { 
-					price += ((this.numberOfBids > 0 ? " (" + this.numberOfBids +" Bids)" : ""))
-				}
-				return price
-			},
+			priceText() { return this.buildPriceText("Price: ") },
+			priceTextMini() { return this.buildPriceText("") },
 			priceTextBgColor() { 
 				if (this.isDropping && this.userIsHighBidder)  { return "bg-green" }
 				else if (this.isDropping && this.userIsOutbid) { return "bg-red" }
@@ -119,18 +104,20 @@
 			userIsWinningBidder() { 
             return this.loggedIn && this.isNotAvailable && (this.item.buyerId == this.userId) && (this.item.currBidderId == this.userId) },
 			userIsHighBidder() { return this.loggedIn && (this.item.currBidderId == this.userId) },
-			userIsOutbid() { 
-				// todo - looks like multiple returns don't work
-				let outbid = false 				
-				if (this.item.bids && this.loggedIn && !this.userIsHighBidder) {
-					Object.keys(this.item.bids).forEach(key => {
-						//console.log("userIsOutbid: bid user", this.dropItem.bids[key].userId)
-						if (this.item.bids[key].userId == this.userId) { outbid = true } // user bid but is not high bidder	
-					})
-				}
-				return outbid
+			userIsOutbid() { return this.loggedIn && !this.userIsHighBidder && this.item.bidderIds && this.item.bidderIds.includes(this.userId) },
+      },
+      methods: {
+         buildPriceText(prefix) {
+            let bidText = ""
+            if (this.item.numberOfBids && this.item.numberOfBids == 1) { bidText = " (1 Bid)" }
+            else if (this.item.numberOfBids && this.item.numberOfBids > 1) { bidText = " (" + this.item.numberOfBids + " Bids)" }
+
+				if (this.item.status == ItemStatus.SOLD) { return ItemStatus.SOLD }
+				else if (this.item.status == ItemStatus.HOLD || this.item.status == ItemStatus.INVOICED) { return ItemStatus.HOLD + " (" + this.currPrice + ")" }
+            else if (this.item.status == ItemStatus.DROPPING) { return prefix + this.currPrice + bidText }
+            else return prefix + this.currPrice
 			},
-    	},
+      },
 		filters: {
 			formatPrice(priceObj) { return "$" + priceObj + (String(priceObj).includes(".") ? "" : ".00") }
 		},	

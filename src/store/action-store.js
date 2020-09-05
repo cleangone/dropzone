@@ -62,6 +62,7 @@ const getters = {
          if (action.userId == userId) { userActions.push(action) }
       }
 
+      userActions.sort((a, b) => (a.createdDate > b.createdDate) ? -1 : 1)
       return userActions
    },
 }

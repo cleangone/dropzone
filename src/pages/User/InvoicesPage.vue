@@ -3,7 +3,7 @@
 		<div class="q-pa-sm absolute full-width full-height">
 			<q-table title="Invoices" :data="invoices" 
 				:columns="columns" :visible-columns="visibleColumns" 
-				row-key="id" :filter="tableDataFilter"  :pagination.sync="pagination"
+				row-key="id" :filter="tableDataFilter" :pagination.sync="pagination"
             no-data-label="No invoices"
 				:dense="$q.screen.lt.md" class="q-mb-sm">
 				<template v-slot:top-right>

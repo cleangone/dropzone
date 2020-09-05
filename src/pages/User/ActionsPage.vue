@@ -2,7 +2,7 @@
   <q-page>  
 	  <div class="q-pa-sm absolute full-width full-height">
 			<q-table title="Bids/Purchases" :columns="columns" :visible-columns="visibleColumns" :data="actions" 
-				row-key="name" :filter="tableDataFilter" 
+				row-key="name" :filter="tableDataFilter" :pagination.sync="pagination"
 				no-data-label="No Bids or Purchases"
       		no-results-label="No Bids or Purchases matching Search criteria"
 				class="q-mb-sm">
@@ -31,7 +31,8 @@
 				 	{ name: 'amount', label: 'Amount', align: 'right',  field: 'amount',       sortable: true, format: val => dollars(val) },
 					{ name: 'result', label: 'Result', align: 'center', field: 'actionResult', sortable: true },
 				 	{ name: 'date',   label: 'Date',   align: 'center', field: 'createdDate',  sortable: true, format: val => formatDate(val) }
-				],
+            ],
+            pagination: { rowsPerPage: 30 },
 			}
       },
 		computed: {

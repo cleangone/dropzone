@@ -41,7 +41,7 @@ function showNegativeNotify(msg) { Notify.create( {type: "negative", timeout: 50
 const getters = {
    itemsExist: state => { return state.items && state.items.length > 0 },
    getItemsInDrop: state => dropId => { 
-      // console.log("getDropItems", state.items)
+      // console.log("getItemsInDrop", state.items)
       let dropItems = []
       state.items.forEach(item => {
          if (item.dropId == dropId) {
@@ -53,7 +53,7 @@ const getters = {
       return dropItems
    },
    getItemsInDrops: state => dropIds => {   
-      // console.log("getDropsItems", dropIds)
+      // console.log("getItemsInDrops", dropIds)
       let dropsItems = []
       state.items.forEach(item => {
          if (dropIds.includes(item.dropId) ) {
@@ -61,7 +61,7 @@ const getters = {
          }
       })
 
-      dropsItems.sort((a, b) => (a.lastUserActivityDate > b.lastUserActivityDate) ? 1 : -1)
+      dropsItems.sort((a, b) => (a.lastUserActivityDate > b.lastUserActivityDate) ? -1 : 1)
       return dropsItems
    },
    getSpecifiedItems: state => itemIds => {   
