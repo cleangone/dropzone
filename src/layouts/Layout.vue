@@ -12,9 +12,11 @@
         <q-btn v-if="loggedIn" icon-right="account_circle" :label="userDisplayName" flat dense >
           <q-menu content-class="bg-grey-4 ">
             <q-list dense style="min-width: 100px">
-              <q-item clickable to="/account" v-close-popup><q-item-section style="bg-black">Account</q-item-section></q-item>
-              <q-item clickable to="/invoices"  v-close-popup><q-item-section style="bg-black">Invoices</q-item-section></q-item>
-              <q-item clickable v-close-popup><q-item-section @click="logoutUser">Logout</q-item-section></q-item>
+               <list-item path="/account"   label="Account" />
+               <list-item path="/favorites" label="Favorites" />    
+               <list-item path="/actions"   label="Bids/Purchases" />           
+               <list-item path="/invoices"  label="Invoices" />
+               <q-item clickable v-close-popup><q-item-section @click="logoutUser">Logout</q-item-section></q-item>
             </q-list>
           </q-menu>
         </q-btn>        
@@ -84,7 +86,8 @@
          },
       },
       components: {
-         'layout-item' : require('layouts/LayoutItem.vue').default
+         'layout-item' : require('layouts/LayoutItem.vue').default,
+         'list-item' : require('layouts/ListItem.vue').default
       },
       created() {
          this.bindUsers()
