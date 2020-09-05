@@ -62,14 +62,14 @@
 				showEditModal: false,
 				dropIdToEdit: '',
 				tableDataFilter: '',
-				visibleColumns: [ 'name', 'startDate', 'startTime', 'status', 'defaultSaleType', 'actions'],
+				visibleColumns: [ 'name', 'startDate', 'status', 'saleType', 'actions'],
  				columns: [
+               //  todo - headerStyle doesn't seem to work - use it to center header
         			{ name: 'id', field: 'id' },
-				 	{ name: 'name',            label: 'Name',              align: 'left',   field: 'name',      sortable: true },
-				 	{ name: 'startDate',       label: 'Start Date',        align: 'left',   field: 'startDate', sortable: true, format: val => formatDate(val) },
-					{ name: 'startTime', label: 'Time ' + localTimezone(), align: 'left',   field: 'startDate', sortable: true, format: val => formatTime(val) },
-					{ name: 'status',          label: 'Status',            align: 'center', field: 'status',    sortable: true },
-					{ name: 'defaultSaleType', label: 'Type',              align: 'center', field: 'defaultSaleType', sortable: true },
+				 	{ name: 'name',      label: 'Name',   align: 'left',   field: 'name',           sortable: true },
+				 	{ name: 'startDate', label: 'Start Date ' + localTimezone(), align: 'center', field: 'startDate', sortable: true, format: val => formatDate(val) },
+					{ name: 'status',    label: 'Status', align: 'center', field: 'status',          sortable: true },
+					{ name: 'saleType',  label: 'Type',   align: 'center', field: 'defaultSaleType', sortable: true },
 					{ name: 'actions' }
             ],
             pagination: { rowsPerPage: 30 },
@@ -110,13 +110,13 @@
    }
    
    function formatDate(startDate) {
+      if (!startDate) { return "" }
+
+      let now = new Date()
       let datetime = new Date(startDate.seconds * 1000)
-      return date.formatDate(datetime, 'YYYY-MM-DD')   
-   }
-         
-   function formatTime(startDate) {
-      let datetime = new Date(startDate.seconds * 1000)
-      return date.formatDate(datetime, 'HH:mm')
+      return (now.getYear() == datetime.getYear() ? 
+         date.formatDate(datetime, 'MMM D, h:mm a') :
+         date.formatDate(datetime, 'MMM D, YYYY h:mm a'))
    }
 
 </script>

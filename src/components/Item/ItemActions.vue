@@ -57,7 +57,7 @@
 			...mapActions('user', ['setLikes']),
 			promptToBid() {
 				let bidAmount = this.item.buyPrice ? this.item.buyPrice + 25 : this.item.startPrice
-				this.$q.dialog({title: 'Confirm', message: 'Bid $' + bidAmount + ' on ' + this.item.name + '?', persistent: true,			
+				this.$q.dialog({title: 'Confirm', message: 'Bid ' + dollars(bidAmount) + ' on ' + this.item.name + '?', persistent: true,			
 	        		ok: { push: true }, cancel: { push: true, color: 'grey' }
 				}).onOk(() => {
 					this.submitBid(
@@ -65,7 +65,7 @@
 				})
 			},
 			promptToBuy() {
-				this.$q.dialog({title: 'Confirm', message: 'Buy ' + this.item.name + ' for ' + this.item.startPrice + '?', persistent: true,			
+				this.$q.dialog({title: 'Confirm', message: 'Buy ' + this.item.name + ' for ' + dollars(this.item.startPrice) + '?', persistent: true,			
 	        		ok: { push: true }, cancel: { push: true, color: 'grey' }
 				}).onOk(() => {
 					this.submitPurchaseRequest(
@@ -96,7 +96,12 @@
 	function zeroPadded(num) {
 		// 4 --> 04
 		return num < 10 ? `0${num}` : num;
-	}
+   }
+   
+   function dollars(number) {
+      if (!number) { return "" }
+      return "$" + number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+   }
 </script>
 
 <style>

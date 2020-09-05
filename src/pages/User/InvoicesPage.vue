@@ -52,9 +52,9 @@
  				columns: [
                { name: 'id', field: 'id' },                 
                { name: 'items',    label: 'Items',  align: 'left',   field: 'items',    sortable: true, format: val => this.itemsText(val) },
-					{ name: 'total',    label: 'Total',  align: 'right',  field: 'total',    sortable: true, format: val => val ? dollars(val) : '' },
+					{ name: 'total',    label: 'Total',  align: 'right',  field: 'total',    sortable: true, format: val => dollars(val) },
 					{ name: 'status',   label: 'Status', align: 'center', field: 'status',   sortable: true },
-               { name: 'sentDate', label: 'Date',   align: 'left',   field: 'sentDate', sortable: true, format: val => val ? formatDateTime(val) : '' },
+               { name: 'sentDate', label: 'Date',   align: 'left',   field: 'sentDate', sortable: true, format: val => formatDate(val) },
             ],
             pagination: { rowsPerPage: 30 },
 			}
@@ -96,17 +96,23 @@
          },
 		},
       created() {
-         console.log("InvoicesAdminPage")
+         // console.log("InvoicesAdminPage")
          if (!this.invoicesExist) { this.bindInvoices() }
       }
 	}
 
    function dollars(number) {
+      if (!number) { return "" }
       return "$" + number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
    }
 
-   function formatDateTime(createdDate) {
-      let datetime = new Date(createdDate)
-      return date.formatDate(datetime, 'YYYY-MM-DD HH:mm')   
+   function formatDate(dateToFormat) {
+      if (!dateToFormat) { return "" }
+
+      let now = new Date()
+      let datetime = new Date(dateToFormat)
+      return (now.getYear() == datetime.getYear() ? 
+         date.formatDate(datetime, 'MMM D') :
+         date.formatDate(datetime, 'MMM D, YYYY'))
    }
 </script>

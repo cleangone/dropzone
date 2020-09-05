@@ -28,9 +28,9 @@
  				columns: [
         			{ name: 'name',   label: 'Item',   align: 'left',   field: 'itemName',     sortable: true },
 				 	{ name: 'action', label: 'Action', align: 'center', field: 'actionType',   sortable: true },
-				 	{ name: 'amount', label: 'Amount', align: 'right',  field: 'amount',       sortable: true, format: val => val ? dollars(val) : '' },
+				 	{ name: 'amount', label: 'Amount', align: 'right',  field: 'amount',       sortable: true, format: val => dollars(val) },
 					{ name: 'result', label: 'Result', align: 'center', field: 'actionResult', sortable: true },
-				 	{ name: 'date',   label: 'Date',   align: 'center', field: 'createdDate',  sortable: true, format: val => date.formatDate(val, 'MMM D, YYYY h:mm a') }
+				 	{ name: 'date',   label: 'Date',   align: 'center', field: 'createdDate',  sortable: true, format: val => formatDate(val) }
 				],
 			}
       },
@@ -54,6 +54,17 @@
 	}
 
    function dollars(number) {
+      if (!number) { return "" }
       return "$" + number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+   }
+
+   function formatDate(dateToFormat) {
+      if (!dateToFormat) { return "" }
+
+      let now = new Date()
+      let datetime = new Date(dateToFormat)
+      return (now.getYear() == datetime.getYear() ? 
+         date.formatDate(datetime, 'MMM D, h:mm a') :
+         date.formatDate(datetime, 'MMM D, YYYY h:mm a'))
    }
 </script>
