@@ -21,30 +21,14 @@
    import { Colors } from 'src/utils/Constants.js' 
 
 	export default {
-		data() {
-	  		return {
-	  			showModal: false
-	  		}
-	  	},
-	  	computed: {
+		computed: {
 			...mapGetters('drop', ['dropsExist', 'getDrops', 'liveDropsExist']),
-			...mapGetters('item', ['itemsExist']),
 			...mapGetters('color', Colors),
       },
-      methods: {
-         ...mapActions('drop', ['bindDrops']),
-         ...mapActions('item', ['bindItems']),
-      },
-		components: {
+      components: {
 			'live-drops-board' : require('components/Drop/LiveDropsBoard.vue').default,
 			'drop' : require('components/Drop/Drop.vue').default
-        },
-      created() {
-         this.bindDrops()
-         this.bindItems()
-         // if (!this.dropsExist) { this.bindDrops() } 
-         // if (!this.itemsExist) { this.bindItems() } 
-      }
+      },
 	}
 </script>
 

@@ -1,13 +1,14 @@
 <template>
 	<q-page class="q-pa-md" :class="pink"> 
 		<a style="cursor: pointer; text-decoration: underline" v-on:click="navBack()">Back</a>
-		<item :item="item" :displayType="displayType" class="q-mt-md"/>	
+      <!-- will have to wait for items if user followed a link directly to this page -->
+		<item v-if="itemsExist" :item="item" :displayType="displayType" class="q-mt-md"/>	
 	</q-page>
 </template>
 
 <script>
 	import { date } from 'quasar'
-	import { mapState, mapGetters, mapActions } from 'vuex'
+	import { mapGetters, mapActions } from 'vuex'
 	import { ItemDisplayType, Colors } from 'src/utils/Constants.js'
 	
 	export default {
@@ -16,21 +17,21 @@
 				itemId: "",
         }
 		},
-		created() {
-			this.itemId = this.$route.params.itemId
-      },
 	  	computed: {
-			...mapGetters('item', ['getItem']),
+         ...mapGetters('item', ['itemsExist', 'getItem']),			
 			...mapGetters('color', Colors),
 			displayType() { return ItemDisplayType.FULL },
 			item() { return this.getItem(this.itemId) },
 		},
 		methods: {
-			navBack() { this.$router.go(-1) },
+         navBack() { this.$router.go(-1) },
 		},
 		components: {
 	  		'item' : require('components/Item/Item.vue').default,
-	  	}
+      },
+      created() {
+         this.itemId = this.$route.params.itemId
+      },
 	}
 
 </script>

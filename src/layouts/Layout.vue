@@ -79,6 +79,8 @@
       },
       methods: {
          ...mapActions('auth', ['logoutUser']),
+         ...mapActions('drop', ['bindDrops']),
+         ...mapActions('item', ['bindItems']),
          ...mapActions('user', ['bindUsers']),
          logout() {        
             this.logoutUser()
@@ -90,6 +92,8 @@
          'list-item' : require('layouts/ListItem.vue').default
       },
       created() {
+         this.bindDrops() 
+         this.bindItems()
          this.bindUsers()
       },
   }
