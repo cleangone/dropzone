@@ -55,7 +55,8 @@
 		methods: {
 			...mapActions('action', ['submitBid', 'submitPurchaseRequest']),
 			...mapActions('user', ['setLikes']),
-			promptToBid() {
+         login() { this.$router.push("/auth/login") },
+         promptToBid() {
 				let bidAmount = this.item.buyPrice ? this.item.buyPrice + 25 : this.item.startPrice
 				this.$q.dialog({title: 'Confirm', message: 'Bid ' + dollars(bidAmount) + ' on ' + this.item.name + '?', persistent: true,			
 	        		ok: { push: true }, cancel: { push: true, color: 'grey' }
