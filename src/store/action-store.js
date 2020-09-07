@@ -65,6 +65,14 @@ const getters = {
       userActions.sort((a, b) => (a.createdDate > b.createdDate) ? -1 : 1)
       return userActions
    },
+   getItemActions: state => itemId => {
+      let itemActions = []
+      for (var action of state.actions) {
+         if (action.itemId == itemId) { itemActions.push(action) }
+      }
+
+      return itemActions
+   },
 }
 
 export default {

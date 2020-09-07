@@ -41,6 +41,8 @@
             <layout-item path="/admin/drops"    label="Drop Admin" iconName="get_app"/>
             <layout-item path="/admin/users"    label="User Admin" iconName="group"/>
             <layout-item path="/admin/invoices" label="Invoices"   iconName="shopping_cart"/>
+            <layout-item path="/admin/settings" label="Settings"   iconName="settings"/>
+            
         </div>
       </q-list>
     </q-drawer>
@@ -78,10 +80,12 @@
          userDisplayName() { return this.user.firstName ? this.user.firstName : this.user.authEmailCopy },
       },
       methods: {
-         ...mapActions('auth', ['logoutUser']),
-         ...mapActions('drop', ['bindDrops']),
-         ...mapActions('item', ['bindItems']),
-         ...mapActions('user', ['bindUsers']),
+         ...mapActions('action',  ['bindActions']),
+         ...mapActions('auth',    ['logoutUser']),
+         ...mapActions('drop',    ['bindDrops']),
+         ...mapActions('item',    ['bindItems']),
+         ...mapActions('setting', ['bindSettings']),
+         ...mapActions('user',    ['bindUsers']),
          logout() {        
             this.logoutUser()
             if (this.$route.path != "/") { this.$router.push("/") }
@@ -92,8 +96,10 @@
          'list-item' : require('layouts/ListItem.vue').default
       },
       created() {
+         this.bindActions() 
          this.bindDrops() 
          this.bindItems()
+         this.bindSettings()
          this.bindUsers()
       },
   }

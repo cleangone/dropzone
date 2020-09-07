@@ -2,7 +2,7 @@
   <q-page>
 	  	<!-- todo - long table scrolls off bottom -->
 		<div class="q-pa-sm absolute full-width full-height">
-			<q-table :title="'Bids - ' + dropItem.name" 
+			<q-table :title="'Bids - ' + itemName" 
 				:columns="columns" :visible-columns="visibleColumns" :data="bids" 
 				row-key="name" :filter="tableDataFilter" 
 				:pagination.sync="pagination"
@@ -24,43 +24,44 @@
 	export default {
 		data() {
 	  		return {
-				dropId: '',
-				dropItemId: '',
+				itemId: '',
 				tableDataFilter: '',
-				visibleColumns: [ 'name', 'amount', 'date'],
- 				columns: [
-    				{ name: 'name',   label: 'User Name', align: 'left',   field: 'userName', sortable: true },
-				 	{ name: 'amount', label: 'Amount',    align: 'right',  field: 'amount',   sortable: true, format: val => "$" + val },
-					{ name: 'date',   label: 'Date',      align: 'center', field: 'date',     sortable: true, format: val => date.formatDate(val, 'MMM D, h:mm:ss a') }
+				visibleColumns: [ 'name', 'amount', 'result', 'date'],
+ 				columns: [ 
+    				{ name: 'name',   label: 'User',   align: 'left',   field: 'userId',       sortable: true, format: val => this.userName(val) },
+				 	{ name: 'amount', label: 'Amount', align: 'right',  field: 'amount',       sortable: true, format: val => dollars(val) },
+					{ name: 'result', label: 'Result', align: 'left',   field: 'actionResult', sortable: true },
+				 	{ name: 'date',   label: 'Date',   align: 'center', field: 'createdDate',  sortable: true, format: val => date.formatDate(val, 'MMM D, h:mm:ss a') }
 				],
-				pagination: { sortBy: 'date', descending: true, page: 1, rowsPerPage: 100} 
+				pagination: { sortBy: 'date', descending: true, page: 1, rowsPerPage: 25} 
 			}
 		},
-		created() {
-			this.dropId = this.$route.params.dropId
-			this.dropItemId = this.$route.params.itemId
-			console.log("BidsAdminPage: dropId=" + this.dropId + ", dropItemId=" + this.dropItemId)
-      },
 		computed: {
-			...mapGetters('drop', ['getDropItem']),
+			...mapGetters('action', ['getItemActions']),
 			...mapGetters('user', ['getUsers']),
-			dropItem() { return this.getDropItem(this.dropId, this.dropItemId) },
-			bids() { 
-				let dispBids = []
-				Object.values(this.dropItem.bids).forEach(bid => {
-					dispBids.push({ userId: bid.userId, userName: this.userNames[bid.userId], amount: bid.amount, date: bid.bidDate })
-				})
-				return dispBids
-			},
-			userNames() { 
-				let names = {}
-				Object.keys(this.getUsers).forEach(key => { 
-					let user = this.getUsers[key]
-					let name = user.lastName + (user.lastName && user.firstName ? ", " : "")  + user.firstName 
-					names[key] = name
-				})
-				return names
+			bids() { return this.getItemActions(this.itemId) },
+			itemName() { return this.bids[0].itemName },
+			users() { return this.getUsers },
+			userIdToName() { 
+            let idToName = {}
+            this.users.forEach(user => { 
+               let userName = (user.firstName || user.lastName) ?
+                  (user.firstName ? user.firstName : "") + (user.firstName && user.lastName ? " " : "") + (user.lastName ? user.lastName : "") :
+                  user.authEmailCopy
+               idToName[user.id] = userName
+            })
+            // console.log("userIdToName", idToName)
+            return idToName
 			}
-		}
-	}
+      },
+      methods: {
+			userName(userId) { return this.userIdToName[userId] }
+      },
+      created() { this.itemId = this.$route.params.itemId }
+   }
+   
+   function dollars(number) {
+      if (!number) { return "" }
+      return "$" + number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+   }
 </script>

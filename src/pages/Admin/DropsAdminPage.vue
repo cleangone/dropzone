@@ -12,22 +12,6 @@
 						<template v-slot:append><q-icon name="search"/></template>
 					</q-input>
 				</template>
-            <template v-slot:bottom-right>
-               <q-select
-                     v-model="visibleColumns"
-                     multiple
-                     dense
-                     options-dense
-                     :display-value="$q.lang.table.columns"
-                     emit-value
-                     map-options
-                     :options="columns"
-                     option-value="name"
-                     options-cover
-                     style="min-width: 150px"
-                  />
-               </template>
-            <!-- cannot get @row-click to work -->
             <q-td slot="body-cell-name" slot-scope="props" :props="props"> 
                <a :href="'#/admin/items/' + props.row.id">{{ props.row.name }}</a>
 	         </q-td>

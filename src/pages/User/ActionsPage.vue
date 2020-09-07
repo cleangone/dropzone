@@ -73,7 +73,7 @@
       let now = new Date()
       let datetime = new Date(dateToFormat)
       return (now.getYear() == datetime.getYear() ? 
-         date.formatDate(datetime, 'MMM D, h:mm a') :
-         date.formatDate(datetime, 'MMM D, YYYY h:mm a'))
+         date.formatDate(datetime, 'MMM D, h:mm:ss a') :
+         date.formatDate(datetime, 'MMM D, YYYY h:mm:ss a'))
    }
 </script>

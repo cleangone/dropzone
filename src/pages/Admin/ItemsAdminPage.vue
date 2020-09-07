@@ -16,6 +16,17 @@
 						<template v-slot:append><q-icon name="search"/></template>
 					</q-input>
 				</template>
+
+            <!-- todo - want multiline header to put bids/purchases -->
+            <!-- <q-th slot="body-cell-bids" slot-scope="props" :props="props"> 
+               {{ header(props) }}
+	         </q-th> -->
+
+            <!-- <q-th v-for="col in props.cols" :key="col.name" :props="props">{{ col.label }} N </q-th> -->
+                  
+            <q-td slot="body-cell-bids" slot-scope="props" :props="props"> 
+               <a v-if="props.row.numberOfBids > 0" :href="'#/admin/bids/' + props.row.id">{{ props.row.numberOfBids }}</a>
+	         </q-td>
             <q-td slot="body-cell-actions" slot-scope="props" :props="props" auto-width>
                <q-btn icon="edit"   @click="editItem(props.row.id)"                           size="sm" flat dense color="primary" />
                <q-btn icon="delete" @click="promptToDeleteItem(props.row.id, props.row.name)" size="sm" flat dense color="red" />
@@ -107,6 +118,8 @@
 				this.itemIdToEdit = itemId
 				this.showEditModal = true
          },
+         // header(val) { console.log(val) },
+      
          userName(userId) { return this.userIdToName.get(userId) },
 			promptToDeleteItem(itemId, name) {
 				this.$q.dialog({title: 'Confirm', message: 'Delete ' + name + '?', persistent: true,			
@@ -120,7 +133,7 @@
       },
       created() {
 			this.dropId = this.$route.params.dropId
-         console.log("ItemsAdminPage: dropId=" + this.dropId)
+         // console.log("ItemsAdminPage: dropId=" + this.dropId)
          
          if (!this.itemsExist) { this.bindItems() } 
       },
