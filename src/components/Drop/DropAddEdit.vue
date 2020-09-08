@@ -31,12 +31,8 @@
         </q-input>
     	</div>
 		<div class="row q-mb-sm q-gutter-md">
-			<q-select label="Default Sale Type" v-model="dropToSubmit.defaultSaleType" :options="saleTypeOptions" class="col" filled/>
-		   <q-input v-model.number="dropToSubmit.bidAdditionalTime" label="Bid Timer (secs)" type="number" filled class="col"/>
-      </div>
-		<div v-if="isEdit" class="row q-mb-sm q-gutter-md">
+			<q-select label="Default Sale Type" v-model="dropToSubmit.defaultSaleType" :options="saleTypeOptions" class="col" filled/>  
          <q-select label="Status" v-model="dropToSubmit.status" :options="statusOptions" class="col" filled/>
-			<div class="col"/>
 		</div>	
 		<div class="row q-mb-sm items-center">
 	      <div class="col">
@@ -63,7 +59,6 @@
    import { SaleType, DropStatus } from 'src/utils/Constants.js'
    import { localTimezone } from 'src/utils/DateUtils';
 
-	
 	export default {
 		props: ['type', 'drop'],
 		data() {

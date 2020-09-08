@@ -20,7 +20,6 @@
 	import { Route, DropStatus } from 'src/utils/Constants.js';
    import { getStartDateText } from 'src/utils/DateUtils'
    
-
 	export default {
 		props: ['drop'],
 		computed: {
