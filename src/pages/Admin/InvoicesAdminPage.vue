@@ -97,6 +97,7 @@
          },
          itemsText(invoiceItems) {  
             let itemsText = ""
+            if (!invoiceItems || invoiceItems.length == 0) { return itemsText }
             for (var item of invoiceItems) {
                if (itemsText.length) { itemsText += ", " }
                itemsText += item.name

@@ -3,7 +3,6 @@ import { firestore } from 'boot/firebase'
 import { uid } from 'quasar'
 import { InvoiceStatus } from 'src/utils/Constants.js'
    
-
 /*
    invoice
       id
@@ -50,7 +49,14 @@ function collection() { return firestore.collection('invoices') }
 
 const getters = {
    invoicesExist: state => { return state.invoices && state.invoices.length > 0 },
-   getInvoices: state => { return state.invoices },
+   getInvoices: state => { 
+      let invoices = []
+      for (var invoice of state.invoices) {
+         if (invoice.id != "0") { invoices.push(invoice) }
+      }
+
+      return invoices
+   },
    getUserInvoices: state => userId => {
       let userInvoices = []
       for (var invoice of state.invoices) {
