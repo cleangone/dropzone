@@ -24,7 +24,8 @@
 <script>
 	import { date } from 'quasar'
 	import { mapGetters, mapActions } from 'vuex'
-	import { ItemDisplayType, ItemStatus, SaleType, Colors } from 'src/utils/Constants.js';
+   import { ItemDisplayType, ItemStatus, SaleType, Colors } from 'src/utils/Constants.js';
+   import { dollars } from 'src/utils/Utils'
 	
 	var timeouts = {};
 	
@@ -97,11 +98,6 @@
 	function zeroPadded(num) {
 		// 4 --> 04
 		return num < 10 ? `0${num}` : num;
-   }
-   
-   function dollars(number) {
-      if (!number) { return "" }
-      return "$" + number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
    }
 </script>
 

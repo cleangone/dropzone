@@ -58,6 +58,7 @@
 	import { date } from 'quasar'
    import { mapGetters, mapActions } from 'vuex'
    import { ItemStatus, InvoiceStatus } from 'src/utils/Constants.js'
+   import { dollars } from 'src/utils/Utils'
    
 	export default {
 		props: ['type', 'items', 'invoice'],
@@ -141,10 +142,6 @@
 
          }
 		}
-   }
-   
-   function dollars(number) {
-      return number ? "$" + number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : ""
    }
 </script>
 

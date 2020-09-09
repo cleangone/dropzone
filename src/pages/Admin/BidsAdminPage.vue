@@ -19,7 +19,8 @@
 
 <script>
 	import { date } from 'quasar'
-	import { mapState, mapGetters, mapActions } from 'vuex'
+   import { mapState, mapGetters, mapActions } from 'vuex'
+   import { dollars } from 'src/utils/Utils'
 
 	export default {
 		data() {
@@ -58,10 +59,5 @@
 			userName(userId) { return this.userIdToName[userId] }
       },
       created() { this.itemId = this.$route.params.itemId }
-   }
-   
-   function dollars(number) {
-      if (!number) { return "" }
-      return "$" + number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
    }
 </script>

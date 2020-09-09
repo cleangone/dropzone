@@ -42,11 +42,11 @@ const actions = {
       return bindFirestoreRef('users', collection())
    }),
    setUser: firestoreAction((context, user) => {
-      console.log("setUser", user)
+      // console.log("setUser", user)
       collection().doc(user.id).set(user)
    }),
    setLikes: firestoreAction((context, user) => {
-      console.log("setLikes", user.likedItemIds) 
+      // console.log("setLikes", user.likedItemIds) 
       collection().doc(user.id).update({ likedItemIds: user.likedItemIds })
    }),
 }

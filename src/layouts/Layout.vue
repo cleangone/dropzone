@@ -83,6 +83,7 @@
          ...mapActions('action',  ['bindActions']),
          ...mapActions('auth',    ['logoutUser']),
          ...mapActions('drop',    ['bindDrops']),
+         ...mapActions('invoice', ['bindInvoices']),
          ...mapActions('item',    ['bindItems']),
          ...mapActions('setting', ['bindSettings']),
          ...mapActions('user',    ['bindUsers']),
@@ -97,7 +98,8 @@
       },
       created() {
          this.bindActions() 
-         this.bindDrops() 
+         this.bindDrops()
+         this.bindInvoices() 
          this.bindItems()
          this.bindSettings()
          this.bindUsers()

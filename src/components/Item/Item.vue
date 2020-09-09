@@ -58,7 +58,8 @@
 	import { date } from 'quasar'
 	import { mapGetters, mapActions } from 'vuex'
 	import { ItemDisplayType, ItemStatus, SaleType, Colors } from 'src/utils/Constants.js';
-	
+	import { dollars } from 'src/utils/Utils'
+   
 	export default {
 		props: ['item', 'displayType'], 
 		data() {
@@ -127,10 +128,6 @@
 			'item-timer' : require('components/Item/ItemTimer.vue').default
 		}
 	}
-
-   function dollars(number) {
-      return number ? "$" + number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : ""
-   }
 
 	// todo - this is how you make a global function
 	function zeroPadded(num) {

@@ -42,7 +42,8 @@
 
 <script>
 	import { date } from 'quasar'
-	import { mapGetters, mapActions } from 'vuex'
+   import { mapGetters, mapActions } from 'vuex'
+   import { dollars } from 'src/utils/Utils'
 
 	export default {
 		data() {
@@ -100,11 +101,6 @@
          if (!this.invoicesExist) { this.bindInvoices() }
       }
 	}
-
-   function dollars(number) {
-      if (!number) { return "" }
-      return "$" + number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-   }
 
    function formatDate(dateToFormat) {
       if (!dateToFormat) { return "" }

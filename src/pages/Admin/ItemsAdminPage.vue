@@ -60,6 +60,7 @@
 	import { date } from 'quasar'
    import { mapGetters, mapActions } from 'vuex'
    import { ItemStatus } from 'src/utils/Constants.js'
+   import { dollars } from 'src/utils/Utils'
 	
 	export default {
 		data() {
@@ -78,8 +79,8 @@
 				 	{ name: 'name',       label: 'Name',        align: 'left',   field: 'name',         sortable: true },
 				 	{ name: 'saleType',   label: 'Sale Type',   align: 'center', field: 'saleType',     sortable: true },
 					{ name: 'buyerId',    label: 'Buyer',       align: 'left',   field: 'buyerId',      sortable: true, format: val => this.userName(val) },
-					{ name: 'startPrice', label: 'Start Price', align: 'right',  field: 'startPrice',   sortable: true, format: val => val ? dollars(val) : '' },
-					{ name: 'buyPrice',   label: 'Final Price', align: 'right',  field: 'buyPrice',     sortable: true, format: val => val ? dollars(val) : '' },
+					{ name: 'startPrice', label: 'Start Price', align: 'right',  field: 'startPrice',   sortable: true, format: val => dollars(val) },
+					{ name: 'buyPrice',   label: 'Final Price', align: 'right',  field: 'buyPrice',     sortable: true, format: val => dollars(val) },
 					{ name: 'bids',       label: 'Bids',        align: 'center', field: 'numberOfBids', sortable: true },
 					{ name: 'status',     label: 'Status',      align: 'center', field: 'status',       sortable: true },
 					{ name: 'actions' }
@@ -146,10 +147,6 @@
       },
    }
 
-   function dollars(number) {
-      return "$" + number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-   }
-   
    function getItem(items, itemId) { 
       for (var item of items) {
          if (item.id == itemId) { return item }

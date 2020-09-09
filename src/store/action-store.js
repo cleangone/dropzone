@@ -19,7 +19,6 @@ import { ActionStatus, ActionType } from 'src/utils/Constants.js'
 
 const state = {
 	actions: [],
-   // dropsDownloaded: false,
 }
 
 const actions = {
