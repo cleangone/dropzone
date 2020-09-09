@@ -34,8 +34,10 @@
 			</q-table>
          <div class="q-mt-md">
 			   <q-btn v-if="!rowsSelected" @click="showAddModal=true" icon="add" unelevated color="primary"/>
+            <q-btn v-if="!rowsSelected" @click="showBulkAddModal=true" label="Bulk" unelevated color="primary" class="q-ml-xs"/>
             <q-btn v-if="showInvoiceButton" @click="showInvoiceModal=true" label="Create Invoice" unelevated color="primary"/>
          </div>
+         <div style="height: 75px"/>
 		</div>
 
 		<!-- 2 modals - don't want a race condition updating type  -->
@@ -44,6 +46,9 @@
 		</q-dialog>
 		<q-dialog v-model="showEditModal">
 			<item-add-edit type="edit" :dropId="dropId" :item="itemToEdit" @close="showEditModal=false" />
+		</q-dialog>
+      <q-dialog v-model="showBulkAddModal">	
+			<item-bulk-add :dropId="dropId" />
 		</q-dialog>
       <q-dialog v-model="showInvoiceModal">	
 			<invoice-add-edit type="create" :items="selectedRowItems" @close="showInvoiceModal=false" />
@@ -62,6 +67,7 @@
 				dropId: '',
 				showAddModal: false,
             showEditModal: false,
+            showBulkAddModal: false,
             showInvoiceModal: false,
 				itemIdToEdit: '',
             tableDataFilter: '',
@@ -129,6 +135,7 @@
 		},
 		components: {
 			'item-add-edit' : require('components/Item/ItemAddEdit.vue').default,
+      	'item-bulk-add' : require('components/Item/ItemBulkAdd.vue').default,
       	'invoice-add-edit' : require('components/Admin/InvoiceAddEdit.vue').default
       },
       created() {

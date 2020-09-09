@@ -12,30 +12,27 @@
 	        	]"
 	      	filled class="col" />
     	</div>
-
 		<div class="row q-mb-sm">
 			<!-- install in quasar folder: > quasar ext add qdecimal -->
 			<!-- <q-decimal v-model="itemToSubmit.startPrice" mode="currency" currency="USD" 
 				label="Start Price" input-style="text-align: right" :prefix="true" filled class="col" ></q-decimal> -->
          <q-input v-model.number="itemToSubmit.startPrice" label="Price" type=number prefix="$" filled class="col" />
-		
 		</div>
-
-    	<div class="row q-mb-md items-center">
-	      <div class="col">
-				<q-btn v-if="!uploaderDisplayed" @click="uploaderDisplayed=true" label="Upload Image" color="primary" />
-				<q-firebase-uploader v-else path="drops/" @upload="uploadCompleted"/> 
-	      </div>
-	      <q-img :src="itemToSubmit.imageUrl ? itemToSubmit.imageUrl : 'statics/image-placeholder.png'"
-          	class="q-ml-sm" contain />
-    	</div>
-		<div class="row q-mb-sm">
+       <div class="row q-mb-md items-center">
+          <div v-if="uploaderDisplayed" class="col q-gutter-xs" :class="pink">
+				<q-firebase-uploader path="drops/" @upload="uploadCompleted" style="width: 400px"/> 
+            <q-btn @click="uploaderDisplayed=false" icon="clear" color="primary" size="sm" dense/>
+         </div>
+	      <div v-else class="col q-gutter-sm" :class="yellow">
+				<q-btn @click="uploaderDisplayed=true" label="Upload Image" color="primary" />
 				<q-checkbox v-model="itemToSubmit.isHorizontal" label="Horizontal Image" dense/>
-		</div>
-		<div class="row q-mb-xs q-gutter-md">
-			<q-select label="Status" v-model="itemToSubmit.status" :options="statusOptions" class="col" filled/>
-			<q-select label="Sale Type" v-model="itemToSubmit.saleType" :options="saleTypeOptions" class="col" filled/>
-		</div>
+	   	   <q-select label="Status" v-model="itemToSubmit.status" :options="statusOptions" filled/>
+			   <q-select label="Sale Type" v-model="itemToSubmit.saleType" :options="saleTypeOptions" filled/>
+		   </div>
+         <div v-if="!uploaderDisplayed" class="col" style="height: 200px" :class="blue">
+	         <q-img  style="height: 200px; width: 200px" :src="itemToSubmit.imageUrl ? itemToSubmit.imageUrl : 'statics/image-placeholder.png'" class="q-ml-lg" contain />
+         </div>
+    	</div>
 	</q-card-section>
 
    <q-card-actions align="right">
@@ -46,10 +43,10 @@
 </template>
 
 <script>
-	import { mapActions } from 'vuex'
+	import { mapGetters, mapActions } from 'vuex'
 	import QFirebaseUploader from 'components/QFirebaseUploader.js'
-	import { SaleType, ItemStatus } from 'src/utils/Constants.js';
-	
+   import { SaleType, ItemStatus, Colors } from 'src/utils/Constants.js';
+   
 	export default {
       props: [
          'type', 
@@ -72,7 +69,10 @@
 				statusOptions: [ ItemStatus.PREVIEW, ItemStatus.AVAILABLE, ItemStatus.DROPPING, ItemStatus.HOLD, ItemStatus.SOLD ],
 				saleTypeOptions: [ SaleType.DEFAULT, SaleType.BID, SaleType.BUY ]
 			}
-		},
+      },
+      computed: {
+			...mapGetters('color', Colors),
+      },
 		methods: {
 			...mapActions('item', ['createItem', 'setItem']),
 			submitForm() {
@@ -102,8 +102,8 @@
 			},
 			uploadCompleted(emit) {
 				console.log("uploadCompleted", emit)
-				this.itemToSubmit.imageUrl = emit.url
-				this.uploaderDisplayed = false
+            this.itemToSubmit.imageUrl = emit.url
+            this.uploaderDisplayed = false
 			}
 		},
 		components: {
