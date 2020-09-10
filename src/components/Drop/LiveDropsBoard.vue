@@ -2,7 +2,7 @@
 	<div class="column justify-center q-mt-md q-pa-sm rounded-borders bg-grey-4">
 		<div class="self-center text-h6">Drop Board</div>
 		<div class="row q-mt-xs q-gutter-xs">
-			<item v-for="(item, key) in liveDropItems" :key="key" :item="item" :displayType="mini"/>
+			<item v-for="(item, key) in activeDropItems" :key="key" :item="item" :displayType="mini"/>
 		</div>
   	</div> 
 </template>
@@ -18,10 +18,10 @@
 			}
 		},
 		computed: {
-			...mapGetters('drop', ['getLiveDropIds']),
+			...mapGetters('drop', ['getActiveDropIds']),
 			...mapGetters('item', ['getItemsInDrops']),
          mini() { return ItemDisplayType.MINI },
-         liveDropItems() { return this.getItemsInDrops(this.getLiveDropIds) }
+         activeDropItems() { return this.getItemsInDrops(this.getActiveDropIds) }
     	},
 		components: {
 			'item' : require('components/Item/Item.vue').default

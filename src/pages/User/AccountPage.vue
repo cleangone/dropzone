@@ -2,24 +2,37 @@
   <q-page padding>  
 	  <q-card class="form-card flat">
 			<q-card-section>
-            <div class="q-mb-sm">
-					<span class="text-grey-9 text-caption">Email: </span>
-               <span> {{ email }} </span>
-               <!-- <span v-if="emailVerified" class="text-primary"> (Verified) </span>
-				   <span v-if="(userEmail != null) && !emailVerified" class="text-primary"> 
-                  <q-btn @click="verifyEmail" label="Verify" color="primary"  size="sm" dense/> 
-               </span> -->
-               <q-btn @click="showEditEmailModal=true" icon="edit" color="primary" size="xs" flat dense/> 
+            <div class="row" :class="blue">
+               <div class="col q-gutter-sm" :class="green">
+                  <div>
+                     <span class="text-grey-9 text-caption">Email: </span>
+                     <span> {{ email }} </span>
+                     <!-- <span v-if="emailVerified" class="text-primary"> (Verified) </span>
+                     <span v-if="(userEmail != null) && !emailVerified" class="text-primary"> 
+                        <q-btn @click="verifyEmail" label="Verify" color="primary"  size="sm" dense/> 
+                     </span> -->
+                     <q-btn @click="showEditEmailModal=true" icon="edit" color="primary" size="xs" flat dense/> 
+                  </div>
+                  <div class="row">
+                     <q-input v-model="userToUpdate.firstName" label="First Name" class="col" filled />
+                     <q-input v-model="userToUpdate.lastName"  label="Last Name"  class="col q-ml-sm"  filled />
+                  </div>
+                  <q-input v-model="userToUpdate.address" label="Address" filled/>
+                  <q-input v-model="userToUpdate.city"    label="City" filled />
+                  <div class="row">
+                     <q-input v-model="userToUpdate.state" label="State" class="col" filled />
+                     <q-input v-model="userToUpdate.zip"   label="Zip"   class="col q-ml-sm" filled />
+                  </div>
+                  <div class="row">
+                     <q-input v-model="userToUpdate.country" label="Country" class="col" filled />
+                     <div class="col q-ml-sm"/>
+                  </div>
+               </div>
+               <div class="col" :class="orange"/>
             </div>
-				<div class="q-mb-sm">
-					<q-input v-model="userToUpdate.firstName" label="First Name" stack-label />
-				</div>
-				<div class="q-mb-sm">
-					<q-input v-model="userToUpdate.lastName" label="Last Name" stack-label />
-				</div>
 			</q-card-section>
 		
-			<q-card-actions >
+			<q-card-actions>
 				<q-btn @click="reset" label="Reset" color="grey" />
 				<q-btn @click="submitUpdate" label="Save" color="primary" />
 			</q-card-actions>
@@ -38,7 +51,7 @@
    import { mapGetters, mapActions } from 'vuex'
    import { Notify } from 'quasar'
    import { firebaseAuth } from 'boot/firebase'
-
+   import { Colors } from 'src/utils/Constants.js';
 
 	export default {
 		data() {
@@ -50,7 +63,8 @@
 		},
 		computed: {
 			...mapGetters('auth', ['userId', 'currentUser']),
-			...mapGetters('user', ['getUser', 'isAdmin']),
+         ...mapGetters('user', ['getUser', 'isAdmin']),
+         ...mapGetters('color', Colors),
 			user() { return this.getUser(this.userId)},
 		},
 		methods: {

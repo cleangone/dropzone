@@ -20,6 +20,10 @@
                </q-tr>
             </template>
 
+            <q-td slot="body-cell-tracking" slot-scope="props" :props="props"> 
+               blah
+	         </q-td>
+
             <template v-slot:body="props">
                <q-tr :props="props">
                   <q-td auto-width>
@@ -52,21 +56,24 @@
 <script>
 	import { date } from 'quasar'
    import { mapGetters, mapActions } from 'vuex'
+   import { InvoiceStatus } from 'src/utils/Constants.js'
    import { dollars } from 'src/utils/Utils'
+   
 
 	export default {
 		data() {
 	  	   return {
 			   showEditModal: false,
 				tableDataFilter: '',
-            visibleColumns: ['userName', 'items', 'total', 'status', 'sentDate'],
+            visibleColumns: ['userName', 'items', 'total', 'status', 'tracking', 'sentDate'],
  				columns: [
                { name: 'id', field: 'id' },                 
-               { name: 'userName', label: 'User',   align: 'left',   field: 'userName', sortable: true },
-					{ name: 'items',    label: 'Items',  align: 'left',   field: 'items',    sortable: true, format: val => this.itemsText(val) },
-					{ name: 'total',    label: 'Total',  align: 'right',  field: 'total',    sortable: true, format: val => dollars(val) },
-					{ name: 'status',   label: 'Status', align: 'center', field: 'status',   sortable: true },
-               { name: 'sentDate', label: 'Date',   align: 'left',   field: 'sentDate', sortable: true, format: val => formatDate(val) },
+               { name: 'userName', label: 'User',     align: 'left',   field: 'userName', sortable: true },
+					{ name: 'items',    label: 'Items',    align: 'left',   field: 'items',    sortable: true, format: val => this.itemsText(val) },
+					{ name: 'total',    label: 'Total',    align: 'right',  field: 'total',    sortable: true, format: val => dollars(val) },
+					{ name: 'status',   label: 'Status',   align: 'center', field: 'status',   sortable: true },
+               { name: 'tracking', label: 'Tracking', align: 'center', field: 'tracking', sortable: true },
+               { name: 'sentDate', label: 'Date',     align: 'left',   field: 'sentDate', sortable: true, format: val => formatDate(val) },
             ],
             pagination: { rowsPerPage: 30 },
             invoiceIdToEdit: '',
@@ -77,7 +84,6 @@
          invoiceToEdit() { return this.getInvoice(this.invoiceIdToEdit) },
          invoices() {
             let invs = this.getInvoices
-            console.log("invoices", invs)
             return invs
          },
       },

@@ -10,7 +10,7 @@
 				</span>
 			</div> -->
 		</div> 
-		<div v-if="liveDropsExist" class="col q-mt-none" :class="indigo">
+		<div v-if="activeDropsExist" class="col q-mt-none" :class="indigo">
 			<live-drops-board/>
 		</div> 
 	</q-page>
@@ -22,7 +22,7 @@
 
 	export default {
 		computed: {
-			...mapGetters('drop', ['dropsExist', 'getDrops', 'liveDropsExist']),
+			...mapGetters('drop', ['dropsExist', 'getDrops', 'activeDropsExist']),
 			...mapGetters('color', Colors),
       },
       components: {

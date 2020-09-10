@@ -24,9 +24,9 @@
 <script>
 	import { date } from 'quasar'
 	import { mapGetters, mapActions } from 'vuex'
-   import { ItemDisplayType, ItemStatus, SaleType, Colors } from 'src/utils/Constants.js';
+   import { DropStatus, ItemDisplayType, ItemStatus, SaleType, Colors } from 'src/utils/Constants.js';
    import { dollars } from 'src/utils/Utils'
-	
+   
 	var timeouts = {};
 	
 	export default {
@@ -44,7 +44,11 @@
 			...mapGetters('color', Colors),
          
 			drop() { return this.getDrop(this.item.dropId) },
-         itemSaleType() { return (this.item.saleType == SaleType.DEFAULT ? this.drop.defaultSaleType : this.item.saleType) },
+         itemSaleType() {    
+            let itemSaleType = this.item.saleType == SaleType.DEFAULT ? this.drop.defaultSaleType : this.item.saleType
+            if (this.drop.status == DropStatus.DROPPED) { itemSaleType = SaleType.BUY }
+            return itemSaleType
+         },
          user() { return this.getUser(this.userId)},
          userIsAdmin() { return this.user && this.user.isAdmin },
 			isAvailable() { return this.item.status == ItemStatus.AVAILABLE || this.item.status == ItemStatus.DROPPING },

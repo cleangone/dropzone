@@ -31,9 +31,9 @@
         </q-input>
     	</div>
 		<div class="row q-mb-sm q-gutter-md">
+		   <q-select label="Status" v-model="dropToSubmit.status" :options="statusOptions" class="col" filled/>
 			<q-select label="Default Sale Type" v-model="dropToSubmit.defaultSaleType" :options="saleTypeOptions" class="col" filled/>  
-         <q-select label="Status" v-model="dropToSubmit.status" :options="statusOptions" class="col" filled/>
-		</div>	
+      </div>	
 		<div class="row q-mb-sm items-center">
 	      <div class="col">
 				<!-- <q-input v-model="dropToSubmit.imageUrl" label="Image URL" filled/> -->
@@ -74,9 +74,9 @@
             startDate: date.formatDate(Date.now(), 'YYYY/MM/DD'),
             startTime: '09:00',
             timezone: localTimezone(),
-				uploaderDisplayed: false,
-				statusOptions: [ DropStatus.PREDROP, DropStatus.LIVE, DropStatus.POSTDROP ],
-				saleTypeOptions: [ SaleType.BID, SaleType.BUY ]
+            uploaderDisplayed: false,
+            statusOptions: [ DropStatus.SETUP, DropStatus.SCHEDULE, DropStatus.STARTUP, DropStatus.LIVE, DropStatus.DROPPED ],
+            saleTypeOptions: [ SaleType.BID, SaleType.BUY ]
 			}
 		},
 		computed: {

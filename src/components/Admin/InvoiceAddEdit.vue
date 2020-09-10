@@ -45,6 +45,10 @@
          <q-select v-if="isEdit" label="Status" v-model="invoiceToSubmit.status" :options="statusOptions" class="col" filled/>
          <div class="col"/>
 		</div>
+      <div v-if="isShipped" class="row q-mt-sm q-gutter-sm">
+         <q-select v-model="invoiceToSubmit.carrier" label="Carrier" :options="carrierOptions" class="col" filled/>
+         <q-input v-model="invoiceToSubmit.tracking" label="Tracking" filled class="col" />
+		</div>
    </q-card-section>
 
     <q-card-actions align="right">
@@ -75,6 +79,7 @@
                priceAdjustment: 0,
             },
             statusOptions: [ InvoiceStatus.CREATED, InvoiceStatus.UPDATED, InvoiceStatus.PAID, InvoiceStatus.SHIPPED ],
+            carrierOptions: [ "USPS", "FedEx" ],
             visibleColumns: [ 'name', 'price'],
  				columns: [
         			{ name: 'name',  label: 'Item Name', align: 'left', field: 'name' },
@@ -85,6 +90,7 @@
 		computed: {	
          ...mapGetters('user', ['getUser']),
          isEdit() { return this.type == "edit" },	
+         isShipped() { return this.invoiceToSubmit.status == InvoiceStatus.SHIPPED },	
          subtotal() { return dollars(this.invoiceToSubmit.subTotal) },
          shippingCharge() { return dollars(this.invoiceToSubmit.shippingCharge) },
          priceAdjustment() { return "(" + dollars(this.invoiceToSubmit.priceAdjustment) + ")" },

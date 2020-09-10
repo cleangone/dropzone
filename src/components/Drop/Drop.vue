@@ -2,7 +2,8 @@
 	<q-card class="card">
 		<router-link :to="{ name: dropPageRoute, params: { dropId: drop.id } }">
 			<q-img :src="drop.imageUrl ? drop.imageUrl : 'statics/image-placeholder.png'" basic contain>
-				<div class="absolute-bottom text-h6">{{ drop.name }}</div>
+            <drop-timer v-if="isCountdown" :drop="drop"/>
+            <div v-else class="absolute-bottom text-h6">{{ drop.name }}</div>
 			</q-img>
 		</router-link>
 		<q-card-section class="q-px-xs q-py-md" :class="purple">
@@ -16,21 +17,23 @@
 </template>
 
 <script>
+   import { date } from 'quasar'
 	import { mapGetters } from 'vuex'
-	import { Route, DropStatus } from 'src/utils/Constants.js';
+	import { Route, DropStatus, Colors } from 'src/utils/Constants.js';
    import { getStartDateText } from 'src/utils/DateUtils'
    
 	export default {
 		props: ['drop'],
 		computed: {
-			...mapGetters('color', ['purple']),
-			isPreDrop() { return this.drop.status == DropStatus.PREDROP },
+         ...mapGetters('color', Colors),
+			isCountdown() { return this.drop.status == DropStatus.COUNTDOWN},
+			isPreDrop() { return this.drop.status != DropStatus.LIVE && this.drop.status != DropStatus.DROPPED },
 			dropPageRoute() { return Route.DROP },
-         startDateText() { 
-            console.log("startDateText", this.drop.startDate)
-            return getStartDateText(this.drop.startDate) 
-            },
-    	}
+         startDateText() { return getStartDateText(this.drop.startDate) }
+      },
+      components: {
+         'drop-timer' : require('components/Drop/DropTimer.vue').default
+      }
 	}
 </script>
 

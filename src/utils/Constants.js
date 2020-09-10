@@ -17,9 +17,13 @@ export const ActionType = {
 }
 
 export const DropStatus = {
-   PREDROP: 'Pre-Drop',
-   LIVE: 'Live',
-   POSTDROP: 'Post-Drop'
+   SETUP:     'Setup',
+   SCHEDULE:  'Schedule',
+   SCHEDULED: 'Scheduled',
+   STARTUP:   'Start Countdown',
+   COUNTDOWN: 'Countdown',
+   LIVE:      'Live',
+   DROPPED:   'Dropped'
 }
 
 export const InvoiceStatus = {

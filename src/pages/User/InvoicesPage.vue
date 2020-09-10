@@ -43,19 +43,21 @@
 <script>
 	import { date } from 'quasar'
    import { mapGetters, mapActions } from 'vuex'
+   import { InvoiceStatus } from 'src/utils/Constants.js'
    import { dollars } from 'src/utils/Utils'
 
 	export default {
 		data() {
 	  	   return {
 			   tableDataFilter: '',
-            visibleColumns: ['items', 'total', 'status', 'sentDate'],
+            visibleColumns: ['items', 'total', 'status', 'tracking', 'sentDate'],
  				columns: [
                { name: 'id', field: 'id' },                 
-               { name: 'items',    label: 'Items',  align: 'left',   field: 'items',    sortable: true, format: val => this.itemsText(val) },
-					{ name: 'total',    label: 'Total',  align: 'right',  field: 'total',    sortable: true, format: val => dollars(val) },
-					{ name: 'status',   label: 'Status', align: 'center', field: 'status',   sortable: true },
-               { name: 'sentDate', label: 'Date',   align: 'left',   field: 'sentDate', sortable: true, format: val => formatDate(val) },
+               { name: 'items',    label: 'Items',    align: 'left',   field: 'items',    sortable: true, format: val => this.itemsText(val) },
+					{ name: 'total',    label: 'Total',    align: 'right',  field: 'total',    sortable: true, format: val => dollars(val) },
+					{ name: 'status',   label: 'Status',   align: 'center', field: 'status',   sortable: true },
+               { name: 'tracking', label: 'Tracking', align: 'center', field: 'carrierTracking',  sortable: true },
+               { name: 'sentDate', label: 'Date',     align: 'left',   field: 'sentDate', sortable: true, format: val => formatDate(val) },
             ],
             pagination: { rowsPerPage: 30 },
 			}
@@ -64,11 +66,21 @@
          ...mapGetters('auth', ['userId']),
          ...mapGetters('invoice', ['invoicesExist', 'getUserInvoices', 'getInvoice']),
          invoices() { 
-            // make copies - vuex not happy with table minipulation of elements
             let invoices = this.getUserInvoices(this.userId) 
-            let copies = []
-            invoices.forEach(invoice => { copies.push(Object.assign({}, invoice)) })
-            return copies
+            let dispInvoices = []
+            invoices.forEach(invoice => { 
+               let dispInvoice = Object.assign({}, invoice)
+               if (invoice.status = InvoiceStatus.SHIPPED) {
+                  dispInvoice.carrierTracking = 
+                     invoice.carrier || invoice.tracking ? 
+                     (invoice.carrier ? invoice.carrier : "") + 
+                        (invoice.carrier && invoice.tracking ? " - " : "") + 
+                        (invoice.tracking ? invoice.tracking : "") : 
+                     ""
+               }
+               dispInvoices.push(dispInvoice)
+            })
+            return dispInvoices
          },
       },
 		methods: {
