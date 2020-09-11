@@ -18,15 +18,15 @@
                   <q-th v-for="col in props.cols" :key="col.name" :props="props">{{ col.label }}</q-th>
                </q-tr>
             </template>
-
             <template v-slot:body="props">
                <q-tr :props="props">
                   <q-td auto-width>
                      <q-btn size="xs" color="primary" round dense @click="props.expand = !props.expand" :icon="props.expand ? 'remove' : 'add'" />
                   </q-td>
-                  <q-td v-for="col in props.cols" :key="col.name" :props="props">{{ col.value }}</q-td>
+                  <q-td v-for="col in props.cols" :key="col.name" :props="props">
+                     <invoice-td :row="props.row" :col="col"/>
+                  </q-td>
                </q-tr>
-               
                <template v-if="props.expand">
                   <q-tr v-for="detail in getInvoiceDetails(props.row.id)" :key="detail.name" :props="props">
                      <q-td />
@@ -56,7 +56,7 @@
                { name: 'items',    label: 'Items',    align: 'left',   field: 'items',    sortable: true, format: val => this.itemsText(val) },
 					{ name: 'total',    label: 'Total',    align: 'right',  field: 'total',    sortable: true, format: val => dollars(val) },
 					{ name: 'status',   label: 'Status',   align: 'center', field: 'status',   sortable: true },
-               { name: 'tracking', label: 'Tracking', align: 'center', field: 'carrierTracking',  sortable: true },
+               { name: 'tracking', label: 'Tracking', align: 'center', field: 'tracking' },
                { name: 'sentDate', label: 'Date',     align: 'left',   field: 'sentDate', sortable: true, format: val => formatDate(val) },
             ],
             pagination: { rowsPerPage: 30 },
@@ -97,7 +97,7 @@
             if (invoice.priceAdjustment) { details.push({ name: "Adjustment", price: "(" + dollars(invoice.priceAdjustment) + ")" }) }
 
             return details 
-         },
+         },              
          itemsText(invoiceItems) {  
             let itemsText = ""
             for (var item of invoiceItems) {
@@ -107,7 +107,10 @@
 
             return (itemsText.length > 30 ? itemsText.substring(0, 30) + "..." : itemsText)
          },
-		},
+      },
+      components: {
+         'invoice-td' : require('components/Invoice/InvoiceTd.vue').default,
+      },
       created() {
          // console.log("InvoicesAdminPage")
          if (!this.invoicesExist) { this.bindInvoices() }

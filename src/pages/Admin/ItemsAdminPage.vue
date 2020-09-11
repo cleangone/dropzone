@@ -137,7 +137,7 @@
 		components: {
 			'item-add-edit' : require('components/Item/ItemAddEdit.vue').default,
       	'item-bulk-add' : require('components/Item/ItemBulkAdd.vue').default,
-      	'invoice-add-edit' : require('components/Admin/InvoiceAddEdit.vue').default
+      	'invoice-add-edit' : require('components/Invoice/InvoiceAddEdit.vue').default
       },
       created() {
 			this.dropId = this.$route.params.dropId

@@ -26,6 +26,16 @@ export const DropStatus = {
    DROPPED:   'Dropped'
 }
 
+export const EmailFields = {
+   PURCHASE_SUCCESS: 'emailPurchaseSuccess',
+   PURCHASE_FAIL:    'emailPurchaseFail',
+   WINNING_BID:      'winningBid',
+   INVOICE:          'emailInvoice',
+   SHIIPPING:        'emailShipping',
+   SUBJECT_SUFFIX:   'Subject',
+   BODY_SUFFIX:      'Body',
+}
+
 export const InvoiceStatus = {
    CREATED: 'Created',
    UPDATED: 'Updated',
@@ -62,6 +72,7 @@ export const SaleType = {
    BID: 'Bid',
    BUY: 'Buy',
 }
+
 
 export const Colors = [ 'red', 'pink', 'orange', 'yellow', 'blue', 'green', 'indigo', 'purple' ]
 

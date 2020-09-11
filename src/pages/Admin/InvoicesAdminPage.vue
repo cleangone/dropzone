@@ -19,22 +19,18 @@
                   <q-th auto-width /> <!-- actions col -->
                </q-tr>
             </template>
-
-            <q-td slot="body-cell-tracking" slot-scope="props" :props="props"> 
-               blah
-	         </q-td>
-
             <template v-slot:body="props">
                <q-tr :props="props">
                   <q-td auto-width>
                      <q-btn size="xs" color="primary" round dense @click="props.expand = !props.expand" :icon="props.expand ? 'remove' : 'add'" />
                   </q-td>
-                  <q-td v-for="col in props.cols" :key="col.name" :props="props">{{ col.value }}</q-td>
+                  <q-td v-for="col in props.cols" :key="col.name" :props="props">
+                     <invoice-td :row="props.row" :col="col"/>
+                  </q-td>
                   <q-td auto-width>
                      <q-btn icon="edit" @click="editInvoice(props.row.id)" size="sm" color="primary" flat dense/>
                   </q-td>
-               </q-tr>
-               
+               </q-tr>   
                <template v-if="props.expand">
                   <q-tr v-for="detail in getInvoiceDetails(props.row.id)" :key="detail.name" :props="props">
                      <q-td />
@@ -129,7 +125,8 @@
          // }
 		},
 		components: {
-			'invoice-add-edit' : require('components/Admin/InvoiceAddEdit.vue').default
+			'invoice-add-edit' : require('components/Invoice/InvoiceAddEdit.vue').default,
+      	'invoice-td' : require('components/Invoice/InvoiceTd.vue').default
       }
 	}
 

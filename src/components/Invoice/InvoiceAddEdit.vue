@@ -79,7 +79,7 @@
                priceAdjustment: 0,
             },
             statusOptions: [ InvoiceStatus.CREATED, InvoiceStatus.UPDATED, InvoiceStatus.PAID, InvoiceStatus.SHIPPED ],
-            carrierOptions: [ "USPS", "FedEx" ],
+            carrierOptions: [ "USPS Priority", "FedEx" ],
             visibleColumns: [ 'name', 'price'],
  				columns: [
         			{ name: 'name',  label: 'Item Name', align: 'left', field: 'name' },
