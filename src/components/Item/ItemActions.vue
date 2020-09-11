@@ -2,11 +2,11 @@
 	<q-card-actions class="q-my-none q-px-xs q-pb-xs q-pt-none" :class="blue">
 		<span v-if="isAvailable" class="col">
 			<span v-if="loggedIn" class="col">
-				<q-btn v-if="isBid"      @click="promptToBid()" :label="itemSaleType" color="primary" small/>
-				<q-btn v-else-if="isBuy" @click="promptToBuy()" :label="itemSaleType" color="primary" small/>
+				<q-btn v-if="isBid"      @click="promptToBid()" :label="itemSaleType" color="primary" :size="buttonSize" dense/>
+				<q-btn v-else-if="isBuy" @click="promptToBuy()" :label="itemSaleType" color="primary" :size="buttonSize" dense/>
 			</span>
 			<span v-else class="col">
-				<q-btn @click="login()" :label="'Login to ' + itemSaleType" color="primary" medium/>
+				<q-btn @click="login()" :label="'Login to ' + itemSaleType" color="primary" :size="buttonSize" dense/>
 			</span>
 		</span>
 		<span v-if="showIcons" class="col" align="right">
@@ -45,16 +45,17 @@
          
 			drop() { return this.getDrop(this.item.dropId) },
          itemSaleType() {    
-            let itemSaleType = this.item.saleType == SaleType.DEFAULT ? this.drop.defaultSaleType : this.item.saleType
+            let itemSaleType = (this.item.saleType == SaleType.DEFAULT ? this.drop.defaultSaleType : this.item.saleType)
             if (this.drop.status == DropStatus.DROPPED) { itemSaleType = SaleType.BUY }
             return itemSaleType
          },
+         buttonSize() { return this.displayType == ItemDisplayType.FULL ? "md" : "sm"  },        
          user() { return this.getUser(this.userId)},
          userIsAdmin() { return this.user && this.user.isAdmin },
 			isAvailable() { return this.item.status == ItemStatus.AVAILABLE || this.item.status == ItemStatus.DROPPING },
 			isBid() { return this.itemSaleType == SaleType.BID && this.item.startPrice },
 			isBuy() { return this.itemSaleType == SaleType.BUY && this.item.startPrice },	
-      	showIcons() { return this.loggedIn &&  this.displayType == ItemDisplayType.FULL },		
+      	showIcons() { return this.loggedIn && this.displayType == ItemDisplayType.FULL },		
          isLiked() { return this.user.likedItemIds  &&  this.user.likedItemIds.includes(this.item.id) },		
 		},
 		methods: {

@@ -2,7 +2,7 @@
 	<div>
 		<div v-if="displayMini">
 			<q-card v-if="hasImageUrl" class="q-pt-xs q-px-xs" style="min-height: 250px;" :class="textBgColor">				
-				<item-thumb :item="item" vImageWidth="125px" hImageWidth="250px"/>
+				<item-thumb :item="item" vImageWidth="125px" hImageWidth="250px" imageMaxHeight="200px"/>
 				<q-card-section class="text-caption q-pa-xs">
 					<div>{{ item.name }}</div>
 					<div v-if="priceTextBgColor" :class="priceTextBgColor" class="text-bold q-px-xs">{{ priceTextMini }}</div>	
@@ -13,7 +13,7 @@
 		</div>
 		<div v-else-if="displayThumb">
 			<q-card v-if="hasImageUrl" class="q-pt-xs q-px-xs" style="min-height: 300px;" :class="textBgColor">
-				<item-thumb :item="item" vImageWidth="150px" hImageWidth="300px"/>
+				<item-thumb :item="item" vImageWidth="150px" hImageWidth="300px" imageMaxHeight="250px"/>
 				<q-card-section class="text-caption q-pa-xs">
 					<strong>{{ item.name }}</strong>
                <div>{{ priceText }}</div>
@@ -21,8 +21,8 @@
                <div v-if="userIsWinningBidder" class="text-bold">You are the winning bidder</div> 
                <div v-if="isDropping">
                   <item-timer :item="item"/>
-                  <div v-if="userIsHighBidder"  class="text-bold bg-green q-px-xs">You are High Bidder</div>
-                  <div v-else-if="userIsOutbid" class="text-bold bg-red   q-px-xs">You have been outbid</div> 
+                  <div v-if="userIsHighBidder"  class="text-bold bg-green  q-px-xs">You are High Bidder</div>
+                  <div v-else-if="userIsOutbid" class="text-bold bg-red-5 q-px-xs">You have been outbid</div> 
                </div> 
 				</q-card-section>	
 				<item-actions :item="item" :displayType="displayType"/>
@@ -44,8 +44,8 @@
                <div v-if="userIsWinningBidder" class="text-bold">You are the winning bidder</div> 
                <div v-if="isDropping">
                   <item-timer :item="item"/>
-                  <div v-if="userIsHighBidder"  class="text-bold bg-green q-px-xs">You are High Bidder</div>
-                  <div v-else-if="userIsOutbid" class="text-bold bg-red   q-px-xs">You have been outbid</div> 
+                  <div v-if="userIsHighBidder"  class="text-bold bg-green  q-px-xs">You are High Bidder</div>
+                  <div v-else-if="userIsOutbid" class="text-bold bg-red-5 q-px-xs">You have been outbid</div> 
                </div> 
 				</q-card-section>	
 				<item-actions :item="item" :displayType="displayType"/>
@@ -96,7 +96,7 @@
 			priceTextMini() { return this.buildPriceText("") },
 			priceTextBgColor() { 
 				if (this.isDropping && this.userIsHighBidder)  { return "bg-green" }
-				else if (this.isDropping && this.userIsOutbid) { return "bg-red" }
+				else if (this.isDropping && this.userIsOutbid) { return "bg-red-5" }
 				else  {return "" }
 			},
 			userIsBuyer() { 
