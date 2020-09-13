@@ -21,8 +21,9 @@
                <div v-if="userIsWinningBidder" class="text-bold">You are the winning bidder</div> 
                <div v-if="isDropping">
                   <item-timer :item="item"/>
-                  <div v-if="userIsHighBidder"  class="text-bold bg-green  q-px-xs">You are High Bidder</div>
-                  <div v-else-if="userIsOutbid" class="text-bold bg-red-5 q-px-xs">You have been outbid</div> 
+                  <div v-if="userIsHighBidder" class="text-bold bg-green q-px-xs">You are High Bidder</div>
+                  <div v-if="userHasHigherMax" class="text-bold bg-green q-px-xs">Max bid {{ userMaxBid }}</div>
+                  <div v-if="userIsOutbid"     class="text-bold bg-red-5 q-px-xs">You have been outbid</div> 
                </div> 
 				</q-card-section>	
 				<item-actions :item="item" :displayType="displayType"/>
@@ -44,8 +45,9 @@
                <div v-if="userIsWinningBidder" class="text-bold">You are the winning bidder</div> 
                <div v-if="isDropping">
                   <item-timer :item="item"/>
-                  <div v-if="userIsHighBidder"  class="text-bold bg-green  q-px-xs">You are High Bidder</div>
-                  <div v-else-if="userIsOutbid" class="text-bold bg-red-5 q-px-xs">You have been outbid</div> 
+                  <div v-if="userIsHighBidder" class="text-bold bg-green  q-px-xs">You are High Bidder</div>
+                  <div v-if="userHasHigherMax" class="text-bold bg-green q-px-xs">Max bid {{ userMaxBid }}</div>
+                  <div v-if="userIsOutbid"     class="text-bold bg-red-5 q-px-xs">You have been outbid</div> 
                </div> 
 				</q-card-section>	
 				<item-actions :item="item" :displayType="displayType"/>
@@ -106,6 +108,8 @@
             return this.loggedIn && this.isNotAvailable && (this.item.buyerId == this.userId) && (this.item.currBidderId == this.userId) },
 			userIsHighBidder() { return this.loggedIn && (this.item.currBidderId == this.userId) },
 			userIsOutbid() { return this.loggedIn && !this.userIsHighBidder && this.item.bidderIds && this.item.bidderIds.includes(this.userId) },
+         userHasHigherMax() { return this.userIsHighBidder && (this.item.currBidAmount > this.item.buyPrice) },
+         userMaxBid() { return dollars(this.item.currBidAmount) } 
       },
       methods: {
          buildPriceText(prefix) {

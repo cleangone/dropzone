@@ -36,13 +36,14 @@
       },
 	  	computed: {
 			...mapGetters('auth', ['loggedIn', 'userId']),
-			...mapGetters('user', ['getUser']),
+         ...mapGetters('user', ['getUser']),
 			...mapGetters('drop', ['getDrop']),
 			...mapGetters('item', ['getItemsInDrop']),
 			thumb() { return ItemDisplayType.THUMB },
          drop() { return this.getDrop(this.dropId) },
          isCountdown() { return this.drop.status == DropStatus.COUNTDOWN },
-			user() { return this.getUser(this.userId) },
+         user() { return this.getUser(this.userId) },
+         isAdmin() { return this.user && this.user.isAdmin },
          items () { 
             let items = this.getItemsInDrop(this.dropId) 
             if (!this.showOnlyLikedItems) { return items }
@@ -54,7 +55,14 @@
 		      })
 				return likedItems
          },
-			showItems() { return this.drop.status == DropStatus.LIVE || this.drop.status == DropStatus.DROPPED  },
+         showItems() { 
+            const showItems = 
+               (this.isAdmin && this.drop.status == DropStatus.SETUP) ||
+               this.drop.status == DropStatus.LIVE || 
+               this.drop.status == DropStatus.DROPPED 
+            // console.log("showItems return", showItems)
+            return showItems 
+         },
 			startDateText() { return getStartDateText(this.drop.startDate) },
 			showLabel() { return this.showOnlyLikedItems ? "Show liked": "Show all" }
 		},

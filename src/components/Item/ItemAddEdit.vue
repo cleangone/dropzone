@@ -66,7 +66,7 @@
                bidderIds: []
 				},
 				uploaderDisplayed: false,
-				statusOptions: [ ItemStatus.PREVIEW, ItemStatus.AVAILABLE, ItemStatus.DROPPING, ItemStatus.HOLD, ItemStatus.SOLD ],
+				statusOptions: [ ItemStatus.SETUP, ItemStatus.AVAILABLE, ItemStatus.DROPPING, ItemStatus.HOLD, ItemStatus.SOLD ],
 				saleTypeOptions: [ SaleType.DEFAULT, SaleType.BID, SaleType.BUY ]
 			}
       },
@@ -84,6 +84,7 @@
                   this.itemToSubmit.buyPrice = 0 
                   this.itemToSubmit.bidderIds = []
                   this.itemToSubmit.currBidderId = ''
+                  this.itemToSubmit.currBidAmount = 0
                   this.itemToSubmit.currActionId = ''
                   this.itemToSubmit.numberOfBids = 0
                   this.itemToSubmit.buyerId = ''

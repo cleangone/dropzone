@@ -15,15 +15,7 @@
 					<q-input borderless dense debounce="300" v-model="tableDataFilter" placeholder="Search">
 						<template v-slot:append><q-icon name="search"/></template>
 					</q-input>
-				</template>
-
-            <!-- todo - want multiline header to put bids/purchases -->
-            <!-- <q-th slot="body-cell-bids" slot-scope="props" :props="props"> 
-               {{ header(props) }}
-	         </q-th> -->
-
-            <!-- <q-th v-for="col in props.cols" :key="col.name" :props="props">{{ col.label }} N </q-th> -->
-                  
+				</template> 
             <q-td slot="body-cell-bids" slot-scope="props" :props="props"> 
                <a v-if="props.row.numberOfBids > 0" :href="'#/admin/bids/' + props.row.id">{{ props.row.numberOfBids }}</a>
 	         </q-td>
@@ -32,14 +24,15 @@
                <q-btn icon="delete" @click="promptToDeleteItem(props.row.id, props.row.name)" size="sm" flat dense color="red" />
             </q-td> 
 			</q-table>
-         <div class="q-mt-md">
-			   <q-btn v-if="!rowsSelected" @click="showAddModal=true" icon="add" unelevated color="primary"/>
-            <q-btn v-if="!rowsSelected" @click="showBulkAddModal=true" label="Bulk" unelevated color="primary" class="q-ml-xs"/>
-            <q-btn v-if="showInvoiceButton" @click="showInvoiceModal=true" label="Create Invoice" unelevated color="primary"/>
-         </div>
+         <div class="q-mt-md"> 
+			   <q-btn v-if="!rowsSelected"      @click="showAddModal=true"      icon="add"             unelevated color="primary"/>
+            <q-btn v-if="!rowsSelected"      @click="showBulkAddModal=true"  label="Bulk Add"       unelevated color="primary" class="q-ml-xs"/>
+            <q-btn v-if="showBulkEditButton" @click="showBulkEditModal=true" label="Bulk Edit"      unelevated color="primary"/>
+            <q-btn v-if="showInvoiceButton"  @click="showInvoiceModal=true"  label="Create Invoice" unelevated color="primary"/>
+         </div> 
          <div style="height: 75px"/>
 		</div>
-
+ 
 		<!-- 2 modals - don't want a race condition updating type  -->
 		<q-dialog v-model="showAddModal">	
 			<item-add-edit type="add" :dropId="dropId" @close="showAddModal=false" />
@@ -49,6 +42,9 @@
 		</q-dialog>
       <q-dialog v-model="showBulkAddModal">	
 			<item-bulk-add :dropId="dropId" />
+		</q-dialog>
+      <q-dialog v-model="showBulkEditModal">	
+			<item-bulk-edit :items="selectedRowItems" @close="showBulkEditModal=false" />
 		</q-dialog>
       <q-dialog v-model="showInvoiceModal">	
 			<invoice-add-edit type="create" :items="selectedRowItems" @close="showInvoiceModal=false" />
@@ -69,6 +65,7 @@
 				showAddModal: false,
             showEditModal: false,
             showBulkAddModal: false,
+            showBulkEditModal: false,
             showInvoiceModal: false,
 				itemIdToEdit: '',
             tableDataFilter: '',
@@ -116,6 +113,14 @@
             }
 
             return true
+         },
+         showBulkEditButton() { 
+            if (this.selectedRowItems.length < 2) { return false } 
+            for (var rowItem of this.selectedRowItems) {
+               if (rowItem.status != ItemStatus.SETUP && rowItem.status != ItemStatus.AVAILABLE) { return false }
+            }
+
+            return true
          }
 		},
 		methods: {
@@ -135,8 +140,9 @@
 			}
 		},
 		components: {
-			'item-add-edit' : require('components/Item/ItemAddEdit.vue').default,
-      	'item-bulk-add' : require('components/Item/ItemBulkAdd.vue').default,
+			'item-add-edit'    : require('components/Item/ItemAddEdit.vue').default,
+      	'item-bulk-add'    : require('components/Item/ItemBulkAdd.vue').default,
+      	'item-bulk-edit'   : require('components/Item/ItemBulkEdit.vue').default,
       	'invoice-add-edit' : require('components/Invoice/InvoiceAddEdit.vue').default
       },
       created() {

@@ -30,6 +30,12 @@ const actions = {
       collection().doc(item.id).set(item)
    }),
    setItem: firestoreAction((context, item) => { collection().doc(item.id).set(item) }),
+   updateItems: firestoreAction((context, itemUpdates) => { 
+      // todo - research batching - no big deal right now - will only be 5-25 items
+      itemUpdates.forEach(update => {
+         collection().doc(update.id).update(update)
+      })
+   }),
    updateItem: firestoreAction((context, item) => { collection().doc(item.id).update(item) }),
    deleteItem: firestoreAction((context, id) => { collection().doc(id).delete() }),
 }

@@ -2,8 +2,15 @@
 	<q-card-actions class="q-my-none q-px-xs q-pb-xs q-pt-none" :class="blue">
 		<span v-if="isAvailable" class="col">
 			<span v-if="loggedIn" class="col">
-				<q-btn v-if="isBid"      @click="promptToBid()" :label="itemSaleType" color="primary" :size="buttonSize" dense/>
-				<q-btn v-else-if="isBuy" @click="promptToBuy()" :label="itemSaleType" color="primary" :size="buttonSize" dense/>
+            <span v-if="dropIsActive" class="col">
+               <q-btn v-if="isBid"  @click="showBidModal=true" :label="itemSaleType" color="primary" :size="buttonSize" dense/>
+               <q-btn v-else-if="isBuy" @click="promptToBuy()" :label="itemSaleType" color="primary" :size="buttonSize" dense/>
+			   </span>
+            <span v-else class="col">
+               <!-- admin is viewing before drop in live -->
+               <q-btn v-if="isBid"      :label="itemSaleType" disable color="primary" :size="buttonSize" dense/>
+               <q-btn v-else-if="isBuy" :label="itemSaleType" disable color="primary" :size="buttonSize" dense/>
+			   </span>
 			</span>
 			<span v-else class="col">
 				<q-btn @click="login()" :label="'Login to ' + itemSaleType" color="primary" :size="buttonSize" dense/>
@@ -17,6 +24,9 @@
 		</span>
 		<q-dialog v-model="showEditModal">
 			<item-add-edit type="edit" :item ="item" @close="showEditModal=false" />
+		</q-dialog>
+      <q-dialog v-model="showBidModal">
+			<item-bid :item ="item" @close="showBidModal=false" />
 		</q-dialog>
 	</q-card-actions>
 </template>
@@ -33,8 +43,8 @@
 		props: ['item', 'displayType'], 
 		data() {
 			return {
-				showEditModal: false,
-				timerSeconds: 0
+            showEditModal: false,
+            showBidModal: false,
 			}
 		},
 		computed: {
@@ -53,6 +63,7 @@
          user() { return this.getUser(this.userId)},
          userIsAdmin() { return this.user && this.user.isAdmin },
 			isAvailable() { return this.item.status == ItemStatus.AVAILABLE || this.item.status == ItemStatus.DROPPING },
+			dropIsActive() { return this.drop.status == DropStatus.LIVE || this.drop.status == DropStatus.DROPPED },
 			isBid() { return this.itemSaleType == SaleType.BID && this.item.startPrice },
 			isBuy() { return this.itemSaleType == SaleType.BUY && this.item.startPrice },	
       	showIcons() { return this.loggedIn && this.displayType == ItemDisplayType.FULL },		
@@ -62,15 +73,15 @@
 			...mapActions('action', ['submitBid', 'submitPurchaseRequest']),
 			...mapActions('user', ['setLikes']),
          login() { this.$router.push("/auth/login") },
-         promptToBid() {
-				let bidAmount = this.item.buyPrice ? this.item.buyPrice + 25 : this.item.startPrice
-				this.$q.dialog({title: 'Confirm', message: 'Bid ' + dollars(bidAmount) + ' on ' + this.item.name + '?', persistent: true,			
-	        		ok: { push: true }, cancel: { push: true, color: 'grey' }
-				}).onOk(() => {
-					this.submitBid(
-                  { itemId: this.item.id, itemName: this.item.name, userId: this.userId, amount: bidAmount }) 
-				})
-			},
+         // promptToBid() {
+			// 	let bidAmount = this.item.buyPrice ? this.item.buyPrice + 25 : this.item.startPrice
+			// 	this.$q.dialog({title: 'Confirm', message: 'Bid ' + dollars(bidAmount) + ' on ' + this.item.name + '?', persistent: true,			
+	      //   		ok: { push: true }, cancel: { push: true, color: 'grey' }
+			// 	}).onOk(() => {
+			// 		this.submitBid(
+         //          { itemId: this.item.id, itemName: this.item.name, userId: this.userId, amount: bidAmount }) 
+			// 	})
+			// },
 			promptToBuy() {
 				this.$q.dialog({title: 'Confirm', message: 'Buy ' + this.item.name + ' for ' + dollars(this.item.startPrice) + '?', persistent: true,			
 	        		ok: { push: true }, cancel: { push: true, color: 'grey' }
@@ -95,7 +106,8 @@
 			formatPrice(priceObj) { return "$" + priceObj + (String(priceObj).includes(".") ? "" : ".00") }
 		},	
 		components: {
-			'item-add-edit' : require('components/Item/ItemAddEdit.vue').default
+			'item-add-edit' : require('components/Item/ItemAddEdit.vue').default,
+			'item-bid' : require('components/Item/ItemBid.vue').default
 		},
 	}
 

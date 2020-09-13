@@ -1,6 +1,7 @@
 
 export const ActionResultType = {
    HIGH_BID:     'High Bid',
+   INCREASED:    'Increased',
    OUTBID:       'Outbid',
    PURCHASED:    'Purchased',
    ALREADY_SOLD: 'Already Sold',
@@ -14,6 +15,7 @@ export const ActionStatus = {
 export const ActionType = {
    BID:          'Bid',
    PURCHASE_REQ: 'Purchase Request',
+   WINNING_BID:  'Winning Bid',
 }
 
 export const DropStatus = {
@@ -51,12 +53,12 @@ export const ItemDisplayType = {
 }
 
 export const ItemStatus = {
-   PREVIEW: 'Preview',
+   SETUP:     'Setup',
    AVAILABLE: 'Available',
-   DROPPING: 'Dropping',
-   HOLD: 'On Hold',
+   DROPPING:  'Dropping',
+   HOLD:      'On Hold',
    INVOICED:  'Invoiced',
-   SOLD: 'Sold',
+   SOLD:      'Sold',
 }
 
 export const Route = {

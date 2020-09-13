@@ -13,12 +13,10 @@
 	export default {
       props: ['row', 'col'],
 		methods: {
-         hasTrackingLink(row) {  
-            console.log("hasTrackingLink", row)
-            return (row.tracking && row.tracking.length > 5 && row.carrier == "USPS Priority")
+         hasTrackingLink(row) { 
+            return (row.tracking && row.tracking.length > 5 && row.carrier == "USPS Priority") 
          },  
          getTrackingLink(row) {  
-            console.log("hasTrackingLink", row)
             if (row.carrier = "USPS Priority") { return "https://tools.usps.com/go/TrackConfirmAction?tLabels=" + row.tracking }
             else { return ""}
          },                     
