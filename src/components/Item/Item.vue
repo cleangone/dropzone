@@ -94,7 +94,10 @@
 			isBuy() { return this.itemSaleType == SaleType.BUY },			
 			numberOfBids() { return this.item.bids ? Object.keys(this.item.bids).length : 0 },
 			currPrice() { return dollars(this.item.buyPrice > this.item.startPrice ? this.item.buyPrice : this.item.startPrice) },
-			priceText() { return this.buildPriceText("Price: ") },
+			priceText() { 
+            const prefix = this.item.status == ItemStatus.DROPPING ? "Current Bid: " : "Price: "
+            return this.buildPriceText(prefix) 
+         },
 			priceTextMini() { return this.buildPriceText("") },
 			priceTextBgColor() { 
 				if (this.isDropping && this.userIsHighBidder)  { return "bg-green" }

@@ -19,12 +19,7 @@
 		<span v-if="showIcons" class="col" align="right">
 			<q-btn v-if="isLiked" icon="favorite" @click="unlike" flat small dense/>
 			<q-btn v-else  icon="favorite_border" @click="like"   flat small dense/>
-
-			<q-btn v-if="userIsAdmin" @click="showEditModal=true" icon="edit" flat small dense/>
-		</span>
-		<q-dialog v-model="showEditModal">
-			<item-add-edit type="edit" :item ="item" @close="showEditModal=false" />
-		</q-dialog>
+      </span>
       <q-dialog v-model="showBidModal">
 			<item-bid :item ="item" @close="showBidModal=false" />
 		</q-dialog>
@@ -43,7 +38,6 @@
 		props: ['item', 'displayType'], 
 		data() {
 			return {
-            showEditModal: false,
             showBidModal: false,
 			}
 		},
@@ -73,15 +67,6 @@
 			...mapActions('action', ['submitBid', 'submitPurchaseRequest']),
 			...mapActions('user', ['setLikes']),
          login() { this.$router.push("/auth/login") },
-         // promptToBid() {
-			// 	let bidAmount = this.item.buyPrice ? this.item.buyPrice + 25 : this.item.startPrice
-			// 	this.$q.dialog({title: 'Confirm', message: 'Bid ' + dollars(bidAmount) + ' on ' + this.item.name + '?', persistent: true,			
-	      //   		ok: { push: true }, cancel: { push: true, color: 'grey' }
-			// 	}).onOk(() => {
-			// 		this.submitBid(
-         //          { itemId: this.item.id, itemName: this.item.name, userId: this.userId, amount: bidAmount }) 
-			// 	})
-			// },
 			promptToBuy() {
 				this.$q.dialog({title: 'Confirm', message: 'Buy ' + this.item.name + ' for ' + dollars(this.item.startPrice) + '?', persistent: true,			
 	        		ok: { push: true }, cancel: { push: true, color: 'grey' }
@@ -106,7 +91,6 @@
 			formatPrice(priceObj) { return "$" + priceObj + (String(priceObj).includes(".") ? "" : ".00") }
 		},	
 		components: {
-			'item-add-edit' : require('components/Item/ItemAddEdit.vue').default,
 			'item-bid' : require('components/Item/ItemBid.vue').default
 		},
 	}

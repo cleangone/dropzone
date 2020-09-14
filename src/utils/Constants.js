@@ -5,6 +5,7 @@ export const ActionResultType = {
    OUTBID:       'Outbid',
    PURCHASED:    'Purchased',
    ALREADY_SOLD: 'Already Sold',
+   WINNING_BID:  'Winning Bid',
 }
 
 export const ActionStatus = {
@@ -15,7 +16,6 @@ export const ActionStatus = {
 export const ActionType = {
    BID:          'Bid',
    PURCHASE_REQ: 'Purchase Request',
-   WINNING_BID:  'Winning Bid',
 }
 
 export const DropStatus = {
@@ -74,7 +74,6 @@ export const SaleType = {
    BID: 'Bid',
    BUY: 'Buy',
 }
-
 
 export const Colors = [ 'red', 'pink', 'orange', 'yellow', 'blue', 'green', 'indigo', 'purple' ]
 

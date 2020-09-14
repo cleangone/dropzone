@@ -1,7 +1,7 @@
 <template>
 	<q-page class="q-pa-md b-pink">
 		<a style="cursor: pointer; text-decoration: underline" v-on:click="navBack()">Back</a>
-		<q-toggle v-if="loggedIn" class="float-right" v-model="showOnlyLikedItems" icon="favorite" :label= "showLabel" />
+		<q-toggle v-if="loggedIn" class="float-right" v-model="showAvailable" :label= "showAvailable ? 'Show All': 'Show Available'"/>
 		<div v-if="drop">
 			<div class="row q-mt-sm text-h6">{{ drop.name }}</div>
 			<div v-if="showItems" class="row q-mt-sm q-gutter-sm">
@@ -21,14 +21,14 @@
 <script>
 	import { date } from 'quasar'
 	import { mapState, mapGetters, mapActions } from 'vuex'
-	import { DropStatus, ItemDisplayType } from 'src/utils/Constants.js'
+	import { DropStatus, ItemDisplayType, ItemStatus } from 'src/utils/Constants.js'
 	import { getStartDateText } from 'src/utils/DateUtils'
    
 	export default {
 		data() {
 			return {				
 				dropId: 0,
-				showOnlyLikedItems: false
+				showAvailable: false
         }
 		},
 		created() {
@@ -46,14 +46,13 @@
          isAdmin() { return this.user && this.user.isAdmin },
          items () { 
             let items = this.getItemsInDrop(this.dropId) 
-            if (!this.showOnlyLikedItems) { return items }
-            if (!this.user.likedItemIds) { return [] } // no liked items
-
-            let likedItems = []
+            if (!this.showAvailable) { return items }
+            
+            let availableItems = []
             items.forEach(item => { 
-               if (this.user.likedItemIds.includes(item.id)) { likedItems.push(item) }
+               if (item.status == ItemStatus.AVAILABLE || item.status == ItemStatus.DROPPING) { availableItems.push(item) }
 		      })
-				return likedItems
+				return availableItems
          },
          showItems() { 
             const showItems = 
@@ -64,7 +63,6 @@
             return showItems 
          },
 			startDateText() { return getStartDateText(this.drop.startDate) },
-			showLabel() { return this.showOnlyLikedItems ? "Show liked": "Show all" }
 		},
 		methods: {
 			navBack() { this.$router.go(-1) },

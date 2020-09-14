@@ -3,13 +3,14 @@
 	  <div class="q-pa-sm absolute full-width full-height">
 			<q-table title="Bids/Purchases" :data="actions" :columns="columns" :visible-columns="visibleColumns" 
             row-key="name" :filter="tableDataFilter" :pagination.sync="pagination"
-				no-data-label="No Bids or Purchases" no-results-label="No Bids or Purchases matching Search criteria"
+				no-data-label="No Bids or Purchases" 
+            no-results-label="No Bids or Purchases matching Search criteria"
 				:dense="$q.screen.lt.md" class="q-mb-sm">
 				<template v-slot:top-right>
 					<q-input borderless dense debounce="300" v-model="tableDataFilter" placeholder="Search">
 						<template v-slot:append><q-icon name="search"/></template>
 					</q-input>
-               <q-checkbox v-model="showOutbid" label="Show Outbid" class="text-grey-7"/>
+               <q-checkbox v-model="showOnlyWins" label="Show only Wins/Purchases" class="text-grey-7"/>
             </template>
             <q-td slot="body-cell-name" slot-scope="props" :props="props"> 
                <a :href="'/#/item/' + props.row.itemId">{{ props.row.itemName }}</a>
@@ -22,13 +23,13 @@
 <script>
 	import { date } from 'quasar'
    import { mapGetters, mapActions } from 'vuex'
-   import { ActionResultType } from 'src/utils/Constants.js'
+   import { ActionType, ActionResultType } from 'src/utils/Constants.js'
    import { dollars } from 'src/utils/Utils'
 
 	export default {
 		data() {
 	  		return {
-            showOutbid: true,
+            showOnlyWins: false,
 				tableDataFilter: '',
 				visibleColumns: [ 'name', 'action', 'amount', 'result', 'date'],
  				columns: [
@@ -48,7 +49,8 @@
          actions() { 
             let displayActions = []
             this.userActions.forEach(action => { 
-               if (this.showOutbid || action.actionResult != ActionResultType.OUTBID ) { displayActions.push(Object.assign({}, action)) }
+               if (!this.showOnlyWins || isWinningBid(action) || isPurchased(action)) { 
+                  displayActions.push(Object.assign({}, action)) }
             })
             return displayActions
          },
@@ -57,11 +59,13 @@
          ...mapActions('action', ['bindActions']),
       },
       created() {
-         // console.log("ActionsPage")
          if (!this.actionsExist) { this.bindActions() }
       }
 	}
 
+   function isPurchased(action)  { return action.actionResult == ActionResultType.PURCHASED }
+   function isWinningBid(action) { return action.actionResult == ActionResultType.WINNING_BID }
+   
    function formatDate(dateToFormat) {
       if (!dateToFormat) { return "" }
 
