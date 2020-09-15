@@ -7,10 +7,7 @@
 			</q-img>
 		</router-link>
 		<q-card-section class="q-px-xs q-py-md" :class="purple">
-			<div v-if="isComingSoon" class="text-bold">
-            Coming Soon
-			</div>
-         <div v-else-if="isPreDrop">
+         <div v-if="isPreDrop">
 				<span class="text-bold">Drops: {{ startDateText }}</span>
 			</div>
 			<div v-else class="text-green text-bold">Drop is LIVE</div>
@@ -29,8 +26,7 @@
 		props: ['drop'],
 		computed: {
          ...mapGetters('color', Colors),
-         isComingSoon() { return Drop.isSetup(this.drop) || Drop.isSchedule(this.drop) },
-         isPreDrop() { return Drop.isScheduled(this.drop) || Drop.isStartCountdown(this.drop) || Drop.isCountdown(this.drop) },
+         isPreDrop() { return !Drop.isActive(this.drop) },
          isCountdown() { return Drop.isCountdown(this.drop) },
 			dropPageRoute() { return Route.DROP },
          startDateText() { return getStartDateText(this.drop.startDate) }
