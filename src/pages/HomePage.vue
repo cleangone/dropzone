@@ -4,11 +4,6 @@
 			<div v-if="dropsExist" class=" q-gutter-y-lg" :class="blue"> 
 				<drop v-for="(drop, key) in getDrops" :key="key" :drop="drop"  />
 			</div>
-			<!-- <div v-else>
-				<span class="absolute-center">
-					<q-spinner color="primary" size="3em" :thickness="2" />
-				</span>
-			</div> -->
 		</div> 
 		<div v-if="activeDropsExist" class="col q-mt-none" :class="indigo">
 			<live-drops-board/>

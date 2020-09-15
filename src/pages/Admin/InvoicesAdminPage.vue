@@ -78,10 +78,7 @@
 		computed: {
          ...mapGetters('invoice', ['invoicesExist', 'getInvoices', 'getInvoice']),
          invoiceToEdit() { return this.getInvoice(this.invoiceIdToEdit) },
-         invoices() {
-            let invs = this.getInvoices
-            return invs
-         },
+         invoices() {return this.getInvoices },
       },
 		methods: {
          ...mapActions('invoice', ['bindInvoices', 'deleteInvoice']),

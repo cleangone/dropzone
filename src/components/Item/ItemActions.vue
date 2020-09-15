@@ -29,7 +29,8 @@
 <script>
 	import { date } from 'quasar'
 	import { mapGetters, mapActions } from 'vuex'
-   import { DropStatus, ItemDisplayType, ItemStatus, SaleType, Colors } from 'src/utils/Constants.js';
+   import { ItemDisplayType, ItemStatus, SaleType, Colors } from 'src/utils/Constants.js';
+   import { Drop } from 'src/models/Drop.js';
    import { dollars } from 'src/utils/Utils'
    
 	var timeouts = {};
@@ -50,14 +51,14 @@
 			drop() { return this.getDrop(this.item.dropId) },
          itemSaleType() {    
             let itemSaleType = (this.item.saleType == SaleType.DEFAULT ? this.drop.defaultSaleType : this.item.saleType)
-            if (this.drop.status == DropStatus.DROPPED) { itemSaleType = SaleType.BUY }
+            if (Drop.isDropped(this.drop)) { itemSaleType = SaleType.BUY }
             return itemSaleType
          },
          buttonSize() { return this.displayType == ItemDisplayType.FULL ? "md" : "sm"  },        
          user() { return this.getUser(this.userId)},
          userIsAdmin() { return this.user && this.user.isAdmin },
 			isAvailable() { return this.item.status == ItemStatus.AVAILABLE || this.item.status == ItemStatus.DROPPING },
-			dropIsActive() { return this.drop.status == DropStatus.LIVE || this.drop.status == DropStatus.DROPPED },
+         dropIsActive() { return Drop.isLive(this.drop) || Drop.isDropped(this.drop) },
 			isBid() { return this.itemSaleType == SaleType.BID && this.item.startPrice },
 			isBuy() { return this.itemSaleType == SaleType.BUY && this.item.startPrice },	
       	showIcons() { return this.loggedIn && this.displayType == ItemDisplayType.FULL },		

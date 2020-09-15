@@ -52,7 +52,7 @@ const getters = {
    getInvoices: state => { 
       let invoices = []
       for (var invoice of state.invoices) {
-         if (invoice.id != "0") { invoices.push(invoice) }
+         if (invoice.id != "0") { invoices.push((Object.assign({}, invoice))) }
       }
 
       return invoices
@@ -60,7 +60,7 @@ const getters = {
    getUserInvoices: state => userId => {
       let userInvoices = []
       for (var invoice of state.invoices) {
-         if (invoice.userId == userId) { userInvoices.push(invoice) }
+         if (invoice.userId == userId) { userInvoices.push(Object.assign({}, invoice)) }
       }
 
       return userInvoices

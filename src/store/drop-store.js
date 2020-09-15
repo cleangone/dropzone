@@ -1,8 +1,8 @@
 import { firestoreAction } from 'vuexfire'
 import { firestore } from 'boot/firebase'
 import { uid } from 'quasar'
-import { DropStatus } from 'src/utils/Constants.js'
-
+import { Drop } from 'src/models/Drop.js';
+   
 /*
    drop:
       id
@@ -53,17 +53,19 @@ const getters = {
       if (!state.drops) { return false } 
       
       for (var drop of state.drops) {
-         if (drop.status == DropStatus.LIVE || drop.status == DropStatus.DROPPED) { return true }
+         if (Drop.isLive(drop) || Drop.isDropped(drop)) { return true }
       }
 
       return false
    },
    getDrops: state => { 
-      // const sortedNotes = []
-      // Object.assign(sortedNotes, state.notes)
-      // sortedNotes.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : -1)
-      
-      return state.drops
+      // return state.drops
+      // console.log("getDrops")
+      const drops = [...state.drops];
+      // console.log("drops", drops)
+      drops.sort((a, b) => (a.startDate < b.startDate) ? -1 : 1)
+      // console.log("sorted drops", drops)
+      return drops
    },
    getDrop: state => dropId => {
       for (var drop of state.drops) {
@@ -77,7 +79,7 @@ const getters = {
       if (!state.drops) { return dropIds } 
    
       for (var drop of state.drops) {
-         if (drop.status == DropStatus.LIVE || drop.status == DropStatus.DROPPED) { dropIds.push(drop.id) }
+         if (Drop.isLive(drop) || Drop.isDropped(drop)) { dropIds.push(drop.id) }
       }
 
       return dropIds

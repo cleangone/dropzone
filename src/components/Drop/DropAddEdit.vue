@@ -56,7 +56,8 @@
 	import { date } from 'quasar'
 	import { mapState, mapActions } from 'vuex'
 	import QFirebaseUploader from 'components/QFirebaseUploader.js'
-   import { SaleType, DropStatus } from 'src/utils/Constants.js'
+   import { SaleType } from 'src/utils/Constants.js'
+   import { DropStatus, Drop } from 'src/models/Drop.js'
    import { localTimezone } from 'src/utils/DateUtils';
 
 	export default {
@@ -66,7 +67,7 @@
 				dropToSubmit: {
 					name: '',
 					startDate: null,
-					status: DropStatus.PREDROP,
+					status: DropStatus.SETUP,
 					bidAdditionalTime: 60,
 					defaultSaleType: '',
 					imageUrl: ''
@@ -75,7 +76,7 @@
             startTime: '09:00',
             timezone: localTimezone(),
             uploaderDisplayed: false,
-            statusOptions: [ DropStatus.SETUP, DropStatus.SCHEDULE, DropStatus.STARTUP, DropStatus.LIVE, DropStatus.DROPPED ],
+            statusOptions: [ DropStatus.SETUP, DropStatus.SCHEDULE, DropStatus.START_COUNTDOWN, DropStatus.LIVE, DropStatus.DROPPED ],
             saleTypeOptions: [ SaleType.BID, SaleType.BUY ]
 			}
 		},
@@ -100,7 +101,14 @@
             this.dropToSubmit.startDate = new Date(formattedStartDate)
             
 				if (this.type == 'add') { this.createDrop(this.dropToSubmit) }
-				else { this.setDrop(this.dropToSubmit) }
+				else { 
+               // todo - also have to figure out if drop was scheduled and date has changed
+               // does updating a scheduled drop auto reschedule it?
+               if (Drop.isSetup(this.dropToSubmit) || Drop.isStartCountdown(this.dropToSubmit) || Drop.isLive(this.dropToSubmit)) {
+                  // stop any existing queued task from starting countdown
+                  this.dropToSubmit.cloudTaskId = "0" 
+               }
+               this.setDrop(this.dropToSubmit) }
 			},
 			uploadCompleted(emit) {
 				console.log("uploadCompleted", emit)
@@ -138,6 +146,4 @@
 		border-radius: 10px;
 	}
 	.form-card .q-img__image { background-size: cover !important; }
-	.form-card .q-rating__icon { opacity: 0.2; }
-	.form-card .q-rating__icon--active { opacity: 1; }
 </style>

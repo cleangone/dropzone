@@ -27,8 +27,8 @@
          <div class="q-mt-md"> 
 			   <q-btn v-if="!rowsSelected"      @click="showAddModal=true"      icon="add"             unelevated color="primary"/>
             <q-btn v-if="!rowsSelected"      @click="showBulkAddModal=true"  label="Bulk Add"       unelevated color="primary" class="q-ml-xs"/>
+            <q-btn v-if="showInvoiceButton"  @click="showInvoiceModal=true"  label="Create Invoice" unelevated color="primary" class="q-mr-xs"/>
             <q-btn v-if="showBulkEditButton" @click="showBulkEditModal=true" label="Bulk Edit"      unelevated color="primary"/>
-            <q-btn v-if="showInvoiceButton"  @click="showInvoiceModal=true"  label="Create Invoice" unelevated color="primary"/>
          </div> 
          <div style="height: 75px"/>
 		</div>
@@ -117,7 +117,7 @@
          showBulkEditButton() { 
             if (this.selectedRowItems.length < 2) { return false } 
             for (var rowItem of this.selectedRowItems) {
-               if (rowItem.status != ItemStatus.SETUP && rowItem.status != ItemStatus.AVAILABLE) { return false }
+               if (!(rowItem.status == ItemStatus.SETUP || rowItem.status == ItemStatus.AVAILABLE || rowItem.status == ItemStatus.HOLD)) { return false }
             }
 
             return true

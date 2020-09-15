@@ -9,7 +9,7 @@
 
 <script>
 	import { mapState, mapGetters, mapActions } from 'vuex'
-	import { DropStatus, ItemDisplayType } from 'src/utils/Constants.js';
+	import { ItemDisplayType } from 'src/utils/Constants.js';
 	
 	export default {
 		data() {

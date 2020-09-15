@@ -65,23 +65,7 @@
 		computed: {
          ...mapGetters('auth', ['userId']),
          ...mapGetters('invoice', ['invoicesExist', 'getUserInvoices', 'getInvoice']),
-         invoices() { 
-            let invoices = this.getUserInvoices(this.userId) 
-            let dispInvoices = []
-            invoices.forEach(invoice => { 
-               let dispInvoice = Object.assign({}, invoice)
-               if (invoice.status = InvoiceStatus.SHIPPED) {
-                  dispInvoice.carrierTracking = 
-                     invoice.carrier || invoice.tracking ? 
-                     (invoice.carrier ? invoice.carrier : "") + 
-                        (invoice.carrier && invoice.tracking ? " - " : "") + 
-                        (invoice.tracking ? invoice.tracking : "") : 
-                     ""
-               }
-               dispInvoices.push(dispInvoice)
-            })
-            return dispInvoices
-         },
+         invoices() { return this.getUserInvoices(this.userId) },
       },
 		methods: {
          ...mapActions('invoice', ['bindInvoices', 'deleteInvoice']),

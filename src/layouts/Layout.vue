@@ -32,7 +32,7 @@
         <div v-if="loggedIn">
             <layout-item path="/account"   label="My Account" iconName="account_circle"/>
             <layout-item path="/favorites" label="Favorites"  iconName="favorite"/>    
-            <layout-item path="/actions"   label="History"    iconName="monetization_on"/>           
+            <layout-item path="/actions"   label="History"    iconName="history"/>           
             <layout-item path="/invoices"  label="Invoices"   iconName="shopping_cart"/>           
         </div>
 

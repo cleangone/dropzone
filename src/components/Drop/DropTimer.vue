@@ -4,7 +4,7 @@
        <span v-else>{{ timerSeconds }}</span>
    </div>
    <div v-else class="absolute-bottom text-h6">
-      {{ drop.name }} - {{ timerSeconds }}
+      {{ drop.name }} :{{ timerSeconds }}
    </div>
 </template>
 

@@ -7,9 +7,11 @@
 			</q-img>
 		</router-link>
 		<q-card-section class="q-px-xs q-py-md" :class="purple">
-			<div v-if="isPreDrop">
-				<span class="text-bold">Drops:</span>
-				<span> {{ startDateText }}</span>
+			<div v-if="isComingSoon" class="text-bold">
+            Coming Soon
+			</div>
+         <div v-else-if="isPreDrop">
+				<span class="text-bold">Drops: {{ startDateText }}</span>
 			</div>
 			<div v-else class="text-green text-bold">Drop is LIVE</div>
 		</q-card-section>		
@@ -19,15 +21,17 @@
 <script>
    import { date } from 'quasar'
 	import { mapGetters } from 'vuex'
-	import { Route, DropStatus, Colors } from 'src/utils/Constants.js';
+	import { Route, Colors } from 'src/utils/Constants.js';
+   import { Drop } from 'src/models/Drop.js';
    import { getStartDateText } from 'src/utils/DateUtils'
    
 	export default {
 		props: ['drop'],
 		computed: {
          ...mapGetters('color', Colors),
-			isCountdown() { return this.drop.status == DropStatus.COUNTDOWN},
-			isPreDrop() { return this.drop.status != DropStatus.LIVE && this.drop.status != DropStatus.DROPPED },
+         isComingSoon() { return Drop.isSetup(this.drop) || Drop.isSchedule(this.drop) },
+         isPreDrop() { return Drop.isScheduled(this.drop) || Drop.isStartCountdown(this.drop) || Drop.isCountdown(this.drop) },
+         isCountdown() { return Drop.isCountdown(this.drop) },
 			dropPageRoute() { return Route.DROP },
          startDateText() { return getStartDateText(this.drop.startDate) }
       },

@@ -18,16 +18,6 @@ export const ActionType = {
    PURCHASE_REQ: 'Purchase Request',
 }
 
-export const DropStatus = {
-   SETUP:     'Setup',
-   SCHEDULE:  'Schedule',
-   SCHEDULED: 'Scheduled',
-   STARTUP:   'Start Countdown',
-   COUNTDOWN: 'Countdown',
-   LIVE:      'Live',
-   DROPPED:   'Dropped'
-}
-
 export const EmailFields = {
    PURCHASE_SUCCESS: 'emailPurchaseSuccess',
    PURCHASE_FAIL:    'emailPurchaseFail',

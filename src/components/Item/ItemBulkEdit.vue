@@ -41,6 +41,20 @@
                   let update = { id: item.id }
                   if (this.status.length) { update.status = this.status }
                   if (this.saleType.length) { update.saleType = this.saleType }
+
+                  if (update.status == ItemStatus.AVAILABLE) { 
+                     update.buyPrice = 0 
+                     update.bidderIds = []
+                     update.currBidderId = ''
+                     update.currBidAmount = 0
+                     update.currActionId = ''
+                     update.numberOfBids = 0
+                     update.buyerId = ''
+                     update.buyerName = ''
+                     update.dropDoneDate = 0 
+                     update.lastUserActivityDate = 0 
+                  }
+                  // console.log("Bulk update", update)
                   itemUpdates.push(update)
                })
  
