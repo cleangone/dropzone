@@ -18,16 +18,16 @@
 <script>
    import { date } from 'quasar'
 	import { mapGetters } from 'vuex'
-	import { Route, Colors } from 'src/utils/Constants.js';
-   import { Drop } from 'src/models/Drop.js';
+	import { Route, Colors } from 'src/utils/Constants.js'
+   import { DropMgr } from 'src/managers/DropMgr.js'
    import { getStartDateText } from 'src/utils/DateUtils'
    
 	export default {
 		props: ['drop'],
 		computed: {
          ...mapGetters('color', Colors),
-         isPreDrop() { return !Drop.isActive(this.drop) },
-         isCountdown() { return Drop.isCountdown(this.drop) },
+         isPreDrop() { return !DropMgr.isActive(this.drop) },
+         isCountdown() { return DropMgr.isCountdown(this.drop) },
 			dropPageRoute() { return Route.DROP },
          startDateText() { return getStartDateText(this.drop.startDate) }
       },

@@ -47,8 +47,10 @@
 	import { mapGetters, mapActions } from 'vuex'
 	import QFirebaseUploader from 'components/QFirebaseUploader.js'
    import { SaleType, ItemStatus, Colors } from 'src/utils/Constants.js'
-   import { Tag, TagCategory } from 'src/models/Tag.js'
+   import { TagMgr, TagCategory } from 'src/managers/TagMgr.js'
    
+   const NONE = "(none)"
+
 	export default {
       props: [
          'type', 
@@ -76,12 +78,19 @@
       computed: {
          ...mapGetters('tag', ['getTags']),
          ...mapGetters('color', Colors),
+         artistMap() { 
+            let map = new Map()
+            for (var tag of this.getTags(TagCategory.ARTIST) ) {
+               map.set(tag.name, tag)
+            }
+            return map
+         },
          artistOptions() {
-            let artists = []
-            let tags = this.getTags(TagCategory.ARTIST)
-            tags.forEach(tag => { artists.push(tag.id) })
-            artists.push("")
-            return artists
+            let options = [NONE]
+            for (var name of this.artistMap.keys() ) {
+               options.push(name)
+            }
+            return options
          }
       },
 		methods: {
@@ -104,7 +113,11 @@
 						this.itemToSubmit.lastUserActivityDate = 0 
                }
 
-               Tag.setArtist(this.itemToSubmit, this.artist)
+               if (this.artist) {
+                  const tag = this.artist == NONE ? { id:"", name: "", category: TagCategory.ARTIST } : this.artistMap.get(this.artist)
+                  TagMgr.setTag(this.itemToSubmit, tag) 
+               }
+               
                this.persistItem()
                this.$emit('close')
 				}
@@ -128,8 +141,11 @@
          setTimeout(() => {    
             if (this.type == 'edit') { 
                this.itemToSubmit = Object.assign({}, this.item) 
-               if (this.itemToSubmit.tags) { this.itemToSubmit.tags = {...this.item.tags} }
-               this.artist = Tag.artist(this.itemToSubmit)
+
+               // copy maps to make vuex happy
+               if (this.itemToSubmit.tagIds) { this.itemToSubmit.tagIds = {...this.item.tagIds} }
+               if (this.itemToSubmit.tagNames) { this.itemToSubmit.tagNames = {...this.item.tagNames} }
+               this.artist = TagMgr.artist(this.itemToSubmit)
             }
             else { this.itemToSubmit.dropId = this.dropId }
          }, 100)  

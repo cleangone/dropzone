@@ -22,7 +22,8 @@
 	import { date } from 'quasar'
 	import { mapState, mapGetters, mapActions } from 'vuex'
    import { ItemDisplayType, ItemStatus } from 'src/utils/Constants.js'
-   import { Drop } from 'src/models/Drop.js';
+   import { DropMgr } from 'src/managers/DropMgr.js';
+   
 	import { getStartDateText } from 'src/utils/DateUtils'
    
 	export default {
@@ -42,7 +43,7 @@
 			...mapGetters('item', ['getItemsInDrop']),
 			thumb() { return ItemDisplayType.THUMB },
          drop() { return this.getDrop(this.dropId) },
-         isCountdown() { return Drop.isCountdown(this.drop) },
+         isCountdown() { return DropMgr.isCountdown(this.drop) },
          user() { return this.getUser(this.userId) },
          isAdmin() { return this.user && this.user.isAdmin },
          items () { 
@@ -56,9 +57,9 @@
 				return availableItems
          },
          showItems() { 
-            return (this.isAdmin && Drop.isSetup(this.drop) || Drop.isLive(this.drop) || Drop.isDropped(this.drop) )
+            return (this.isAdmin && DropMgr.isSetup(this.drop) || DropMgr.isLive(this.drop) || DropMgr.isDropped(this.drop) )
          },
-			startDateText() { return getStartDateText(this.drop.startDate) },
+			startDateText() { return getStartDateText(this.DropMgr.startDate) },
 		},
 		methods: {
 			navBack() { this.$router.go(-1) },

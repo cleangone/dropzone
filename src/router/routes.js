@@ -18,9 +18,11 @@ const routes = [
       { path: '/admin/drops',         component: () => import('pages/Admin/DropsAdminPage.vue') },      
       { path: '/admin/items/:dropId', component: () => import('pages/Admin/ItemsAdminPage.vue') },      
       { path: '/admin/bids/:itemId',  component: () => import('pages/Admin/BidsAdminPage.vue') },    
-      { path: '/admin/invoices',      component: () => import('pages/Admin/InvoicesAdminPage.vue') },  
-      { path: '/admin/settings',      component: () => import('pages/Admin/SettingsPage.vue') },  
       { path: '/admin/users',         component: () => import('pages/Admin/UsersAdminPage.vue') },  
+      { path: '/admin/invoices',      component: () => import('pages/Admin/InvoicesAdminPage.vue') },  
+      { path: '/admin/artists',       component: () => import('pages/Admin/ArtistsAdminPage.vue') },  
+      { path: '/admin/settings',      component: () => import('pages/Admin/SettingsPage.vue') },  
+      
    ]
   }
 ]

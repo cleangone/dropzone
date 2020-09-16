@@ -62,7 +62,7 @@
 	import { date } from 'quasar'
    import { mapGetters, mapActions } from 'vuex'
    import { ItemStatus } from 'src/utils/Constants.js'
-   import { Tag } from 'src/models/Tag.js'
+   import { TagMgr } from 'src/managers/TagMgr.js'
    import { dollars } from 'src/utils/Utils'
 	
 	export default {
@@ -142,7 +142,7 @@
             if (row.buyPrice && (row.buyPrice != row.startPrice)) { text += ("/" + dollars(row.buyPrice))}
             return text 
          },
-         artist(row) { return Tag.artist(row) },
+         artist(row) { return TagMgr.artist(row) },
          userName(userId) { return this.userIdToName.get(userId) },
 			promptToDeleteItem(itemId, name) {
 				this.$q.dialog({title: 'Confirm', message: 'Delete ' + name + '?', persistent: true,			

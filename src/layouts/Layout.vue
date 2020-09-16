@@ -41,8 +41,8 @@
             <layout-item path="/admin/drops"    label="Drop Admin" iconName="get_app"/>
             <layout-item path="/admin/users"    label="User Admin" iconName="group"/>
             <layout-item path="/admin/invoices" label="Invoices"   iconName="shopping_cart"/>
+            <layout-item path="/admin/artists"  label="Artists"    iconName="brush"/>
             <layout-item path="/admin/settings" label="Settings"   iconName="settings"/>
-            
         </div>
       </q-list>
     </q-drawer>

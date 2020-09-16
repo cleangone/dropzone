@@ -1,7 +1,7 @@
 import { firestoreAction } from 'vuexfire'
 import { firestore } from 'boot/firebase'
 import { uid } from 'quasar'
-import { Drop } from 'src/models/Drop.js';
+import { DropMgr } from 'src/managers/DropMgr.js';
    
 /*
    drop:
@@ -53,7 +53,7 @@ const getters = {
       if (!state.drops) { return false } 
       
       for (var drop of state.drops) {
-         if (Drop.isLive(drop) || Drop.isDropped(drop)) { return true }
+         if (DropMgr.isLive(drop) || DropMgr.isDropped(drop)) { return true }
       }
 
       return false
@@ -75,7 +75,7 @@ const getters = {
       if (!state.drops) { return dropIds } 
    
       for (var drop of state.drops) {
-         if (Drop.isLive(drop) || Drop.isDropped(drop)) { dropIds.push(drop.id) }
+         if (DropMgr.isLive(drop) || DropMgr.isDropped(drop)) { dropIds.push(drop.id) }
       }
 
       return dropIds

@@ -16,10 +16,6 @@
 				<q-btn @click="login()" :label="'Login to ' + itemSaleType" color="primary" :size="buttonSize" dense/>
 			</span>
 		</span>
-		<span v-if="showIcons" class="col" align="right">
-			<q-btn v-if="isLiked" icon="favorite" @click="unlike" flat small dense/>
-			<q-btn v-else  icon="favorite_border" @click="like"   flat small dense/>
-      </span>
       <q-dialog v-model="showBidModal">
 			<item-bid :item ="item" @close="showBidModal=false" />
 		</q-dialog>
@@ -30,7 +26,7 @@
 	import { date } from 'quasar'
 	import { mapGetters, mapActions } from 'vuex'
    import { ItemDisplayType, ItemStatus, SaleType, Colors } from 'src/utils/Constants.js';
-   import { Drop } from 'src/models/Drop.js';
+   import { DropMgr } from 'src/managers/DropMgr.js';
    import { dollars } from 'src/utils/Utils'
    
 	var timeouts = {};
@@ -51,23 +47,20 @@
 			drop() { return this.getDrop(this.item.dropId) },
          itemSaleType() {    
             let itemSaleType = (this.item.saleType == SaleType.DEFAULT ? this.drop.defaultSaleType : this.item.saleType)
-            if (Drop.isDropped(this.drop)) { itemSaleType = SaleType.BUY }
+            if (DropMgr.isDropped(this.drop)) { itemSaleType = SaleType.BUY }
             return itemSaleType
          },
          buttonSize() { return this.displayType == ItemDisplayType.FULL ? "md" : "sm"  },        
          user() { return this.getUser(this.userId)},
          userIsAdmin() { return this.user && this.user.isAdmin },
 			isAvailable() { return this.item.status == ItemStatus.AVAILABLE || this.item.status == ItemStatus.DROPPING },
-         dropIsActive() { return Drop.isLive(this.drop) || Drop.isDropped(this.drop) },
+         dropIsActive() { return DropMgr.isLive(this.drop) || DropMgr.isDropped(this.drop) },
 			isBid() { return this.itemSaleType == SaleType.BID && this.item.startPrice },
 			isBuy() { return this.itemSaleType == SaleType.BUY && this.item.startPrice },	
-      	showIcons() { return this.loggedIn && this.displayType == ItemDisplayType.FULL },		
-         isLiked() { return this.user.likedItemIds  &&  this.user.likedItemIds.includes(this.item.id) },		
-		},
+      },
 		methods: {
 			...mapActions('action', ['submitBid', 'submitPurchaseRequest']),
-			...mapActions('user', ['setLikes']),
-         login() { this.$router.push("/auth/login") },
+			login() { this.$router.push("/auth/login") },
 			promptToBuy() {
 				this.$q.dialog({title: 'Confirm', message: 'Buy ' + this.item.name + ' for ' + dollars(this.item.startPrice) + '?', persistent: true,			
 	        		ok: { push: true }, cancel: { push: true, color: 'grey' }
@@ -75,18 +68,7 @@
 					this.submitPurchaseRequest(
                   { itemId: this.item.id, itemName: this.item.name, userId: this.userId, amount: this.item.startPrice }) 
 				})
-			},
-			like() { 
-            let likedItemIds = this.user.likedItemIds ? [...this.user.likedItemIds] : []
-            likedItemIds.push(this.item.id) 
-            this.setLikes({ id: this.user.id, likedItemIds: likedItemIds }) 
-         },
-			unlike() { 
-            // todo - ugly
-            let likedItemIds = []
-            this.user.likedItemIds.forEach(likedItemId => { if (likedItemId != this.item.id) { likedItemIds.push(likedItemId)} })
-            this.setLikes({ id: this.user.id, likedItemIds: likedItemIds }) 
-         },
+			},			
 		},
 		filters: {
 			formatPrice(priceObj) { return "$" + priceObj + (String(priceObj).includes(".") ? "" : ".00") }

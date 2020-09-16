@@ -1,10 +1,13 @@
 import { firestoreAction } from 'vuexfire'
 import { firestore } from 'boot/firebase'
+import { uid } from 'quasar'
 
 /*
    tag
-      id - tag value
+      id 
+      name
       category
+      sortName
 */
 
 const state = { 
@@ -13,20 +16,12 @@ const state = {
 
 const actions = {
    bindTags: firestoreAction(({ bindFirestoreRef }) => { return bindFirestoreRef('tags', collection()) }),
-   // createItem: firestoreAction((context, item) => {
-   //    item.id = uid()
-   //    item.createdDate = Date.now()
-   //    collection().doc(item.id).set(item)
-   // }),
-   // setItem: firestoreAction((context, item) => { collection().doc(item.id).set(item) }),
-   // updateItems: firestoreAction((context, itemUpdates) => { 
-   //    // todo - research batching - no big deal right now - will only be 5-25 items
-   //    itemUpdates.forEach(update => {
-   //       collection().doc(update.id).update(update)
-   //    })
-   // }),
-   // updateItem: firestoreAction((context, item) => { collection().doc(item.id).update(item) }),
-   // deleteItem: firestoreAction((context, id) => { collection().doc(id).delete() }),
+   createTag: firestoreAction((context, tag) => {
+      tag.id = uid()
+      collection().doc(tag.id).set(tag)
+   }),
+   setTag: firestoreAction((context, tag) => { collection().doc(tag.id).set(tag) }),
+   deleteTag: firestoreAction((context, id) => { collection().doc(id).delete() }),
 }
 
 function collection() { return firestore.collection('tags') }
@@ -34,18 +29,26 @@ function showPositiveNotify(msg) { Notify.create( {type: "positive", timeout: 10
 function showNegativeNotify(msg) { Notify.create( {type: "negative", timeout: 5000, message: msg} )}
 
 const getters = {
-   // tagsExist: state => category => { return state.items && state.items.length > 0 },
+   tagsExist: state => category => { 
+      for (var tag of state.tags) {
+         if (tag.category == category) { return item }
+      }
+      return false   
+   },
    getTags: state => category => { 
       let tags = []
       state.tags.forEach(tag => {
-         if (tag.category == category) {
-            console.log("getTags - tag", tag)
-            tags.push(tag)
-         }
+         if (tag.category == category) { tags.push(tag) }
       })
 
-      tags.sort((a, b) => (a.id > b.id) ? 1 : -1)
+      tags.sort((a, b) => (a.sortName > b.sortName) ? 1 : -1)
       return tags
+   },
+   getTag: state => id => { 
+      for (var tag of state.tags) {
+         if (tag.id == id) { return tag }
+      }
+      return null
    },
 }
 

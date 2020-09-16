@@ -24,8 +24,10 @@
 <script>
 	import { mapGetters, mapActions } from 'vuex'
 	import { SaleType, ItemStatus } from 'src/utils/Constants.js';
-   import { Tag, TagCategory } from 'src/models/Tag.js'
+   import { TagMgr, TagCategory } from 'src/managers/TagMgr.js'
    
+   const NONE = "(none)"
+
 	export default {
       props: ['items'],
 		data() {
@@ -39,12 +41,19 @@
       },
        computed: {
          ...mapGetters('tag', ['getTags']),
+         artistMap() { 
+            let map = new Map()
+            for (var tag of this.getTags(TagCategory.ARTIST)) {
+               map.set(tag.name, tag)
+            }
+            return map
+         },
          artistOptions() {
-            let artists = []
-            let tags = this.getTags(TagCategory.ARTIST)
-            tags.forEach(tag => { artists.push(tag.id) })
-            artists.push("")
-            return artists
+            let options = [NONE]
+            for (var name of this.artistMap.keys() ) {
+               options.push(name)
+            }
+            return options
          }
       },
       methods: {
@@ -55,8 +64,11 @@
                this.items.forEach(item => {
                   let update = { id: item.id }
                   if (this.status.length) { update.status = this.status }
-                  if (this.artist.length) { Tag.setArtist(update, this.artist) }
                   if (this.saleType.length) { update.saleType = this.saleType }
+                  if (this.artist.length) { 
+                     const tag = this.artist == NONE ? { id:"", name: "", category: TagCategory.ARTIST } : this.artistMap.get(this.artist)
+                     TagMgr.setTag(update, tag) 
+                  }
 
                   if (update.status == ItemStatus.AVAILABLE) { 
                      update.buyPrice = 0 
@@ -73,10 +85,8 @@
                   // console.log("Bulk update", update)
                   itemUpdates.push(update)
                })
- 
                this.updateItems(itemUpdates)
             }
-            
             this.$emit('close')
 			},
 		},

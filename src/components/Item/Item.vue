@@ -63,7 +63,7 @@
 	import { date } from 'quasar'
 	import { mapGetters, mapActions } from 'vuex'
 	import { ItemDisplayType, ItemStatus, SaleType, Colors } from 'src/utils/Constants.js';
-	import { Tag } from 'src/models/Tag.js';
+	import { TagMgr } from 'src/managers/TagMgr.js';
 	import { dollars } from 'src/utils/Utils'
    
 	export default {
@@ -89,7 +89,7 @@
          },
 
          hasArtist() { return this.artist.length > 0 },
-         artist() { return Tag.artist(this.item) },
+         artist() { return TagMgr.artist(this.item) },
 
 			imageWidth() { return ("width: " + (this.item.isHorizontal ? this.hImageWidth : this.vImageWidth)) },		
 			imageUrl() { return this.item.imageUrl ? this.item.imageUrl : 'statics/image-placeholder.png' },
