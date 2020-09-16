@@ -61,7 +61,9 @@
 <script>
 	import { date } from 'quasar'
    import { mapGetters, mapActions } from 'vuex'
-   import { ItemStatus, InvoiceStatus } from 'src/utils/Constants.js'
+   import { ItemMgr, ItemStatus } from 'src/managers/ItemMgr.js';
+   import { InvoiceStatus } from 'src/utils/Constants.js'
+
    import { dollars } from 'src/utils/Utils'
    
 	export default {
@@ -132,7 +134,7 @@
                   this.invoiceError = "Not all items have the same buyer"
                   return 
                }
-               if (item.status != ItemStatus.HOLD && item.status != ItemStatus.INVOICED) { 
+               if (!ItemMgr.isHold(item) && !ItemMgr.isInvoice(item)) { 
                   this.invoiceError = "All item must be status Hold or Invoiced" 
                   return
                }

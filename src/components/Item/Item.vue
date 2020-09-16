@@ -62,7 +62,8 @@
 <script>
 	import { date } from 'quasar'
 	import { mapGetters, mapActions } from 'vuex'
-	import { ItemDisplayType, ItemStatus, SaleType, Colors } from 'src/utils/Constants.js';
+	import { ItemDisplayType, SaleType, Colors } from 'src/utils/Constants.js';
+	import { ItemMgr, ItemStatus } from 'src/managers/ItemMgr.js';
 	import { TagMgr } from 'src/managers/TagMgr.js';
 	import { dollars } from 'src/utils/Utils'
    
@@ -95,15 +96,15 @@
 			imageUrl() { return this.item.imageUrl ? this.item.imageUrl : 'statics/image-placeholder.png' },
 			itemSaleType() { return (this.item.saleType == SaleType.DEFAULT ? this.drop.defaultSaleType : this.item.saleType) },
 			style() { return (this.item.isHorizontal ? "width: 300px" : "width: 200px") },			
-			userIsAdmin() { return this.isAdmin(this.userId) },
-         isNotAvailable() { return this.item.status == ItemStatus.HOLD || this.item.status == ItemStatus.INVOICED || this.item.status == ItemStatus.SOLD },
-         isDropping() { return this.item.status == ItemStatus.DROPPING },
+         userIsAdmin() { return this.isAdmin(this.userId) },
+         isNotAvailable() { return ItemMgr.isHold(this.item) || ItemMgr.isInvoiced(this.item) || ItemMgr.isSold(this.item) },
+         isDropping() { return ItemMgr.isDropping(this.item) },
 			isBid() { return this.itemSaleType == SaleType.BID },
 			isBuy() { return this.itemSaleType == SaleType.BUY },			
 			numberOfBids() { return this.item.bids ? Object.keys(this.item.bids).length : 0 },
 			currPrice() { return dollars(this.item.buyPrice > this.item.startPrice ? this.item.buyPrice : this.item.startPrice) },
 			priceText() { 
-            const prefix = this.item.status == ItemStatus.DROPPING ? "Current Bid: " : "Price: "
+            const prefix = ItemMgr.isDropping(this.item) ? "Current Bid: " : "Price: "
             return this.buildPriceText(prefix) 
          },
 			priceTextMini() { return this.buildPriceText("") },
@@ -128,9 +129,9 @@
             if (this.item.numberOfBids && this.item.numberOfBids == 1) { bidText = " (1 Bid)" }
             else if (this.item.numberOfBids && this.item.numberOfBids > 1) { bidText = " (" + this.item.numberOfBids + " Bids)" }
 
-				if (this.item.status == ItemStatus.SOLD) { return ItemStatus.SOLD }
-				else if (this.item.status == ItemStatus.HOLD || this.item.status == ItemStatus.INVOICED) { return ItemStatus.HOLD + " (" + this.currPrice + ")" }
-            else if (this.item.status == ItemStatus.DROPPING) { return prefix + this.currPrice + bidText }
+				if (ItemMgr.isSold(this.item)) { return ItemStatus.SOLD }
+				else if (ItemMgr.isHold(this.item) || ItemMgr.isInvoiced(this.item)) { return ItemStatus.HOLD + " (" + this.currPrice + ")" }
+            else if (ItemMgr.isDropping(this.item)) { return prefix + this.currPrice + bidText }
             else return prefix + this.currPrice
 			},
       },

@@ -46,8 +46,9 @@
 <script>
 	import { mapGetters, mapActions } from 'vuex'
 	import QFirebaseUploader from 'components/QFirebaseUploader.js'
-   import { SaleType, ItemStatus, Colors } from 'src/utils/Constants.js'
+   import { ItemStatus } from 'src/managers/ItemMgr.js'
    import { TagMgr, TagCategory } from 'src/managers/TagMgr.js'
+   import { SaleType, Colors } from 'src/utils/Constants.js'
    
    const NONE = "(none)"
 

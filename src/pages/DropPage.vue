@@ -21,9 +21,10 @@
 <script>
 	import { date } from 'quasar'
 	import { mapState, mapGetters, mapActions } from 'vuex'
-   import { ItemDisplayType, ItemStatus } from 'src/utils/Constants.js'
    import { DropMgr } from 'src/managers/DropMgr.js';
-	import { getStartDateText } from 'src/utils/DateUtils'
+	import { ItemMgr } from 'src/managers/ItemMgr.js'
+   import { ItemDisplayType } from 'src/utils/Constants.js'
+   import { getStartDateText } from 'src/utils/DateUtils'
    
 	export default {
 		data() {
@@ -51,7 +52,7 @@
             
             let availableItems = []
             items.forEach(item => { 
-               if (item.status == ItemStatus.AVAILABLE || item.status == ItemStatus.DROPPING) { availableItems.push(item) }
+               if (ItemMgr.isAvailable(item) || ItemMgr.isDropping(item)) { availableItems.push(item) }
 		      })
 				return availableItems
          },

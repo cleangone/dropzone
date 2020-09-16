@@ -42,15 +42,6 @@ export const ItemDisplayType = {
    FULL: 'Full'
 }
 
-export const ItemStatus = {
-   SETUP:     'Setup',
-   AVAILABLE: 'Available',
-   DROPPING:  'Dropping',
-   HOLD:      'On Hold',
-   INVOICED:  'Invoiced',
-   SOLD:      'Sold',
-}
-
 export const Route = {
    DROP: 'Drop',
    ITEM: 'Item',

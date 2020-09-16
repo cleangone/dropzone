@@ -15,7 +15,8 @@
 <script>
 	import { mapGetters, mapActions } from 'vuex'
 	import QFirebaseUploader from 'components/QFirebaseUploader.js'
-   import { SaleType, ItemStatus } from 'src/utils/Constants.js';
+   import { ItemStatus } from 'src/managers/ItemMgr.js'
+	import { SaleType } from 'src/utils/Constants.js'
    
 	export default {
       props: ['dropId'],

@@ -1,5 +1,4 @@
 
-
 export const DropStatus = {
    SETUP:     'Setup',
    SCHEDULE:  'Schedule',

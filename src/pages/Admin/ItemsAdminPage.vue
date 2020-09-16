@@ -61,8 +61,8 @@
 <script>
 	import { date } from 'quasar'
    import { mapGetters, mapActions } from 'vuex'
-   import { ItemStatus } from 'src/utils/Constants.js'
-   import { TagMgr } from 'src/managers/TagMgr.js'
+   import { ItemMgr } from 'src/managers/ItemMgr.js';
+	import { TagMgr } from 'src/managers/TagMgr.js'
    import { dollars } from 'src/utils/Utils'
 	
 	export default {
@@ -113,7 +113,7 @@
             // selected rows have same buyer and are not Sold
             let buyerId = null
             for (var rowItem of this.selectedRowItems) {
-               if (rowItem.status == ItemStatus.SOLD) { return false }
+               if (ItemMgr.isSold(rowItem)) { return false }
                if (!rowItem.buyerId) { return false }
                if (buyerId == null) { buyerId = rowItem.buyerId }
                if (rowItem.buyerId != buyerId) { return false }
@@ -124,7 +124,7 @@
          showBulkEditButton() { 
             if (this.selectedRowItems.length < 2) { return false } 
             for (var rowItem of this.selectedRowItems) {
-               if (!(rowItem.status == ItemStatus.SETUP || rowItem.status == ItemStatus.AVAILABLE || rowItem.status == ItemStatus.HOLD)) { return false }
+               if (!(ItemMgr.isSetup(rowItem) || ItemMgr.isAvailable(rowItem) || ItemMgr.isHold(rowItem))) { return false }
             }
 
             return true

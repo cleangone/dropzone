@@ -23,8 +23,9 @@
 
 <script>
 	import { mapGetters, mapActions } from 'vuex'
-	import { SaleType, ItemStatus } from 'src/utils/Constants.js';
+	import { ItemStatus } from 'src/managers/ItemMgr.js';
    import { TagMgr, TagCategory } from 'src/managers/TagMgr.js'
+   import { SaleType } from 'src/utils/Constants.js';
    
    const NONE = "(none)"
 

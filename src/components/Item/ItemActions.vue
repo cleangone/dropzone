@@ -25,8 +25,9 @@
 <script>
 	import { date } from 'quasar'
 	import { mapGetters, mapActions } from 'vuex'
-   import { ItemDisplayType, ItemStatus, SaleType, Colors } from 'src/utils/Constants.js';
-   import { DropMgr } from 'src/managers/DropMgr.js';
+   import { ItemMgr } from 'src/managers/ItemMgr.js';
+	import { DropMgr } from 'src/managers/DropMgr.js';
+   import { ItemDisplayType, SaleType, Colors } from 'src/utils/Constants.js';
    import { dollars } from 'src/utils/Utils'
    
 	var timeouts = {};
@@ -53,7 +54,7 @@
          buttonSize() { return this.displayType == ItemDisplayType.FULL ? "md" : "sm"  },        
          user() { return this.getUser(this.userId)},
          userIsAdmin() { return this.user && this.user.isAdmin },
-			isAvailable() { return this.item.status == ItemStatus.AVAILABLE || this.item.status == ItemStatus.DROPPING },
+			isAvailable() { return ItemMgr.isAvailable(this.item)  || ItemMgr.isDropping(this.item)  },
          dropIsActive() { return DropMgr.isLive(this.drop) || DropMgr.isDropped(this.drop) },
 			isBid() { return this.itemSaleType == SaleType.BID && this.item.startPrice },
 			isBuy() { return this.itemSaleType == SaleType.BUY && this.item.startPrice },	

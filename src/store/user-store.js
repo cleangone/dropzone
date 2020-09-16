@@ -11,29 +11,8 @@ import { firestore } from 'boot/firebase'
       likedItemIds []
 */  
 
-// import Vue from 'vue'
-// import { Notify, uid } from 'quasar'
-// import { firebaseDB, firebaseAuth } from 'boot/firebase'
-// import { SaleType, DropItemStatus } from '../constants/Constants.js';
-	
-/*
-   user: <Key: auth userId>
-      authEmailCopy
-      firstName
-      lastName
-      isAdmin   
-      actions
-         itemName
-         action
-         amount
-         date
-      likes (id is dropItemId)
-         dropItemId
-*/  
-
 const state = {
 	users: [],
-   // usersDownloaded: false,
 }
 
 const actions = {
