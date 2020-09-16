@@ -16,6 +16,12 @@
 						<template v-slot:append><q-icon name="search"/></template>
 					</q-input>
 				</template> 
+            <q-td slot="body-cell-artist" slot-scope="props" :props="props"> 
+              {{ artist(props.row) }}
+            </q-td>
+            <q-td slot="body-cell-price" slot-scope="props" :props="props"> 
+              {{ priceText(props.row) }}
+            </q-td>
             <q-td slot="body-cell-bids" slot-scope="props" :props="props"> 
                <a v-if="props.row.numberOfBids > 0" :href="'#/admin/bids/' + props.row.id">{{ props.row.numberOfBids }}</a>
 	         </q-td>
@@ -56,6 +62,7 @@
 	import { date } from 'quasar'
    import { mapGetters, mapActions } from 'vuex'
    import { ItemStatus } from 'src/utils/Constants.js'
+   import { Tag } from 'src/models/Tag.js'
    import { dollars } from 'src/utils/Utils'
 	
 	export default {
@@ -70,14 +77,14 @@
 				itemIdToEdit: '',
             tableDataFilter: '',
             selectedRowItems: [],
-				visibleColumns: [ 'name', 'saleType', 'buyerId', 'startPrice', 'buyPrice', 'bids', 'status', 'actions'],
+				visibleColumns: [ 'name', 'artist', 'saleType', 'buyerId', 'price', 'bids', 'status', 'actions'],
  				columns: [
         			{ name: 'id', field: 'id' },
 				 	{ name: 'name',       label: 'Name',        align: 'left',   field: 'name',         sortable: true },
+				 	{ name: 'artist',     label: 'Artist',      align: 'left',   field: 'artist',       sortable: true },
 				 	{ name: 'saleType',   label: 'Sale Type',   align: 'center', field: 'saleType',     sortable: true },
 					{ name: 'buyerId',    label: 'Buyer',       align: 'left',   field: 'buyerId',      sortable: true, format: val => this.userName(val) },
-					{ name: 'startPrice', label: 'Start Price', align: 'right',  field: 'startPrice',   sortable: true, format: val => dollars(val) },
-					{ name: 'buyPrice',   label: 'Final Price', align: 'right',  field: 'buyPrice',     sortable: true, format: val => dollars(val) },
+					{ name: 'price', label: 'Start/Final Price',align: 'right',  field: 'startPrice',   sortable: true },
 					{ name: 'bids',       label: 'Bids',        align: 'center', field: 'numberOfBids', sortable: true },
 					{ name: 'status',     label: 'Status',      align: 'center', field: 'status',       sortable: true },
 					{ name: 'actions' }
@@ -130,8 +137,12 @@
 				this.itemIdToEdit = itemId
 				this.showEditModal = true
          },
-         // header(val) { console.log(val) },
-      
+         priceText(row) { 
+            let text = dollars(row.startPrice) 
+            if (row.buyPrice && (row.buyPrice != row.startPrice)) { text += ("/" + dollars(row.buyPrice))}
+            return text 
+         },
+         artist(row) { return Tag.artist(row) },
          userName(userId) { return this.userIdToName.get(userId) },
 			promptToDeleteItem(itemId, name) {
 				this.$q.dialog({title: 'Confirm', message: 'Delete ' + name + '?', persistent: true,			

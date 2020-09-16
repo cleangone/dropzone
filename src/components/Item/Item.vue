@@ -3,10 +3,11 @@
 		<div v-if="displayMini">
 			<q-card v-if="hasImageUrl" class="q-pt-xs q-px-xs" style="min-height: 250px;" :class="textBgColor">				
 				<item-thumb :item="item" vImageWidth="125px" hImageWidth="250px" imageMaxHeight="200px"/>
-				<q-card-section class="text-caption q-pa-xs">
-					<div>{{ item.name }}</div>
+				<q-card-section class="text-caption q-pa-xs" :class="purple">
+					<div :class="orange">{{ item.name }}</div>
+               <div v-if="hasArtist" class="q-ma-none q-pa-none" style="line-height: 1em" :class="pink">{{artist}}</div>
 					<div v-if="priceTextBgColor" :class="priceTextBgColor" class="text-bold q-px-xs">{{ priceTextMini }}</div>	
-					<div v-else>{{ priceTextMini }}</div>	
+					<div v-else :class="blue">{{ priceTextMini }}</div>	
 					<item-timer v-if="isDropping" :item="item"/>
 				</q-card-section>	
 			</q-card>
@@ -14,8 +15,9 @@
 		<div v-else-if="displayThumb">
 			<q-card v-if="hasImageUrl" class="q-pt-xs q-px-xs" style="min-height: 300px;" :class="textBgColor">
 				<item-thumb :item="item" vImageWidth="150px" hImageWidth="300px" imageMaxHeight="250px"/>
-				<q-card-section class="text-caption q-pa-xs">
+				<q-card-section class="text-caption q-px-xs">
 					<strong>{{ item.name }}</strong>
+               <div v-if="hasArtist" style="line-height: 1em"> {{artist}} </div>
                <div>{{ priceText }}</div>
                <div v-if="userIsBuyer" class="text-bold">You are the buyer</div> 
                <div v-if="userIsWinningBidder" class="text-bold">You are the winning bidder</div> 
@@ -40,6 +42,7 @@
 				</q-card-section>	
 				<q-card-section class="text-subtitle2 q-pa-xs q-mt-sm">
 					<strong>{{ item.name }}</strong>
+               <div v-if="hasArtist"> {{artist}} </div>
                <div>{{ priceText }}</div>
                <div v-if="userIsBuyer" class="text-bold">You are the buyer</div>
                <div v-if="userIsWinningBidder" class="text-bold">You are the winning bidder</div> 
@@ -60,6 +63,7 @@
 	import { date } from 'quasar'
 	import { mapGetters, mapActions } from 'vuex'
 	import { ItemDisplayType, ItemStatus, SaleType, Colors } from 'src/utils/Constants.js';
+	import { Tag } from 'src/models/Tag.js';
 	import { dollars } from 'src/utils/Utils'
    
 	export default {
@@ -82,7 +86,11 @@
 			textBgColor() {
 				if (this.isNotAvailable) { return (this.userIsBuyer || this.userIsHighBidder ? "bg-green" : "bg-red-5") }
 				else if (this.isDropping) { return "bg-yellow" }
-			},
+         },
+
+         hasArtist() { return this.artist.length > 0 },
+         artist() { return Tag.artist(this.item) },
+
 			imageWidth() { return ("width: " + (this.item.isHorizontal ? this.hImageWidth : this.vImageWidth)) },		
 			imageUrl() { return this.item.imageUrl ? this.item.imageUrl : 'statics/image-placeholder.png' },
 			itemSaleType() { return (this.item.saleType == SaleType.DEFAULT ? this.drop.defaultSaleType : this.item.saleType) },

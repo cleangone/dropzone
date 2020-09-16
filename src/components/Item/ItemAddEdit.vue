@@ -5,20 +5,21 @@
     </q-card-section>
 
     <q-card-section>
-    	<div class="row q-mb-sm">
+    	<div class="row q-mb-xs">
 	      <q-input v-model="itemToSubmit.name" label="Name" ref="name"
 	      	:rules="[ val => !!val || '* Required',
 	          	val => val.length < 51 || 'Please use maximum 50 characters',
 	        	]"
 	      	filled class="col" />
     	</div>
-		<div class="row q-mb-sm">
+		<div class="row q-mb-sm q-gutter-sm">
 			<!-- install in quasar folder: > quasar ext add qdecimal -->
 			<!-- <q-decimal v-model="itemToSubmit.startPrice" mode="currency" currency="USD" 
 				label="Start Price" input-style="text-align: right" :prefix="true" filled class="col" ></q-decimal> -->
+         <q-select v-model="artist" label="Artist" :options="artistOptions" filled class="col"/>
          <q-input v-model.number="itemToSubmit.startPrice" label="Price" type=number prefix="$" filled class="col" />
 		</div>
-       <div class="row q-mb-md items-center">
+      <div class="row q-mb-md items-center">
           <div v-if="uploaderDisplayed" class="col q-gutter-xs" :class="pink">
 				<q-firebase-uploader path="drops/" @upload="uploadCompleted" style="width: 400px"/> 
             <q-btn @click="uploaderDisplayed=false" icon="clear" color="primary" size="sm" dense/>
@@ -45,7 +46,8 @@
 <script>
 	import { mapGetters, mapActions } from 'vuex'
 	import QFirebaseUploader from 'components/QFirebaseUploader.js'
-   import { SaleType, ItemStatus, Colors } from 'src/utils/Constants.js';
+   import { SaleType, ItemStatus, Colors } from 'src/utils/Constants.js'
+   import { Tag } from 'src/models/Tag.js'
    
 	export default {
       props: [
@@ -64,14 +66,18 @@
 					isHorizontal: false,
                saleType: 'Default',
                bidderIds: []
-				},
+            },
+            artist: "",
 				uploaderDisplayed: false,
 				statusOptions: [ ItemStatus.SETUP, ItemStatus.AVAILABLE, ItemStatus.DROPPING, ItemStatus.HOLD, ItemStatus.SOLD ],
 				saleTypeOptions: [ SaleType.DEFAULT, SaleType.BID, SaleType.BUY ]
 			}
       },
       computed: {
-			...mapGetters('color', Colors),
+         ...mapGetters('color', Colors),
+         artistOptions() {
+            return ["", "Nick Klein", "Cliff Chaing", "Geoff Shaw"]
+         }
       },
 		methods: {
 			...mapActions('item', ['createItem', 'setItem']),
@@ -92,6 +98,8 @@
                   this.itemToSubmit.dropDoneDate = 0 
 						this.itemToSubmit.lastUserActivityDate = 0 
                }
+
+               Tag.setArtist(this.itemToSubmit, this.artist)
                this.persistItem()
                this.$emit('close')
 				}
@@ -113,7 +121,11 @@
 		mounted() {
          // slight delay because param update propagating as modal being popped up
          setTimeout(() => {    
-            if (this.type == 'edit') { this.itemToSubmit = Object.assign({}, this.item) }
+            if (this.type == 'edit') { 
+               this.itemToSubmit = Object.assign({}, this.item) 
+               if (this.itemToSubmit.tags) { this.itemToSubmit.tags = {...this.item.tags} }
+               this.artist = Tag.artist(this.itemToSubmit)
+            }
             else { this.itemToSubmit.dropId = this.dropId }
          }, 100)  
 		}

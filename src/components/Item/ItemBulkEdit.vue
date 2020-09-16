@@ -4,9 +4,12 @@
       <div class="text-h6 heading">Item Bulk Edit</div>
     </q-card-section>
     <q-card-section>
-       <div class="q-mb-sm">
+      <div class="q-mb-sm">
          <q-select label="Status" v-model="status" :options="statusOptions" filled/>
       </div>
+      <div class="q-mb-sm">
+         <q-select v-model="artist" label="Artist" :options="artistOptions" filled class="col"/>
+      </div>  
       <div class="q-mb-sm">
          <q-select label="Sale Type" v-model="saleType" :options="saleTypeOptions" filled/>
       </div>
@@ -21,25 +24,33 @@
 <script>
 	import { mapActions } from 'vuex'
 	import { SaleType, ItemStatus } from 'src/utils/Constants.js';
+   import { Tag } from 'src/models/Tag.js'
    
 	export default {
       props: ['items'],
 		data() {
 			return {
-            status: '',
-            saleType: '',
+            status: "",
+            artist: "",
+            saleType: "",
 				statusOptions: [ ItemStatus.SETUP, ItemStatus.AVAILABLE, ItemStatus.HOLD, ItemStatus.SOLD ],
 				saleTypeOptions: [ SaleType.DEFAULT, SaleType.BID, SaleType.BUY ]
 			}
       },
+       computed: {
+         artistOptions() {
+            return ["", "Nick Klein", "Cliff Chaing", "Geoff Shaw"]
+         }
+      },
       methods: {
 			...mapActions('item', ['updateItems']),
 			persistItems() {
-            if (this.status.length || this.saleType.length ) { 
+            if (this.status.length || this.artist.length || this.saleType.length ) { 
                const itemUpdates = []
                this.items.forEach(item => {
                   let update = { id: item.id }
                   if (this.status.length) { update.status = this.status }
+                  if (this.artist.length) { Tag.setArtist(update, this.artist) }
                   if (this.saleType.length) { update.saleType = this.saleType }
 
                   if (update.status == ItemStatus.AVAILABLE) { 

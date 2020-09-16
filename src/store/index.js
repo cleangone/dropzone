@@ -9,6 +9,7 @@ import invoice from './invoice-store'
 import item    from './item-store'
 import drop    from './drop-store'
 import setting from './setting-store'
+import tag     from './tag-store'
 import user    from './user-store'
 
 Vue.use(Vuex)
@@ -23,6 +24,7 @@ export default function () {
       invoice,
       item,
       setting,
+      tag,
       user
     },
     mutations: {

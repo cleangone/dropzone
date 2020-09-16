@@ -21,7 +21,7 @@ export class Drop {
    // isStartCountdown() { return this.status == DropStatus.START_COUNTDOWN }		
    // isCountdown() { return this.status == DropStatus.COUNTDOWN }		
  
-   static isActive(drop) { return Drop.isLive(drop) || Drop.isDropped(drop) }
+   static isActive(drop)     { return Drop.isLive(drop) || Drop.isDropped(drop) }
    
    static isSetup(drop)     { return drop.status == DropStatus.SETUP }
    static isSchedule(drop)  { return drop.status == DropStatus.SCHEDULE }		
