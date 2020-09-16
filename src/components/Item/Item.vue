@@ -15,10 +15,10 @@
 		<div v-else-if="displayThumb">
 			<q-card v-if="hasImageUrl" class="q-pt-xs q-px-xs" style="min-height: 300px;" :class="textBgColor">
 				<item-thumb :item="item" vImageWidth="150px" hImageWidth="300px" imageMaxHeight="250px"/>
-				<q-card-section class="text-caption q-px-xs">
-					<strong>{{ item.name }}</strong>
-               <div v-if="hasArtist" style="line-height: 1em"> {{artist}} </div>
-               <div>{{ priceText }}</div>
+				<q-card-section class="text-caption q-px-xs q-pt-xs q-pb-none" :class="purple">
+					<div  class="text-weight-bold" :class="orange">{{ item.name }}</div>
+               <div v-if="hasArtist" style="line-height: 1em" :class="pink"> {{artist}} </div>
+               <div :class="indigo">{{ priceText }}</div>
                <div v-if="userIsBuyer" class="text-bold">You are the buyer</div> 
                <div v-if="userIsWinningBidder" class="text-bold">You are the winning bidder</div> 
                <div v-if="isDropping">
