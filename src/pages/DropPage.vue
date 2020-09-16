@@ -23,7 +23,6 @@
 	import { mapState, mapGetters, mapActions } from 'vuex'
    import { ItemDisplayType, ItemStatus } from 'src/utils/Constants.js'
    import { DropMgr } from 'src/managers/DropMgr.js';
-   
 	import { getStartDateText } from 'src/utils/DateUtils'
    
 	export default {
@@ -59,7 +58,7 @@
          showItems() { 
             return (this.isAdmin && DropMgr.isSetup(this.drop) || DropMgr.isLive(this.drop) || DropMgr.isDropped(this.drop) )
          },
-			startDateText() { return getStartDateText(this.DropMgr.startDate) },
+			startDateText() { return getStartDateText(this.drop.startDate) },
 		},
 		methods: {
 			navBack() { this.$router.go(-1) },
