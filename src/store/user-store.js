@@ -76,49 +76,6 @@ const getters = {
       })
       return userIdToName
    },
-   //  hasUsers: state => { 
-   //      console.log("hasUsers") 
-   //      return Object.keys(state.users).length > 0 
-   //  },
-   //  getUsers: state => {
-   //      console.log("getUsers") 
-   //      return state.users
-   //  },
-   //  getUser: state => userId => {
-   //      let user = Object.assign({}, state.users[userId])
-
-   //      if (!user) { return { firstName: '', lastName: '', isAdmin: false } }       
-   //      if(!user.actions) { return user }
-
-   //      // todo - breaks
-        
-   //      // console.log("getUser: user.actions", user.actions) 
-   //      // let sortedKeys = Object.keys(user.actions)
-   //      // sortedKeys.sort((key1, key2) => {
-   //      //     // sort by date descending
-   //      //     let date1 = user.items[key1].date
-   //      //     let date2 = user.items[key2].date
-    
-   //      //     // -1: key1 first, 1 key2 first 
-   //      //     if (date1 > date2 ) return -1
-   //      //     else if (date2 > date1) return 1
-   //      //     else return 0
-   //      // })
-
-   //      // let sortedActions = {}
-   //      // sortedKeys.forEach(key => {
-   //      //     sortedActions[key] = user.actions[key]
-   //      // })
-   //      // user.actions = sortedActions
-
-   //      return user
-   //  },
-   //  getLikes: state => userId => { 
-   //      console.log("state.users[userId]", state.users[userId])
-   //      return state.users[userId].likes },
-   //  isAdmin: state => userId => {
-   //      return ( userId && state.users[userId] && state.users[userId].isAdmin )
-   //  }
 }
 
 // function getUserRef(userId)  { return firebaseDB.ref("users/" + userId) }

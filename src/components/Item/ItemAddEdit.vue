@@ -47,7 +47,7 @@
 	import { mapGetters, mapActions } from 'vuex'
 	import QFirebaseUploader from 'components/QFirebaseUploader.js'
    import { SaleType, ItemStatus, Colors } from 'src/utils/Constants.js'
-   import { Tag } from 'src/models/Tag.js'
+   import { Tag, TagCategory } from 'src/models/Tag.js'
    
 	export default {
       props: [
@@ -74,9 +74,14 @@
 			}
       },
       computed: {
+         ...mapGetters('tag', ['getTags']),
          ...mapGetters('color', Colors),
          artistOptions() {
-            return ["", "Nick Klein", "Cliff Chaing", "Geoff Shaw"]
+            let artists = []
+            let tags = this.getTags(TagCategory.ARTIST)
+            tags.forEach(tag => { artists.push(tag.id) })
+            artists.push("")
+            return artists
          }
       },
 		methods: {

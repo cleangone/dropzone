@@ -59,12 +59,8 @@ const getters = {
       return false
    },
    getDrops: state => { 
-      // return state.drops
-      // console.log("getDrops")
       const drops = [...state.drops];
-      // console.log("drops", drops)
       drops.sort((a, b) => (a.startDate < b.startDate) ? -1 : 1)
-      // console.log("sorted drops", drops)
       return drops
    },
    getDrop: state => dropId => {

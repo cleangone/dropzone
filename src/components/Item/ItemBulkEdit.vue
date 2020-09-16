@@ -22,9 +22,9 @@
 </template>
 
 <script>
-	import { mapActions } from 'vuex'
+	import { mapGetters, mapActions } from 'vuex'
 	import { SaleType, ItemStatus } from 'src/utils/Constants.js';
-   import { Tag } from 'src/models/Tag.js'
+   import { Tag, TagCategory } from 'src/models/Tag.js'
    
 	export default {
       props: ['items'],
@@ -38,8 +38,13 @@
 			}
       },
        computed: {
+         ...mapGetters('tag', ['getTags']),
          artistOptions() {
-            return ["", "Nick Klein", "Cliff Chaing", "Geoff Shaw"]
+            let artists = []
+            let tags = this.getTags(TagCategory.ARTIST)
+            tags.forEach(tag => { artists.push(tag.id) })
+            artists.push("")
+            return artists
          }
       },
       methods: {

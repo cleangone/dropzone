@@ -86,6 +86,7 @@
          ...mapActions('invoice', ['bindInvoices']),
          ...mapActions('item',    ['bindItems']),
          ...mapActions('setting', ['bindSettings']),
+         ...mapActions('tag',     ['bindTags']),
          ...mapActions('user',    ['bindUsers']),
          logout() {        
             this.logoutUser()
@@ -102,6 +103,7 @@
          this.bindInvoices() 
          this.bindItems()
          this.bindSettings()
+         this.bindTags()
          this.bindUsers()
       },
   }
