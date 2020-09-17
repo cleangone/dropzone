@@ -77,10 +77,11 @@
 				itemIdToEdit: '',
             tableDataFilter: '',
             selectedRowItems: [],
-				visibleColumns: [ 'name', 'artist', 'saleType', 'buyerId', 'price', 'bids', 'status', 'actions'],
+				visibleColumns: [ 'name', 'sort', 'artist', 'saleType', 'buyerId', 'price', 'bids', 'status', 'actions'],
  				columns: [
         			{ name: 'id', field: 'id' },
 				 	{ name: 'name',       label: 'Name',        align: 'left',   field: 'name',         sortable: true },
+				 	{ name: 'sort',      label: 'Sort',   align: 'left',   field: 'sortName',       sortable: true },
 				 	{ name: 'artist',     label: 'Artist',      align: 'left',   field: 'artist',       sortable: true },
 				 	{ name: 'saleType',   label: 'Sale Type',   align: 'center', field: 'saleType',     sortable: true },
 					{ name: 'buyerId',    label: 'Buyer',       align: 'left',   field: 'buyerId',      sortable: true, format: val => this.userName(val) },

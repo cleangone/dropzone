@@ -5,12 +5,12 @@
     </q-card-section>
 
     <q-card-section>
-    	<div class="row q-mb-xs">
-	      <q-input v-model="itemToSubmit.name" label="Name" ref="name"
+    	<div class="row q-mb-xs q-gutter-sm">
+	      <q-input v-model="itemToSubmit.name" label="Name" ref="name" filled class="col"
 	      	:rules="[ val => !!val || '* Required',
-	          	val => val.length < 51 || 'Please use maximum 50 characters',
-	        	]"
-	      	filled class="col" />
+	          	val => val.length < 51 || 'Please use maximum 50 characters']"/>
+         <q-input v-model="itemToSubmit.sortName" label="Sort Name" ref="sort" filled class="col"
+            :rules="[ val => val.length < 51 || 'Please use maximum 50 characters']" />
     	</div>
 		<div class="row q-mb-sm q-gutter-sm">
 			<!-- install in quasar folder: > quasar ext add qdecimal -->

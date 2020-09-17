@@ -49,13 +49,16 @@ const getters = {
    getItemsInDrop: state => dropId => { 
       // console.log("getItemsInDrop", state.items)
       let dropItems = []
+      let sortNamesExist = false
       state.items.forEach(item => {
          if (item.dropId == dropId) {
             dropItems.push(item)
+            if (item.sortName) { sortNamesExist = true}
          }
       })
 
-      dropItems.sort((a, b) => (a.name > b.name) ? 1 : -1)
+      if (sortNamesExist) { dropItems.sort((a, b) => (a.sortName > b.sortName) ? 1 : -1)}
+      else { dropItems.sort((a, b) => (a.name > b.name) ? 1 : -1) } 
       return dropItems
    },
    getItemsInDrops: state => dropIds => {   
