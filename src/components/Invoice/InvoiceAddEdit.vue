@@ -61,9 +61,8 @@
 <script>
 	import { date } from 'quasar'
    import { mapGetters, mapActions } from 'vuex'
-   import { ItemMgr, ItemStatus } from 'src/managers/ItemMgr.js';
+   import { ItemMgr, ItemStatus } from 'src/managers/ItemMgr.js'
    import { InvoiceMgr, InvoiceStatus } from 'src/managers/InvoiceMgr.js'
-
    import { dollars } from 'src/utils/Utils'
    
 	export default {
@@ -81,7 +80,7 @@
                priceAdjustment: 0,
             },
             statusOptions: [ InvoiceStatus.CREATED, InvoiceStatus.UPDATED, InvoiceStatus.PAID, InvoiceStatus.SHIPPED ],
-            carrierOptions: [ "USPS Priority", "FedEx" ],
+            carrierOptions: InvoiceMgr.getCarriers(),
             visibleColumns: [ 'name', 'price'],
  				columns: [
         			{ name: 'name',  label: 'Item Name', align: 'left', field: 'name' },
@@ -147,7 +146,6 @@
             this.invoiceToSubmit.userName = (user.firstName || user.lastName) ?
                (user.firstName ? user.firstName : "") + (user.firstName && user.lastName ? " " : "") + (user.lastName ? user.lastName : "") :
                user.authEmailCopy
-
          }
 		}
    }
@@ -167,6 +165,4 @@
 		border-radius: 10px;
 	}
 	.form-card .q-img__image { background-size: cover !important; }
-	.form-card .q-rating__icon { opacity: 0.2; }
-	.form-card .q-rating__icon--active { opacity: 1; }
 </style>

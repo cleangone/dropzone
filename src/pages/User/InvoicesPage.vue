@@ -41,8 +41,8 @@
 </template>
 
 <script>
-	import { date } from 'quasar'
-   import { mapGetters, mapActions } from 'vuex'
+	import { mapGetters, mapActions } from 'vuex'
+   import { InvoiceMgr } from 'src/managers/InvoiceMgr.js'
    import { dollars } from 'src/utils/Utils'
 
 	export default {
@@ -52,11 +52,11 @@
             visibleColumns: ['items', 'total', 'status', 'tracking', 'sentDate'],
  				columns: [
                { name: 'id', field: 'id' },                 
-               { name: 'items',    label: 'Items',    align: 'left',   field: 'items',    sortable: true, format: val => this.itemsText(val) },
+               { name: 'items',    label: 'Items',    align: 'left',   field: 'items',    sortable: true },
 					{ name: 'total',    label: 'Total',    align: 'right',  field: 'total',    sortable: true, format: val => dollars(val) },
 					{ name: 'status',   label: 'Status',   align: 'center', field: 'status',   sortable: true },
                { name: 'tracking', label: 'Tracking', align: 'center', field: 'tracking' },
-               { name: 'sentDate', label: 'Date',     align: 'left',   field: 'sentDate', sortable: true, format: val => formatDate(val) },
+               { name: 'sentDate', label: 'Date',     align: 'left',   field: 'sentDate', sortable: true },
             ],
             pagination: { rowsPerPage: 30 },
 			}
@@ -69,27 +69,7 @@
 		methods: {
          ...mapActions('invoice', ['bindInvoices', 'deleteInvoice']),
          isDataCol(colName) { return (colName !== 'expand' && colName !== 'actions') },
-         getInvoiceDetails(invoiceId) { 
-            let details = []
-            let invoice = this.getInvoice(invoiceId)
-            for (var item of invoice.items) {
-               details.push({ name: item.name, price: dollars(item.price) })
-            }
-
-            details.push({ name: "Shipping", price: dollars(invoice.shippingCharge) })
-            if (invoice.priceAdjustment) { details.push({ name: "Adjustment", price: "(" + dollars(invoice.priceAdjustment) + ")" }) }
-
-            return details 
-         },              
-         itemsText(invoiceItems) {  
-            let itemsText = ""
-            for (var item of invoiceItems) {
-               if (itemsText.length) { itemsText += ", " }
-               itemsText += item.name
-            }
-
-            return (itemsText.length > 30 ? itemsText.substring(0, 30) + "..." : itemsText)
-         },
+         getInvoiceDetails(invoiceId) { return InvoiceMgr.getDetails(this.getInvoice(invoiceId)) },
       },
       components: {
          'invoice-td' : require('components/Invoice/InvoiceTd.vue').default,
@@ -99,14 +79,4 @@
          if (!this.invoicesExist) { this.bindInvoices() }
       }
 	}
-
-   function formatDate(dateToFormat) {
-      if (!dateToFormat) { return "" }
-
-      let now = new Date()
-      let datetime = new Date(dateToFormat)
-      return (now.getYear() == datetime.getYear() ? 
-         date.formatDate(datetime, 'MMM D') :
-         date.formatDate(datetime, 'MMM D, YYYY'))
-   }
 </script>
