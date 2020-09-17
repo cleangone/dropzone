@@ -62,7 +62,7 @@
 	import { date } from 'quasar'
    import { mapGetters, mapActions } from 'vuex'
    import { ItemMgr, ItemStatus } from 'src/managers/ItemMgr.js';
-   import { InvoiceStatus } from 'src/utils/Constants.js'
+   import { InvoiceMgr, InvoiceStatus } from 'src/managers/InvoiceMgr.js'
 
    import { dollars } from 'src/utils/Utils'
    
@@ -92,7 +92,7 @@
 		computed: {	
          ...mapGetters('user', ['getUser']),
          isEdit() { return this.type == "edit" },	
-         isShipped() { return this.invoiceToSubmit.status == InvoiceStatus.SHIPPED },	
+         isShipped() { return InvoiceMgr.isShipped(this.invoiceToSubmit) },	
          subtotal() { return dollars(this.invoiceToSubmit.subTotal) },
          shippingCharge() { return dollars(this.invoiceToSubmit.shippingCharge) },
          priceAdjustment() { return "(" + dollars(this.invoiceToSubmit.priceAdjustment) + ")" },

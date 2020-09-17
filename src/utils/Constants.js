@@ -18,6 +18,7 @@ export const ActionType = {
    PURCHASE_REQ: 'Purchase Request',
 }
 
+// todo - only used in SettingsPage - move there?
 export const EmailFields = {
    PURCHASE_SUCCESS: 'emailPurchaseSuccess',
    PURCHASE_FAIL:    'emailPurchaseFail',
@@ -26,14 +27,6 @@ export const EmailFields = {
    SHIIPPING:        'emailShipping',
    SUBJECT_SUFFIX:   'Subject',
    BODY_SUFFIX:      'Body',
-}
-
-export const InvoiceStatus = {
-   CREATED: 'Created',
-   UPDATED: 'Updated',
-   SENT:    'Sent',
-   PAID:    'Paid',
-   SHIPPED: 'Shipped',
 }
 
 export const ItemDisplayType = {

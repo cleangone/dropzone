@@ -43,7 +43,6 @@
 <script>
 	import { date } from 'quasar'
    import { mapGetters, mapActions } from 'vuex'
-   import { InvoiceStatus } from 'src/utils/Constants.js'
    import { dollars } from 'src/utils/Utils'
 
 	export default {

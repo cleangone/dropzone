@@ -10,9 +10,6 @@ export const ItemStatus = {
 
 export class ItemMgr {
    
- 
-   // static isActive(drop)     { return DropMgr.isLive(drop) || DropMgr.isDropped(drop) }
-   
    static isSetup(item)     { return item.status == ItemStatus.SETUP }
    static isAvailable(item) { return item.status == ItemStatus.AVAILABLE }
    static isDropping(item)  { return item.status == ItemStatus.DROPPING }

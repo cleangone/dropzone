@@ -1,7 +1,7 @@
 import { firestoreAction } from 'vuexfire'
 import { firestore } from 'boot/firebase'
 import { uid } from 'quasar'
-import { InvoiceStatus } from 'src/utils/Constants.js'
+import { InvoiceMgr } from 'src/managers/InvoiceMgr.js'
    
 /*
    invoice
@@ -34,7 +34,8 @@ const actions = {
    }),
    setInvoice: firestoreAction((context, invoice) => {
       console.log("setInvoice", invoice)
-      if (invoice.status == InvoiceStatus.SENT) { invoice.status = InvoiceStatus.UPDATED }
+      
+      if (InvoiceMgr.isSent(invoice)) { InvoiceMgr.setUpdated(invoice) }
       invoice.total = invoice.subTotal + invoice.shippingCharge - invoice.priceAdjustment 
    
       collection().doc(invoice.id).set(invoice)
