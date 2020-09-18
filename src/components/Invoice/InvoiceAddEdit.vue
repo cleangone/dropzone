@@ -1,38 +1,37 @@
 <template>
 	<q-card class="form-card">
-    <q-card-section>
+      <q-card-section>
       <div class="text-h6 heading">{{ type }} Invoice</div>
-
+    </q-card-section>
+    <q-card-section>
       <div v-if="invoiceError" class="text-red text-bold q-mt-sm">{{ invoiceError }}</div>
       <div v-else class="q-mt-sm">
-         <q-table
-            :title="'Buyer: ' + invoiceToSubmit.userName"
-            :columns="columns"
-            :visible-columns="visibleColumns"
-            :data="invoiceToSubmit.items"
-            row-key="name"
-            :dense="$q.screen.lt.md"
-            class="q-mb-none">
-               
-            <template v-slot:bottom-row >
-               <q-tr>
-                  <q-td class="text-bold bg-grey-2">Sub-Total</q-td>
-                  <q-td class="text-bold bg-grey-2">{{ subtotal }}</q-td>
-               </q-tr>
-               <q-tr>
-                  <q-td class="text-bold bg-grey-2">Shipping</q-td>
-                  <q-td class="text-bold bg-grey-2">{{ shippingCharge }}</q-td>
-               </q-tr>
-               <q-tr v-if="invoiceToSubmit.priceAdjustment">
-                  <q-td class="text-bold bg-grey-2">Adjustment</q-td>
-                  <q-td class="text-bold bg-grey-2">{{ priceAdjustment }}</q-td>
-               </q-tr>
-               <q-tr>
-                  <q-td class="text-bold bg-grey-2">TOTAL</q-td>
-                  <q-td class="text-bold bg-grey-2">{{ total }}</q-td>
-               </q-tr>
-            </template>
-         </q-table>
+         <div v-html="userAddress" />
+         <div class="q-mt-sm">
+            <q-table :columns="columns" :data="invoiceToSubmit.items" :visible-columns="visibleColumns" row-key="name"
+               :rows-per-page-options="[0]" pagination.sync="pagination" hide-header hide-bottom
+               :dense="$q.screen.lt.md" class="q-mb-none">
+                  
+               <template v-slot:bottom-row >
+                  <q-tr>
+                     <q-td class="bg-grey-2">Sub-Total</q-td>
+                     <q-td class="bg-grey-2" align=right>{{ subtotal }}</q-td>
+                  </q-tr>
+                  <q-tr>
+                     <q-td> Shipping</q-td>
+                     <q-td align=right>{{ shippingCharge }}</q-td>
+                  </q-tr>
+                  <q-tr v-if="invoiceToSubmit.priceAdjustment">
+                     <q-td>Adjustment</q-td>
+                     <q-td align=right>{{ priceAdjustment }}</q-td>
+                  </q-tr>
+                  <q-tr>
+                     <q-td class="bg-grey-2"><span class="text-weight-bold">TOTAL</span></q-td>
+                     <q-td class="bg-grey-2" align=right><span class="text-weight-bold">{{ total }}</span></q-td>
+                  </q-tr>
+               </template>
+            </q-table>
+         </div>
       </div>
     </q-card-section>
 
@@ -69,6 +68,8 @@
 		props: ['type', 'items', 'invoice'],
 		data() {
 			return {
+            user: null, 
+            userAddress: null, 
             invoiceError: null,
 				invoiceToSubmit: {
                userId: null,
@@ -79,24 +80,24 @@
                shippingCharge: 25,
                priceAdjustment: 0,
             },
-            statusOptions: [ InvoiceStatus.CREATED, InvoiceStatus.UPDATED, InvoiceStatus.PAID, InvoiceStatus.SHIPPED ],
+            statusOptions: [ InvoiceStatus.UPDATED, InvoiceStatus.PAID, InvoiceStatus.SHIPPED ],
             carrierOptions: InvoiceMgr.getCarriers(),
             visibleColumns: [ 'name', 'price'],
  				columns: [
         			{ name: 'name',  label: 'Item Name', align: 'left', field: 'name' },
-				 	{ name: 'price', label: 'Price',     align: 'left', field: 'price', format: val => val ? dollars(val) : '' },
+				 	{ name: 'price', label: 'Price',     align: 'right', field: 'price', format: val => val ? dollars(val) : '' },
             ],
 			}
 		},
 		computed: {	
          ...mapGetters('setting', ['getSetting']),
          ...mapGetters('user', ['getUser']),
-         isEdit() { return this.type == "edit" },	
+         isEdit() { return this.type == "Update" },	
          isShipped() { return InvoiceMgr.isShipped(this.invoiceToSubmit) },	
          subtotal() { return dollars(this.invoiceToSubmit.subTotal) },
          shippingCharge() { return dollars(this.invoiceToSubmit.shippingCharge) },
          priceAdjustment() { return "(" + dollars(this.invoiceToSubmit.priceAdjustment) + ")" },
-         total() { return dollars(this.invoiceToSubmit.subTotal + this.invoiceToSubmit.shippingCharge - this.invoiceToSubmit.priceAdjustment) },          
+         total() { return dollars(this.invoiceToSubmit.subTotal + this.invoiceToSubmit.shippingCharge - this.invoiceToSubmit.priceAdjustment) }, 
     	},
 		methods: {
 			...mapActions('invoice', ['createInvoice', 'setInvoice']),
@@ -107,7 +108,7 @@
 			},
 			persistInvoice() {
             // console.log("persistInvoice", this.invoiceToSubmit)
-            InvoiceMgr.finalize(this.invoiceToSubmit, this.getSetting)
+            InvoiceMgr.finalize(this.invoiceToSubmit, this.user, this.getSetting)
             if (this.isEdit) { this.setInvoice(this.invoiceToSubmit)}
             else { 
                this.createInvoice(this.invoiceToSubmit)
@@ -117,38 +118,40 @@
             }
 			}
       },
-		mounted() {
-         if (this.isEdit) {
-            // slight delay because param update propagating as modal being popped up
-            setTimeout(() => { this.invoiceToSubmit = Object.assign({}, this.invoice) }, 100)  
-         }
-         else {
-            console.log("mounted", this.items)
-            for (var item of this.items) {
-               if (!item.buyerId) { 
-                  this.invoiceError = "Not all items have a buyer" 
-                  return 
-               }
-
-               if (this.invoiceToSubmit.userId == null) { this.invoiceToSubmit.userId = item.buyerId }
-               if (item.buyerId != this.invoiceToSubmit.userId) { 
-                  this.invoiceError = "Not all items have the same buyer"
-                  return 
-               }
-               if (!ItemMgr.isHold(item) && !ItemMgr.isInvoice(item)) { 
-                  this.invoiceError = "All item must be status Hold or Invoiced" 
-                  return
-               }
-
-               this.invoiceToSubmit.items.push({ id: item.id, name: item.name, price: item.buyPrice })
-               this.invoiceToSubmit.subTotal += item.buyPrice
+		created() {
+         // slight delay because param update propagating as modal being popped up
+         setTimeout(() => { 
+            if (this.isEdit) {
+               this.invoiceToSubmit = Object.assign({}, this.invoice) 
+               // console.log("mounted: invoice", this.invoiceToSubmit)
             }
+            else {
+               // console.log("mounted", this.items)
+               for (var item of this.items) {
+                  if (!item.buyerId) { 
+                     this.invoiceError = "Not all items have a buyer" 
+                     return 
+                  }
 
-            let user = this.getUser(this.invoiceToSubmit.userId)
-            this.invoiceToSubmit.userName = (user.firstName || user.lastName) ?
-               (user.firstName ? user.firstName : "") + (user.firstName && user.lastName ? " " : "") + (user.lastName ? user.lastName : "") :
-               user.authEmailCopy
-         }
+                  if (this.invoiceToSubmit.userId == null) { this.invoiceToSubmit.userId = item.buyerId }
+                  if (item.buyerId != this.invoiceToSubmit.userId) { 
+                     this.invoiceError = "Not all items have the same buyer"
+                     return 
+                  }
+                  if (!ItemMgr.isHold(item) && !ItemMgr.isInvoice(item)) { 
+                     this.invoiceError = "All item must be status Hold or Invoiced" 
+                     return
+                  }
+
+                  this.invoiceToSubmit.items.push({ id: item.id, name: item.name, price: item.buyPrice })
+                  this.invoiceToSubmit.subTotal += item.buyPrice
+               }
+               // console.log("mounted: invoice", this.invoiceToSubmit)
+            }
+            this.user = this.getUser(this.invoiceToSubmit.userId)
+            this.userAddress = InvoiceMgr.getUserHtml(this.invoiceToSubmit, this.user)
+            // console.log("mounted: userAddress", this.userAddress)
+         }, 100)  
 		}
    }
 </script>
@@ -157,14 +160,4 @@
 	.form-card { min-width: 400px; }
 	.form-card .heading { text-transform: capitalize; }
 	.form-card .q-card-section { width: 100%; }
-	.thumbnail {
-		max-width: 100px;
-		max-height: 100px;
-	}
-	.form-card .q-img {
-		height: 56px;
-		width: 56px;
-		border-radius: 10px;
-	}
-	.form-card .q-img__image { background-size: cover !important; }
 </style>

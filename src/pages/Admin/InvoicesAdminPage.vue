@@ -44,7 +44,7 @@
 		</div>
 
 		<q-dialog v-model="showEditModal">
-			<invoice-add-edit type="edit" :invoice="invoiceToEdit" @close="showEditModal=false" />
+			<invoice-add-edit type="Update" :invoice="invoiceToEdit" @close="showEditModal=false" />
 		</q-dialog>
   	</q-page>
 </template>
@@ -62,12 +62,12 @@
             visibleColumns: ['userName', 'items', 'total', 'status', 'tracking', 'sentDate'],
  				columns: [
                { name: 'id', field: 'id' },                 
-               { name: 'userName', label: 'User',     align: 'left',   field: 'userName', sortable: true },
-					{ name: 'items',    label: 'Items',    align: 'left',   field: 'items',    sortable: true },
-					{ name: 'total',    label: 'Total',    align: 'right',  field: 'total',    sortable: true, format: val => dollars(val) },
-					{ name: 'status',   label: 'Status',   align: 'center', field: 'status',   sortable: true },
-               { name: 'tracking', label: 'Tracking', align: 'center', field: 'tracking', sortable: true },
-               { name: 'sentDate', label: 'Date',     align: 'left',   field: 'sentDate', sortable: true },
+               { name: 'userName', label: 'User',     align: 'left',   field: 'userFullName', sortable: true },
+					{ name: 'items',    label: 'Items',    align: 'left',   field: 'items',        sortable: true },
+					{ name: 'total',    label: 'Total',    align: 'right',  field: 'total',        sortable: true, format: val => dollars(val) },
+					{ name: 'status',   label: 'Status',   align: 'center', field: 'status',       sortable: true },
+               { name: 'tracking', label: 'Tracking', align: 'center', field: 'tracking',     sortable: true },
+               { name: 'sentDate', label: 'Date',     align: 'left',   field: 'sentDate',     sortable: true },
             ],
             pagination: { rowsPerPage: 30 },
             invoiceIdToEdit: '',

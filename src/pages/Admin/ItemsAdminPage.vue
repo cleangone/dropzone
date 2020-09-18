@@ -53,7 +53,7 @@
 			<item-bulk-edit :items="selectedRowItems" @close="showBulkEditModal=false" />
 		</q-dialog>
       <q-dialog v-model="showInvoiceModal">	
-			<invoice-add-edit type="create" :items="selectedRowItems" @close="showInvoiceModal=false" />
+			<invoice-add-edit type="Create" :items="selectedRowItems" @close="showInvoiceModal=false" />
 		</q-dialog>
   	</q-page>
 </template>

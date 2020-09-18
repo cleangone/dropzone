@@ -24,7 +24,7 @@
                      <q-input v-model="userToUpdate.zip"   label="Zip"   class="col q-ml-sm" filled />
                   </div>
                   <div class="row">
-                     <q-input v-model="userToUpdate.country" label="Country" class="col" filled />
+                     <q-input v-model="userToUpdate.country" label="Country (if not USA)" class="col" filled />
                      <div class="col q-ml-sm"/>
                   </div>
                </div>

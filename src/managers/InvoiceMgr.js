@@ -42,25 +42,48 @@ export class InvoiceMgr {
       return details 
    }
           
-   static finalize(invoice, setting) { 
-      console.log("finalize pre", invoice)
+   static finalize(invoice, user, setting) { 
       invoice.total = invoice.subTotal + invoice.shippingCharge - invoice.priceAdjustment 
-      InvoiceMgr.setHtml(invoice, setting)
-      console.log("finalize post", invoice)
+      invoice.userFullName = (user.firstName || user.lastName) ?
+         (user.firstName ? user.firstName : "") + (user.firstName && user.lastName ? " " : "") + (user.lastName ? user.lastName : "") :
+         user.authEmailCopy
+      InvoiceMgr.setHtml(invoice, user, setting)   
    }
    
-   static setHtml(invoice, setting) { 
-      console.log("setHtml", setting)
+   static getUserHtml(invoice, user) { 
+      // console.log("getUserHtml: user", user)
+      let html = []      
+      html.push(
+         div(invoice.userFullName) +
+         div(user.address ? user.address : "ADDRESS" )  +
+         div((user.city ? user.city : "CITY") + ", " + (user.state ? user.state : "STATE")) +
+         div(user.zip ? user.zip : "ZIP" ) +
+         (user.country ? div(user.country) : "" )
+      )
+
+      return html.join("")
+   }
+
+   static setHtml(invoice, user, setting) { 
+      console.log("setHtml: user", user)
+      console.log("setHtml: setting", setting)
       let html = []
       
-      let company = div(setting.companyName)
-      let ppal =  div("Paypal: " + setting.paypal)
-      html.push(div(company + ppal, "align=right"))
-      html.push(br() + br())
+      let paypal = "" 
+      if (setting.paypal) {
+         let paypalLink = setting.paypal 
+         if (paypalLink.toLowerCase().startsWith("https://")) { paypalLink = paypalLink.substring(0, 8) }
+         if (paypalLink.toLowerCase().startsWith("http://"))  { paypalLink = paypalLink.substring(0, 7) }
 
-      let name = p(invoice.userName)
-      html.push(name)
-   
+         paypal =  a(paypalLink, "https://" + paypalLink)
+      }
+
+      html.push(div(
+         div(setting.companyName) + div(paypal), 
+         "align=right"))
+      html.push(br() + br())
+      html.push(InvoiceMgr.getUserHtml(invoice, user) + br())
+      
       let detailRows = []
       for (var item of invoice.items) {
          detailRows.push(tr(td(item.name) + tdRight(dollars(item.price))))
@@ -74,7 +97,7 @@ export class InvoiceMgr {
       
       let itemsTable = table(detailRows.join("") + line + subtotal + shipping + adjustment + line + total, "width=100% style='border:1px solid'")
       html.push(itemsTable)
-      html.push(br() + p("Please forward total amount to Paypal address"))
+      html.push(br() + p(setting.invoiceNote))
 
       invoice.html = html.join("")
    }
@@ -82,6 +105,7 @@ export class InvoiceMgr {
    static setUpdated(invoice) { invoice.status = InvoiceStatus.UPDATED }
 }
 
+function a(innerHtml, href)        { return ele(innerHtml, "a", "href=" + href) }
 function b(innerHtml)              { return ele(innerHtml, "b") }
 function br()                      { return closedEle("br") }
 function div(innerHtml, attr)      { return ele(innerHtml, "div", attr) }
