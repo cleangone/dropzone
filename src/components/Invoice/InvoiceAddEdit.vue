@@ -107,7 +107,7 @@
 			},
 			persistInvoice() {
             // console.log("persistInvoice", this.invoiceToSubmit)
-            this.invoiceToSubmit.html = InvoiceMgr.getHtml(this.invoice, this.getSetting)
+            InvoiceMgr.finalize(this.invoiceToSubmit, this.getSetting)
             if (this.isEdit) { this.setInvoice(this.invoiceToSubmit)}
             else { 
                this.createInvoice(this.invoiceToSubmit)

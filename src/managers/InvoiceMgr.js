@@ -41,9 +41,16 @@ export class InvoiceMgr {
 
       return details 
    }
-            
-   static getHtml(invoice, setting) { 
-      console.log("getHtml", setting)
+          
+   static finalize(invoice, setting) { 
+      console.log("finalize pre", invoice)
+      invoice.total = invoice.subTotal + invoice.shippingCharge - invoice.priceAdjustment 
+      InvoiceMgr.setHtml(invoice, setting)
+      console.log("finalize post", invoice)
+   }
+   
+   static setHtml(invoice, setting) { 
+      console.log("setHtml", setting)
       let html = []
       
       let company = div(setting.companyName)
@@ -63,14 +70,13 @@ export class InvoiceMgr {
       let shipping = tr(td("Shipping") + tdRight(dollars(invoice.shippingCharge)))
       let adjustment = invoice.priceAdjustment == 0 ? "" : tr(td("Adjustment") +  tdRight("(" + dollars(invoice.priceAdjustment) + ")"))
       let line = tr(td(hr(), "colspan=2"))
-      let total = tr(td(b("Total")) + tdRight(b(dollars(invoice.subTotal))))
+      let total = tr(td(b("Total")) + tdRight(b(dollars(invoice.total))))
       
       let itemsTable = table(detailRows.join("") + line + subtotal + shipping + adjustment + line + total, "width=100% style='border:1px solid'")
       html.push(itemsTable)
-
       html.push(br() + p("Please forward total amount to Paypal address"))
 
-      return html.join("")
+      invoice.html = html.join("")
    }
 
    static setUpdated(invoice) { invoice.status = InvoiceStatus.UPDATED }

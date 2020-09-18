@@ -28,16 +28,13 @@ const actions = {
       console.log("createInvoice", invoice)
       invoice.id = uid()
       invoice.createdDate = Date.now()
-      invoice.total = invoice.subTotal + invoice.shippingCharge - invoice.priceAdjustment 
-   
+      
       collection().doc(invoice.id).set(invoice)
    }),
    setInvoice: firestoreAction((context, invoice) => {
       console.log("setInvoice", invoice)
-      
       if (InvoiceMgr.isSent(invoice)) { InvoiceMgr.setUpdated(invoice) }
-      invoice.total = invoice.subTotal + invoice.shippingCharge - invoice.priceAdjustment 
-   
+      
       collection().doc(invoice.id).set(invoice)
    }),
    deleteInvoice: firestoreAction((context, id) => { 
