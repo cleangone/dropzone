@@ -89,6 +89,7 @@
 			}
 		},
 		computed: {	
+         ...mapGetters('setting', ['getSetting']),
          ...mapGetters('user', ['getUser']),
          isEdit() { return this.type == "edit" },	
          isShipped() { return InvoiceMgr.isShipped(this.invoiceToSubmit) },	
@@ -106,6 +107,7 @@
 			},
 			persistInvoice() {
             // console.log("persistInvoice", this.invoiceToSubmit)
+            this.invoiceToSubmit.html = InvoiceMgr.getHtml(this.invoice, this.getSetting)
             if (this.isEdit) { this.setInvoice(this.invoiceToSubmit)}
             else { 
                this.createInvoice(this.invoiceToSubmit)

@@ -10,13 +10,13 @@
 </template>
 
 <script>
-	import { InvoiceMgr } from 'src/managers/InvoiceMgr.js'
+   import { mapGetters } from 'vuex'
    
 	export default {
 		props: ['invoice'],
 		computed: {	
-         html() { return InvoiceMgr.getHtml(this.invoice) },
-      },
+         html() { return this.invoice.html },
+      }   
    }
 </script>
 
