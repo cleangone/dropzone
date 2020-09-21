@@ -1,5 +1,5 @@
 <template >
-	<q-img :src="item.imageUrl" v-on:click="navToItemPage" :style="imageWH" class="image-centered" basic contain>
+	<q-img :src="thumbUrl" v-on:click="navToItemPage" :style="imageWH" class="image-centered" basic contain>
       <q-btn v-if="isLiked"    icon="favorite"        class="absolute-bottom-right" color="blue-9" @click.stop="unlike" flat small dense/>
 		<q-btn v-if="isNotLiked" icon="favorite_border" class="absolute-bottom-right" color="blue-9" @click.stop="like"   flat small dense/>
 	</q-img>
@@ -20,7 +20,8 @@
          imageW() { return "width: " + (this.item.isHorizontal ? this.hImageWidth : this.vImageWidth) },	
          imageH() { return "height: " + this.imageHeight },	
          imageWH() { return "width: " + (this.item.isHorizontal ? this.hImageWidth : this.vImageWidth) +"; max-height: " + this.imageMaxHeight },	
-         isLiked()   { return this.loggedIn && this.user.likedItemIds && this.user.likedItemIds.includes(this.item.id) },		
+         thumbUrl() { return this.item.thumbUrl },	
+         isLiked() { return this.loggedIn && this.user.likedItemIds && this.user.likedItemIds.includes(this.item.id) },		
 		   isNotLiked() { return this.loggedIn && (!this.user.likedItemIds || !this.user.likedItemIds.includes(this.item.id)) },		
 		},
       methods: {

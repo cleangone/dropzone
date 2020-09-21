@@ -1,6 +1,7 @@
 import { firestoreAction } from 'vuexfire'
-import { firestore } from 'boot/firebase'
+import { firestore, firebaseStorage } from 'boot/firebase'
 import { uid } from 'quasar'
+import { ItemMgr } from 'src/managers/ItemMgr.js'
 
 /*
    item
@@ -24,12 +25,31 @@ const state = {
 
 const actions = {
    bindItems: firestoreAction(({ bindFirestoreRef }) => { return bindFirestoreRef('items', collection()) }),
-   createItem: firestoreAction((context, item) => {
-      item.id = uid()
-      item.createdDate = Date.now()
-      collection().doc(item.id).set(item)
+   setItem: firestoreAction((context, item) => { 
+      // console.log("setItem", item)
+      if (!item.id) {
+         // console.log("creating item")
+         item.id = uid()
+         item.createdDate = Date.now()
+      }
+      
+      if (item.thumbUrl) { 
+         // console.log("image not changed")
+         collection().doc(item.id).set(item) 
+      }
+      else {
+         console.log("getting thumbUrl", item.thumbFilePath)
+         var storageRef = firebaseStorage.ref()
+         storageRef.child(item.thumbFilePath).getDownloadURL().then(function(url) {
+            // console.log("getDownloadURL", url)
+            item.thumbUrl = url
+            collection().doc(item.id).set(item) 
+         })
+         .catch(function(error) {
+            console.log("Cannot get downloadURL from thumbnail " + thumbFilePath, error)
+         })
+      }
    }),
-   setItem: firestoreAction((context, item) => { collection().doc(item.id).set(item) }),
    updateItems: firestoreAction((context, itemUpdates) => { 
       // todo - research batching - no big deal right now - will only be 5-25 items
       itemUpdates.forEach(update => {

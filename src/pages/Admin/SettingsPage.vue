@@ -4,16 +4,15 @@
 	  <q-card class="form-card flat">
 			<q-card-section>
 				<div class="row q-mb-sm q-gutter-sm">
-					<q-input v-model="settingToUpdate.siteUrl" label="Site URL" filled class="col-4" />
+               <q-input v-model="settingToUpdate.companyName" label="Company Name" filled class="col-4" />
 					<q-input v-model="settingToUpdate.fromEmail" label="From Email Address" filled class="col-4" />
-               <q-input v-model.number="settingToUpdate.bidAdditionalTime" label="Bid Timer (secs)" type="number" filled class="col"/>
+               <q-input v-model="settingToUpdate.siteUrl" label="Site URL" filled class="col" />
             </div>
             <div class="row q-mb-sm q-gutter-sm">
-					<q-input v-model="settingToUpdate.companyName" label="Company Name" filled class="col-4" />
-            </div>
+				</div>
             <div class="row q-mb-sm q-gutter-sm">
-					<q-input v-model="settingToUpdate.companyName" label="Company Name" filled class="col-4" />
-            	<q-input v-model="settingToUpdate.invoiceNote" label="Invoice Note" filled class="col-7" />
+				   <q-input v-model.number="settingToUpdate.bidAdditionalTime" label="Bid Timer (secs)" type="number" filled class="col-2"/>
+            	<q-input v-model="settingToUpdate.invoiceNote" label="Invoice Note" filled class="col" />
             </div>
             <email-settings-edit :emailSetting="emailPurchaseSuccess" />
             <email-settings-edit :emailSetting="emailPurchaseFail" />

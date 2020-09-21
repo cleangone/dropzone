@@ -2,12 +2,14 @@
 	<q-card class="form-card">
       <q-card-section>
          <div class="text-h6 heading">Add Multiple Items</div>
+         <li v-for="(item, key) in itemsToAdd" :key="key">{{item.imageBaseName}}</li>			
       </q-card-section>
       <q-card-section>
          <q-firebase-uploader path="drops/" multiple @upload="uploadCompleted" /> 
       </q-card-section>
       <q-card-actions align="right">
-         <q-btn label="Cancel" color="grey" v-close-popup />
+         <q-btn @click="cancel" label="Cancel" color="grey"/>
+         <q-btn @click="save"   label="Save"   color="primary"/>
       </q-card-actions>
   </q-card>
 </template>
@@ -15,23 +17,48 @@
 <script>
 	import { mapGetters, mapActions } from 'vuex'
 	import QFirebaseUploader from 'components/QFirebaseUploader.js'
-   import { ItemStatus } from 'src/managers/ItemMgr.js'
+   import { ItemMgr, ItemStatus } from 'src/managers/ItemMgr.js'
+   import { StorageMgr } from 'src/managers/StorageMgr.js'
 	import { SaleType } from 'src/utils/Constants.js'
    
 	export default {
       props: ['dropId'],
+      data() {
+         return {
+			   itemsToAdd: []
+         }
+      },
 		methods: {
-			...mapActions('item', ['createItem']),
+			...mapActions('item', ['setItem']),
 			uploadCompleted(emit) {
-            let itemName = emit.name.includes(".") ? emit.name.substring(0, emit.name.indexOf(".")) : emit.name
-            this.createItem({
+            const itemName = emit.name.includes(".") ? emit.name.substring(0, emit.name.indexOf(".")) : emit.name
+            const item = {
                name: itemName,
+               sortName: itemName,
                dropId: this.dropId,
                status: ItemStatus.AVAILABLE,
                imageUrl: emit.url,
+               imageBaseName: emit.name,
                isHorizontal: false,
 					saleType: SaleType.DEFAULT
-            })
+            }
+
+            ItemMgr.setFilePaths(item)
+            this.itemsToAdd.push(item)
+            this.itemsToAdd.sort((a, b) => (a.imageBaseName > b.imageBaseName) ? 1 : -1) 
+            // console.log("uploadCompleted", this.itemsToAdd)
+         },
+         save() {
+            // console.log("save")
+            for (var item of this.itemsToAdd) {
+               this.setItem(item)
+            }
+
+            this.$emit('close')
+         },
+         cancel() {
+            StorageMgr.deleteItemFiles(this.itemsToAdd) 
+            this.$emit('close')
          }
       },
 		components: {

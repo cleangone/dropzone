@@ -3,6 +3,7 @@
 .thumbs.db
 node_modules
 /dist
+/src/boot/Config.js
 /src/boot/firebaseConfig.js
 /src-cordova/node_modules
 /src-cordova/platforms

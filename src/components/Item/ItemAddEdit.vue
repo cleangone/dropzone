@@ -1,53 +1,54 @@
 <template>
-	<q-card class="form-card">
-    <q-card-section>
-      <div class="text-h6 heading">{{ type }} Item</div>
-    </q-card-section>
+   <q-card class="form-card">
+      <q-card-section>
+         <div class="text-h6 heading">{{ type }} Item</div>
+      </q-card-section>
 
-    <q-card-section>
-    	<div class="row q-mb-xs q-gutter-sm">
-	      <q-input v-model="itemToSubmit.name" label="Name" ref="name" filled class="col"
-	      	:rules="[ val => !!val || '* Required',
-	          	val => val.length < 51 || 'Please use maximum 50 characters']"/>
-         <q-input v-model="itemToSubmit.sortName" label="Sort Name" ref="sort" filled class="col"
-            :rules="[ val => val.length < 51 || 'Please use maximum 50 characters']" />
-    	</div>
-		<div class="row q-mb-sm q-gutter-sm">
-			<!-- install in quasar folder: > quasar ext add qdecimal -->
-			<!-- <q-decimal v-model="itemToSubmit.startPrice" mode="currency" currency="USD" 
-				label="Start Price" input-style="text-align: right" :prefix="true" filled class="col" ></q-decimal> -->
-         <q-select v-model="artist" label="Artist" :options="artistOptions" filled class="col"/>
-         <q-input v-model.number="itemToSubmit.startPrice" label="Price" type=number prefix="$" filled class="col" />
-		</div>
-      <div class="row q-mb-md items-center">
-          <div v-if="uploaderDisplayed" class="col q-gutter-xs" :class="pink">
-				<q-firebase-uploader path="drops/" @upload="uploadCompleted" style="width: 400px"/> 
-            <q-btn @click="uploaderDisplayed=false" icon="clear" color="primary" size="sm" dense/>
+      <q-card-section>
+         <div class="row q-mb-xs q-gutter-sm">
+            <q-input v-model="itemToSubmit.name" label="Name" ref="name" filled class="col"
+               :rules="[ val => !!val || '* Required',
+                  val => val.length < 51 || 'Please use maximum 50 characters']"/>
+            <q-input v-model="itemToSubmit.sortName" label="Sort Name" ref="sort" filled class="col"
+               :rules="[ val => val.length < 51 || 'Please use maximum 50 characters']" />
          </div>
-	      <div v-else class="col q-gutter-sm" :class="yellow">
-				<q-btn @click="uploaderDisplayed=true" label="Upload Image" color="primary" />
-				<q-checkbox v-model="itemToSubmit.isHorizontal" label="Horizontal Image" dense/>
-	   	   <q-select label="Status" v-model="itemToSubmit.status" :options="statusOptions" filled/>
-			   <q-select label="Sale Type" v-model="itemToSubmit.saleType" :options="saleTypeOptions" filled/>
-		   </div>
-         <div v-if="!uploaderDisplayed" class="col" style="height: 200px" :class="blue">
-	         <q-img  style="height: 200px; width: 200px" :src="itemToSubmit.imageUrl ? itemToSubmit.imageUrl : 'statics/image-placeholder.png'" class="q-ml-lg" contain />
+         <div class="row q-mb-sm q-gutter-sm">
+            <!-- install in quasar folder: > quasar ext add qdecimal -->
+            <!-- <q-decimal v-model="itemToSubmit.startPrice" mode="currency" currency="USD" 
+               label="Start Price" input-style="text-align: right" :prefix="true" filled class="col" ></q-decimal> -->
+            <q-select v-model="artist" label="Artist" :options="artistOptions" filled class="col"/>
+            <q-input v-model.number="itemToSubmit.startPrice" label="Price" type=number prefix="$" filled class="col" />
          </div>
-    	</div>
-	</q-card-section>
+         <div class="row q-mb-md items-center">
+            <div v-if="uploaderDisplayed" class="col q-gutter-xs" :class="pink">
+               <q-firebase-uploader path="drops/" @upload="uploadCompleted" style="width: 400px"/> 
+               <q-btn @click="uploaderDisplayed=false" icon="clear" color="primary" size="sm" dense/>
+            </div>
+            <div v-else class="col q-gutter-sm" :class="yellow">
+               <q-btn @click="uploaderDisplayed=true" label="Upload Image" color="primary" />
+               <q-checkbox v-model="itemToSubmit.isHorizontal" label="Horizontal Image" dense/>
+               <q-select label="Status" v-model="itemToSubmit.status" :options="statusOptions" filled/>
+               <q-select label="Sale Type" v-model="itemToSubmit.saleType" :options="saleTypeOptions" filled/>
+            </div>
+            <div v-if="!uploaderDisplayed" class="col" style="height: 200px" :class="blue">
+               <q-img  style="height: 200px; width: 200px" :src="itemToSubmit.imageUrl ? itemToSubmit.imageUrl : 'statics/image-placeholder.png'" class="q-ml-lg" contain />
+            </div>
+         </div>
+      </q-card-section>
 
-   <q-card-actions align="right">
-      <q-btn label="Cancel" color="grey" v-close-popup />
-      <q-btn @click="submitForm" label="Save" color="primary" />
-    </q-card-actions>
-  </q-card>
+      <q-card-actions align="right">
+         <q-btn @click="cancel"      label="Cancel" color="grey"/>
+         <q-btn @click="persistItem" label="Save"   color="primary" />
+      </q-card-actions>
+   </q-card>
 </template>
 
 <script>
-	import { mapGetters, mapActions } from 'vuex'
-	import QFirebaseUploader from 'components/QFirebaseUploader.js'
-   import { ItemStatus } from 'src/managers/ItemMgr.js'
+   import { mapGetters, mapActions } from 'vuex'
+   import QFirebaseUploader from 'components/QFirebaseUploader.js'
+   import { ItemMgr, ItemStatus } from 'src/managers/ItemMgr.js'
    import { TagMgr, TagCategory } from 'src/managers/TagMgr.js'
+   import { StorageMgr } from 'src/managers/StorageMgr.js'
    import { SaleType, Colors } from 'src/utils/Constants.js'
    
    const NONE = "(none)"
@@ -71,9 +72,10 @@
                bidderIds: []
             },
             artist: "",
-				uploaderDisplayed: false,
+            uploaderDisplayed: false,
 				statusOptions: [ ItemStatus.SETUP, ItemStatus.AVAILABLE, ItemStatus.DROPPING, ItemStatus.HOLD, ItemStatus.SOLD ],
-				saleTypeOptions: [ SaleType.DEFAULT, SaleType.BID, SaleType.BUY ]
+            saleTypeOptions: [ SaleType.DEFAULT, SaleType.BID, SaleType.BUY ],
+            uploadedFiles: []
 			}
       },
       computed: {
@@ -95,44 +97,48 @@
          }
       },
 		methods: {
-			...mapActions('item', ['createItem', 'setItem']),
-			submitForm() {
-				// console.log("submitForm")
-				this.$refs.name.validate()
-
-				if (!this.$refs.name.hasError) {
-               if (this.itemToSubmit.status == ItemStatus.AVAILABLE) { 
-                  this.itemToSubmit.buyPrice = 0 
-                  this.itemToSubmit.bidderIds = []
-                  this.itemToSubmit.currBidderId = ''
-                  this.itemToSubmit.currBidAmount = 0
-                  this.itemToSubmit.currActionId = ''
-                  this.itemToSubmit.numberOfBids = 0
-                  this.itemToSubmit.buyerId = ''
-                  this.itemToSubmit.buyerName = ''
-                  this.itemToSubmit.dropDoneDate = 0 
-						this.itemToSubmit.lastUserActivityDate = 0 
-               }
-
-               if (this.artist) {
-                  const tag = this.artist == NONE ? { id:"", name: "", category: TagCategory.ARTIST } : this.artistMap.get(this.artist)
-                  TagMgr.setTag(this.itemToSubmit, tag) 
-               }
-               
-               this.persistItem()
-               this.$emit('close')
-				}
-			},
+			...mapActions('item', ['setItem']),
 			persistItem() {
-				// console.log("persistItem", this.dropItemToSubmit)
-				if (this.type == 'add') { this.createItem(this.itemToSubmit) }
-				else { this.setItem(this.itemToSubmit) }
+				// console.log("persistItem")
+				this.$refs.name.validate()
+            if (this.$refs.name.hasError) { return }
+            
+            if (this.itemToSubmit.status == ItemStatus.AVAILABLE) { 
+               this.itemToSubmit.buyPrice = 0 
+               this.itemToSubmit.bidderIds = []
+               this.itemToSubmit.currBidderId = ''
+               this.itemToSubmit.currBidAmount = 0
+               this.itemToSubmit.currActionId = ''
+               this.itemToSubmit.numberOfBids = 0
+               this.itemToSubmit.buyerId = ''
+               this.itemToSubmit.buyerName = ''
+               this.itemToSubmit.dropDoneDate = 0 
+               this.itemToSubmit.lastUserActivityDate = 0 
+            }
+
+            if (this.artist) {
+               const tag = this.artist == NONE ? { id:"", name: "", category: TagCategory.ARTIST } : this.artistMap.get(this.artist)
+               TagMgr.setTag(this.itemToSubmit, tag) 
+            }
+            
+            this.setItem(this.itemToSubmit)             
+            this.$emit('close')
 			},
 			uploadCompleted(emit) {
-				console.log("uploadCompleted", emit)
             this.itemToSubmit.imageUrl = emit.url
+            this.itemToSubmit.imageBaseName = emit.name
+            this.itemToSubmit.thumbUrl = ""
+            ItemMgr.setFilePaths(this.itemToSubmit)
+            this.uploadedFiles.push(this.itemToSubmit.imageFilePath)
+            this.uploadedFiles.push(this.itemToSubmit.thumbFilePath)
+
             this.uploaderDisplayed = false
-			}
+         },
+         cancel(emit) {
+            // console.log("cancel")
+            StorageMgr.deleteFiles(this.uploadedFiles) 
+            this.$emit('close')
+         }
 		},
 		components: {
     		QFirebaseUploader

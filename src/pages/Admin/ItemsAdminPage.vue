@@ -47,7 +47,7 @@
 			<item-add-edit type="edit" :dropId="dropId" :item="itemToEdit" @close="showEditModal=false" />
 		</q-dialog>
       <q-dialog v-model="showBulkAddModal">	
-			<item-bulk-add :dropId="dropId" />
+			<item-bulk-add :dropId="dropId" @close="showBulkAddModal=false"/>
 		</q-dialog>
       <q-dialog v-model="showBulkEditModal">	
 			<item-bulk-edit :items="selectedRowItems" @close="showBulkEditModal=false" />

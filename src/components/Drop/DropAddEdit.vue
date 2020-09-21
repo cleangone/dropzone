@@ -86,7 +86,7 @@
 		methods: {
 			...mapActions('drop', ['createDrop', 'setDrop']),
 			submitForm() {
-				console.log("submitForm")
+				// console.log("submitForm")
 				this.$refs.name.validate()
 
             // todo - can't Schedule if startDate has already passed
