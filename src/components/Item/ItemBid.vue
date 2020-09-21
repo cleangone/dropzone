@@ -42,8 +42,7 @@
          ...mapActions('action', ['submitBid']),
          quickBid() { this.submitItemBid(this.quickBidAmount) },
          promptToBid() {
-            console.log("promptToBid")
-
+            // console.log("promptToBid")
             // todo - verify that bidAmount not less than quickBidAmount
 				this.$q.dialog({title: 'Confirm', message: 'Bid ' + dollars(this.bidAmount) + ' on ' + this.item.name + '?', persistent: true,			
 	        		ok: { push: true }, cancel: { push: true, color: 'grey' }
@@ -51,7 +50,7 @@
             .onOk(() => { this.submitItemBid(this.bidAmount) })
 			},
 			submitItemBid(itemBidAmount) {
-            console.log("submitItemBid", itemBidAmount)
+            // console.log("submitItemBid", itemBidAmount)
             this.submitBid({ itemId: this.item.id, itemName: this.item.name, userId: this.userId, amount: itemBidAmount }) 
             this.$emit('close')
          },

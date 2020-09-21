@@ -6,7 +6,7 @@
 			</div>
 		</div> 
 		<div v-if="activeDropsExist" class="col q-mt-none" :class="indigo">
-			<live-drops-board/>
+			<drop-board/>
 		</div> 
 	</q-page>
 </template> 
@@ -21,8 +21,8 @@
 			...mapGetters('color', Colors),
       },
       components: {
-			'live-drops-board' : require('components/Drop/LiveDropsBoard.vue').default,
-			'drop' : require('components/Drop/Drop.vue').default
+         'drop' : require('components/Drop/Drop.vue').default,
+         'drop-board' : require('components/Drop/DropBoard.vue').default
       },
 	}
 </script>

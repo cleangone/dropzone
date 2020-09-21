@@ -13,7 +13,6 @@ import { DropMgr } from 'src/managers/DropMgr.js';
 
 const state = {
 	drops: [],
-   // dropsDownloaded: false,
 }
 
 const actions = {
@@ -43,7 +42,6 @@ function collection() { return firestore.collection('drops') }
 // function getActionRef(userId, actionId) { return getRef("users/" + userId + "/actions/" + actionId) }
 // function getRef(path) { return firebaseDB.ref(path) }
 
-// function createPayload(snapshot) { return {id: snapshot.key, value: snapshot.val() } }
 function showPositiveNotify(msg) { Notify.create( {type: "positive", timeout: 1000, message: msg} )}
 function showNegativeNotify(msg) { Notify.create( {type: "negative", timeout: 5000, message: msg} )}
 
@@ -51,11 +49,7 @@ const getters = {
    dropsExist: state => { return state.drops && state.drops.length > 0 },
    activeDropsExist: state => { 
       if (!state.drops) { return false } 
-      
-      for (var drop of state.drops) {
-         if (DropMgr.isLive(drop) || DropMgr.isDropped(drop)) { return true }
-      }
-
+      for (var drop of state.drops) { if (DropMgr.isLive(drop) || DropMgr.isDropped(drop)) { return true } }
       return false
    },
    getDrops: state => { 
@@ -67,17 +61,15 @@ const getters = {
       for (var drop of state.drops) {
          if (drop.id == dropId) { return drop }
       }
-
       return null
    },
-   getActiveDropIds: state => { 
-      let dropIds = []
-      if (!state.drops) { return dropIds } 
+   getDropIds: state => status => { 
+      if (!state.drops) { return [] } 
    
+      let dropIds = []
       for (var drop of state.drops) {
-         if (DropMgr.isLive(drop) || DropMgr.isDropped(drop)) { dropIds.push(drop.id) }
+         if (DropMgr.isStatus(drop, status)) { dropIds.push(drop.id) }
       }
-
       return dropIds
    },
 }

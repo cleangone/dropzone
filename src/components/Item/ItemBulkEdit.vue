@@ -4,6 +4,13 @@
       <div class="text-h6 heading">Item Bulk Edit</div>
     </q-card-section>
     <q-card-section>
+       <div class="q-mb-sm">
+         <q-input v-model="nameFind"    label="Name: Find Text" filled class="col" />
+         <q-input v-model="nameReplace" label="Name: Replace Text With" filled class="col" />
+      </div>
+      <div class="q-mb-sm">
+         <q-checkbox label="Name: Trim leading 0 from numbers" v-model="trimLeadingZero" dense/>
+		</div>
       <div class="q-mb-sm">
          <q-select label="Status" v-model="status" :options="statusOptions" filled/>
       </div>
@@ -13,10 +20,14 @@
       <div class="q-mb-sm">
          <q-select label="Sale Type" v-model="saleType" :options="saleTypeOptions" filled/>
       </div>
+      <div class="q-mb-sm">
+         <q-checkbox label="Delete Items" v-model="deleteItems" dense/>
+		</div>
+      
 	</q-card-section>
    <q-card-actions align="right">
-      <q-btn label="Cancel" color="grey" v-close-popup />
-      <q-btn @click="persistItems" label="Save" color="primary" />
+      <q-btn @click="cancel" label="Cancel" color="grey" />
+      <q-btn @click="save"   label="Save"   color="primary" />
     </q-card-actions>
   </q-card>
 </template>
@@ -33,9 +44,13 @@
       props: ['items'],
 		data() {
 			return {
+            nameFind: "",
+            nameReplace: "",
+            trimLeadingZero: false,
             status: "",
             artist: "",
             saleType: "",
+            deleteItems: false,
 				statusOptions: [ ItemStatus.SETUP, ItemStatus.AVAILABLE, ItemStatus.HOLD, ItemStatus.SOLD ],
 				saleTypeOptions: [ SaleType.DEFAULT, SaleType.BID, SaleType.BUY ]
 			}
@@ -58,20 +73,32 @@
          }
       },
       methods: {
-			...mapActions('item', ['updateItems']),
-			persistItems() {
-            if (this.status.length || this.artist.length || this.saleType.length ) { 
-               const itemUpdates = []
-               this.items.forEach(item => {
-                  let update = { id: item.id }
-                  if (this.status.length) { update.status = this.status }
-                  if (this.saleType.length) { update.saleType = this.saleType }
-                  if (this.artist.length) { 
-                     const tag = this.artist == NONE ? { id:"", name: "", category: TagCategory.ARTIST } : this.artistMap.get(this.artist)
-                     TagMgr.setTag(update, tag) 
-                  }
+			...mapActions('item', ['updateItems', 'deleteItem']),
+			save() {
+            if (this.deleteItems) { 
+               this.promptToDelete() 
+               return
+            }
 
-                  if (update.status == ItemStatus.AVAILABLE) { 
+            const itemUpdates = []
+            this.items.forEach(item => {
+               let update = { }
+               if (this.nameFind.length && this.nameReplace.length && item.name.includes(this.nameFind)) { 
+                  console.log("replace '" + this.nameFind + "' with '" + this.nameReplace + "'")
+                  update.name = item.name.replace(this.nameFind, this.nameReplace)
+               }
+
+               if (this.trimLeadingZero) { 
+                  // " 0[0-9]" matches " 0n"
+                  const name = update.name ? update.name : item.name
+                  const regex = / 0([0-9])/g
+                  const replace = " \$1" 
+                  update.name = name.replace(regex, replace)
+               }
+
+               if (this.status.length) { 
+                  update.status = this.status 
+                  if (update.status == ItemStatus.AVAILABLE) {    
                      update.buyPrice = 0 
                      update.bidderIds = []
                      update.currBidderId = ''
@@ -83,13 +110,34 @@
                      update.dropDoneDate = 0 
                      update.lastUserActivityDate = 0 
                   }
-                  // console.log("Bulk update", update)
+               }
+
+               if (this.saleType.length) { update.saleType = this.saleType }
+
+               if (this.artist.length) { 
+                  const tag = this.artist == NONE ? { id:"", name: "", category: TagCategory.ARTIST } : this.artistMap.get(this.artist)
+                  TagMgr.setTag(update, tag) 
+               }
+
+               if (Object.keys(update).length) { 
+                  // console.log("Bulk Update", update)
+                  update.id = item.id 
                   itemUpdates.push(update)
-               })
-               this.updateItems(itemUpdates)
-            }
+               }
+            })
+
+            if (itemUpdates.length) { this.updateItems(itemUpdates) }
             this.$emit('close')
-			},
+         },
+         promptToDelete() {
+            this.$q.dialog({title: 'Confirm', message: 'Delete ' + this.items.length + ' Items?', persistent: true,			
+	        		ok: { push: true }, cancel: { push: true, color: 'grey' }
+				}).onOk(() => {
+               this.items.forEach(item => { this.deleteItem(item.id) })
+               this.$emit('close')
+				})
+         },
+         cancel() { this.$emit('close') }
 		},
 	}
 </script>

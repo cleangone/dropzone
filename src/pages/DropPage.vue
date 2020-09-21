@@ -1,7 +1,7 @@
 <template>
 	<q-page class="q-pa-md b-pink">
 		<a style="cursor: pointer; text-decoration: underline" v-on:click="navBack()">Back</a>
-		<q-toggle v-if="loggedIn" class="float-right" v-model="showAvailable" :label= "showAvailable ? 'Show All': 'Show Available'"/>
+		<q-checkbox v-model="showHoldSold" label="Show Hold/Sold" class="float-right" dense />
 		<div v-if="drop">
 			<div class="row q-mt-sm text-h6">{{ drop.name }}</div>
 			<div v-if="showItems" class="row q-mt-sm q-gutter-sm">
@@ -30,7 +30,7 @@
 		data() {
 			return {				
 				dropId: 0,
-				showAvailable: false
+				showHoldSold: true
         }
 		},
 		created() {
@@ -48,7 +48,7 @@
          isAdmin() { return this.user && this.user.isAdmin },
          items () { 
             let items = this.getItemsInDrop(this.dropId) 
-            if (!this.showAvailable) { return items }
+            if (this.showHoldSold) { return items }
             
             let availableItems = []
             items.forEach(item => { 
@@ -56,9 +56,7 @@
 		      })
 				return availableItems
          },
-         showItems() { 
-            return (this.isAdmin && DropMgr.isSetup(this.drop) || DropMgr.isLive(this.drop) || DropMgr.isDropped(this.drop) )
-         },
+         showItems() { return DropMgr.isActive(this.drop) || (this.isAdmin && DropMgr.isSetup(this.drop)) },
 			startDateText() { return getStartDateText(this.drop.startDate) },
 		},
 		methods: {

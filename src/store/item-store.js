@@ -33,8 +33,10 @@ const actions = {
          item.createdDate = Date.now()
       }
       
-      if (item.thumbUrl) { 
-         // console.log("image not changed")
+      item.thumbFilePath
+
+      if (item.thumbUrl || !item.thumbFilePath) { 
+         // image not set/changed
          collection().doc(item.id).set(item) 
       }
       else {
@@ -68,40 +70,28 @@ const getters = {
    itemsExist: state => { return state.items && state.items.length > 0 },
    getItemsInDrop: state => dropId => { 
       // console.log("getItemsInDrop", state.items)
-      let dropItems = []
-      let sortNamesExist = false
+      let items = []
       state.items.forEach(item => {
-         if (item.dropId == dropId) {
-            dropItems.push(item)
-            if (item.sortName) { sortNamesExist = true}
-         }
+         if (item.dropId == dropId) { items.push(item) }
       })
 
-      if (sortNamesExist) { dropItems.sort((a, b) => (a.sortName > b.sortName) ? 1 : -1)}
-      else { dropItems.sort((a, b) => (a.name > b.name) ? 1 : -1) } 
-      return dropItems
+      items.sort((a, b) => (a.sortName > b.sortName) ? 1 : -1)
+      return items
    },
    getItemsInDrops: state => dropIds => {   
       // console.log("getItemsInDrops", dropIds)
-      let dropsItems = []
-      state.items.forEach(item => {
-         if (dropIds.includes(item.dropId) ) {
-            dropsItems.push(item)
-         }
-      })
-
-      dropsItems.sort((a, b) => (a.lastUserActivityDate > b.lastUserActivityDate) ? -1 : 1)
-      return dropsItems
-   },
-   getSpecifiedItems: state => itemIds => {   
-      // console.log("getDropsItems", dropIds)
       let items = []
       state.items.forEach(item => {
-         if (itemIds.includes(item.id) ) {
-            items.push(item)
-         }
+         if (dropIds.includes(item.dropId)) { items.push(item) }
       })
-
+      return items
+   },
+   getItems: state => itemIds => {   
+      // console.log("getItems", itemIds)
+      let items = []
+      state.items.forEach(item => {
+         if (itemIds.includes(item.id) ) { items.push(item) }
+      })
       return items
    },
    getItem: state => itemId => { 

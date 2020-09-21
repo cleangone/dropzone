@@ -55,7 +55,7 @@
          user() { return this.getUser(this.userId)},
          userIsAdmin() { return this.user && this.user.isAdmin },
 			isAvailable() { return ItemMgr.isAvailable(this.item)  || ItemMgr.isDropping(this.item)  },
-         dropIsActive() { return DropMgr.isLive(this.drop) || DropMgr.isDropped(this.drop) },
+         dropIsActive() { return DropMgr.isActive(this.drop) },
 			isBid() { return this.itemSaleType == SaleType.BID && this.item.startPrice },
 			isBuy() { return this.itemSaleType == SaleType.BUY && this.item.startPrice },	
       },

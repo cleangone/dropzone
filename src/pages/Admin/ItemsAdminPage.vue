@@ -50,7 +50,7 @@
 			<item-bulk-add :dropId="dropId" @close="showBulkAddModal=false"/>
 		</q-dialog>
       <q-dialog v-model="showBulkEditModal">	
-			<item-bulk-edit :items="selectedRowItems" @close="showBulkEditModal=false" />
+			<item-bulk-edit :items="selectedRowItems" @close="bulkEditDone" />
 		</q-dialog>
       <q-dialog v-model="showInvoiceModal">	
 			<invoice-add-edit type="Create" :items="selectedRowItems" @close="showInvoiceModal=false" />
@@ -149,7 +149,11 @@
 				this.$q.dialog({title: 'Confirm', message: 'Delete ' + name + '?', persistent: true,			
 	        		ok: { push: true }, cancel: { push: true, color: 'grey' }
 				}).onOk(() => { this.deleteItem(itemId) })
-			}
+         },
+         bulkEditDone() {
+            this.selectedRowItems = []
+            this.showBulkEditModal = false
+         }
 		},
 		components: {
 			'item-add-edit'    : require('components/Item/ItemAddEdit.vue').default,

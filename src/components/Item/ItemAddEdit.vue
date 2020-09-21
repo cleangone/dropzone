@@ -125,6 +125,10 @@
             this.$emit('close')
 			},
 			uploadCompleted(emit) {
+            const itemName = emit.name.includes(".") ? emit.name.substring(0, emit.name.indexOf(".")) : emit.name
+         
+            if (!this.itemToSubmit.name) { this.itemToSubmit.name = itemName }
+            if (!this.itemToSubmit.sortName) { this.itemToSubmit.sortName = itemName }
             this.itemToSubmit.imageUrl = emit.url
             this.itemToSubmit.imageBaseName = emit.name
             this.itemToSubmit.thumbUrl = ""

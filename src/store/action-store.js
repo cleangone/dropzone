@@ -26,16 +26,14 @@ const actions = {
       return bindFirestoreRef('actions', collection())
    }),
    submitBid: firestoreAction((context, action) => {
-      console.log("submitBid", action)
-
+      // console.log("submitBid", action)
       init(action, ActionType.BID)
       collection().doc(action.id).set(action)
    
       showPositiveNotify("Bid submitted")
    }),
    submitPurchaseRequest: firestoreAction((context, action) => {
-      console.log("submitPurchaseRequest", action)
-      
+      // console.log("submitPurchaseRequest", action)
       init(action, ActionType.PURCHASE_REQ)
       collection().doc(action.id).set(action)
    

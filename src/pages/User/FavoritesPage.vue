@@ -22,10 +22,10 @@
 	  	computed: {
 			...mapGetters('auth', ['userId']),
 			...mapGetters('user', ['getUser']),
-			...mapGetters('item', ['getSpecifiedItems']),
+			...mapGetters('item', ['getItems']),
 			thumb() { return ItemDisplayType.THUMB },
 			user() { return this.getUser(this.userId) },
-         items () { return (this.user.likedItemIds ? this.getSpecifiedItems(this.user.likedItemIds) : []) },
+         items () { return (this.user.likedItemIds ? this.getItems(this.user.likedItemIds) : []) },
 		},
 		methods: {
 			navBack() { this.$router.go(-1) },
