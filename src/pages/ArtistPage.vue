@@ -6,13 +6,14 @@
 		</div>
       
 		<div class="row q-mt-sm q-gutter-sm">
-         <item v-for="(item, key) in items" :key="key" :item="item" :displayType="thumb"/>
+         <item v-for="(item, key) in displayItems" :key="key" :item="item" :displayType="thumb"/>
       </div>
 	</q-page>
 </template>
 
 <script>
    import { mapGetters } from 'vuex'
+   import { ItemMgr } from 'src/managers/ItemMgr.js'
    import { ItemDisplayType } from 'src/utils/Constants.js'
    
 	export default {
@@ -26,8 +27,18 @@
 			...mapGetters('tag', ['getTag']),
          ...mapGetters('item', ['getActiveItemsWithTag']),
          artist() { return this.getTag(this.tagId) },
-         items () { return this.getActiveItemsWithTag(this.artist) },
          thumb() { return ItemDisplayType.THUMB },
+         items () { return this.getActiveItemsWithTag(this.artist) },
+         displayItems () { 
+            if (this.showHoldSold) { return this.items }
+            
+            let availableItems = []
+            this.items.forEach(item => { 
+               if (ItemMgr.isAvailable(item) || ItemMgr.isDropping(item)) { availableItems.push(item) }
+		      })
+				return availableItems
+         },
+         
       },
 		methods: {
 			navBack() { this.$router.go(-1) },
