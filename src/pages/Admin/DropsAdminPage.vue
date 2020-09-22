@@ -37,7 +37,7 @@
 <script>
 	import { date } from 'quasar'
    import { mapState, mapGetters, mapActions } from 'vuex'
-   import { localTimezone } from 'src/utils/DateUtils';
+   import { formatDateTimeOptYear, localTimezone } from 'src/utils/DateUtils'
 
 	export default {
 		data() {
@@ -51,7 +51,7 @@
                //  todo - headerStyle doesn't seem to work - use it to center header
         			{ name: 'id', field: 'id' },
 				 	{ name: 'name',      label: 'Name',   align: 'left',   field: 'name',           sortable: true },
-				 	{ name: 'startDate', label: 'Start Date ' + localTimezone(), align: 'center', field: 'startDate', sortable: true, format: val => formatDate(val) },
+				 	{ name: 'startDate', label: 'Start Date ' + localTimezone(), align: 'center', field: 'startDate', sortable: true, format: val => formatDateTimeOptYear(val) },
 					{ name: 'status',    label: 'Status', align: 'center', field: 'status',          sortable: true },
 					{ name: 'saleType',  label: 'Type',   align: 'center', field: 'defaultSaleType', sortable: true },
 					{ name: 'actions' }
@@ -91,16 +91,6 @@
          // console.log("DropsAdminPage")
          if (!this.dropsExist) { this.bindDrops() }
       }
-   }
-   
-   function formatDate(startDate) {
-      if (!startDate) { return "" }
-
-      let now = new Date()
-      let datetime = new Date(startDate.seconds * 1000)
-      return (now.getYear() == datetime.getYear() ? 
-         date.formatDate(datetime, 'MMM D, h:mm a') :
-         date.formatDate(datetime, 'MMM D, YYYY h:mm a'))
    }
 
 </script>

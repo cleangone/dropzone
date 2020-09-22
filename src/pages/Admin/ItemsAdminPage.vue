@@ -2,9 +2,10 @@
   <q-page>
       <div class="q-pt-sm q-px-sm text-h6 heading">
          Drop: {{ drop.name }}  
+         <q-btn icon="edit" @click="showEditDropModal=true" size="sm" flat dense color="primary" />
       </div>
       <div class="q-px-sm text-subtitle1 heading">
-         Default Sale Type: {{ drop.defaultSaleType }}
+         {{ dropStatus }}, Default Sale Type: {{ drop.defaultSaleType }}
       </div>
 		<div class="q-pa-sm absolute full-width full-height">
 			<q-table title="Items" :columns="columns" :visible-columns="visibleColumns" :data="items" 
@@ -39,8 +40,10 @@
          <div style="height: 75px"/>
 		</div>
  
-		<!-- 2 modals - don't want a race condition updating type  -->
-		<q-dialog v-model="showAddModal">	
+		<q-dialog v-model="showEditDropModal">
+         <drop-add-edit type="edit" :drop="drop" @close="showEditDropModal=false" />
+		</q-dialog>
+      <q-dialog v-model="showAddModal">	
 			<item-add-edit type="add" :dropId="dropId" @close="showAddModal=false" />
 		</q-dialog>
 		<q-dialog v-model="showEditModal">
@@ -61,14 +64,18 @@
 <script>
 	import { date } from 'quasar'
    import { mapGetters, mapActions } from 'vuex'
-   import { ItemMgr } from 'src/managers/ItemMgr.js';
+   import { DropMgr } from 'src/managers/DropMgr.js';
+	import { ItemMgr } from 'src/managers/ItemMgr.js';
 	import { TagMgr } from 'src/managers/TagMgr.js'
    import { dollars } from 'src/utils/Utils'
+   import { formatDateTimeOptYearTz } from 'src/utils/DateUtils'
+
 	
 	export default {
 		data() {
 	  		return {
-				dropId: '',
+            dropId: '',
+            showEditDropModal: false,
 				showAddModal: false,
             showEditModal: false,
             showBulkAddModal: false,
@@ -98,6 +105,9 @@
          ...mapGetters('item', ['itemsExist', 'getItemsInDrop']),
 			...mapGetters('user', ['getUserIdToName']),
 			drop() { return this.getDrop(this.dropId) },
+         dropStatus() { 
+            return this.drop.status + (DropMgr.isScheduled(this.drop) ? " " + formatDateTimeOptYearTz(this.drop.startDate) : "")
+         },
          itemToEdit() { return this.itemIdToEdit ? getItem(this.items, this.itemIdToEdit) : null },
          items() { 
             // make copies - vuex not happy with table minipulation of elements
@@ -135,7 +145,8 @@
 		},
 		methods: {
 			...mapActions('item', ['bindItems', 'deleteItem']),
-			editItem(itemId) {
+			editDrop() { },
+         editItem(itemId) {
 				// console.log("editItem", itemId)
 				this.itemIdToEdit = itemId
 				this.showEditModal = true
@@ -158,16 +169,14 @@
          }
 		},
 		components: {
-			'item-add-edit'    : require('components/Item/ItemAddEdit.vue').default,
+         'drop-add-edit'    : require('components/Drop/DropAddEdit.vue').default,
+         'item-add-edit'    : require('components/Item/ItemAddEdit.vue').default,
       	'item-bulk-add'    : require('components/Item/ItemBulkAdd.vue').default,
       	'item-bulk-edit'   : require('components/Item/ItemBulkEdit.vue').default,
       	'invoice-add-edit' : require('components/Invoice/InvoiceAddEdit.vue').default
       },
       created() {
 			this.dropId = this.$route.params.dropId
-         // console.log("ItemsAdminPage: dropId=" + this.dropId)
-         
-         if (!this.itemsExist) { this.bindItems() } 
       },
    }
 

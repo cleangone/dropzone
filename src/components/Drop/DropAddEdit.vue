@@ -76,7 +76,7 @@
             startTime: '09:00',
             timezone: localTimezone(),
             uploaderDisplayed: false,
-            statusOptions: [ DropStatus.SETUP, DropStatus.START_COUNTDOWN, DropStatus.SCHEDULE, DropStatus.LIVE, DropStatus.DROPPED ],
+            statusOptions: [ DropStatus.SETUP, DropStatus.SCHEDULE, DropStatus.LIVE, DropStatus.DROPPED ], // DropStatus.START_COUNTDOWN
             saleTypeOptions: [ SaleType.BID, SaleType.BUY ]
 			}
 		},

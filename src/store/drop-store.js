@@ -20,16 +20,16 @@ const actions = {
       return bindFirestoreRef('drops', collection())
    }),
    createDrop: firestoreAction((context, drop) => {
-      console.log("createDrop", drop)
+      // console.log("createDrop", drop)
       drop.id = uid()
       collection().doc(drop.id).set(drop)
    }),
    setDrop: firestoreAction((context, drop) => {
-      console.log("setDrop", drop)
+      // console.log("setDrop", drop)
       collection().doc(drop.id).set(drop)
    }),
    deleteDrop: firestoreAction((context, id) => { 
-      console.log("deleteDrop", id)
+      // console.log("deleteDrop", id)
       collection().doc(id).delete()
    }),
 }
