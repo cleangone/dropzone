@@ -34,7 +34,7 @@
 
 <script>
 	import { mapGetters, mapActions } from 'vuex'
-	import { ItemStatus } from 'src/managers/ItemMgr.js';
+	import { ItemMgr, ItemStatus } from 'src/managers/ItemMgr.js';
    import { TagMgr, TagCategory } from 'src/managers/TagMgr.js'
    import { SaleType } from 'src/utils/Constants.js';
    
@@ -51,7 +51,7 @@
             artist: "",
             saleType: "",
             deleteItems: false,
-				statusOptions: [ ItemStatus.SETUP, ItemStatus.AVAILABLE, ItemStatus.HOLD, ItemStatus.SOLD ],
+				statusOptions: [ ItemStatus.PRIVATE, ItemStatus.SETUP, ItemStatus.AVAILABLE, ItemStatus.HOLD, ItemStatus.SOLD ],
 				saleTypeOptions: [ SaleType.DEFAULT, SaleType.BID, SaleType.BUY ]
 			}
       },
@@ -98,7 +98,7 @@
 
                if (this.status.length) { 
                   update.status = this.status 
-                  if (update.status == ItemStatus.AVAILABLE) {    
+                  if (ItemMgr.isSetup(update) || ItemMgr.isAvailable(update)) {
                      update.buyPrice = 0 
                      update.bidderIds = []
                      update.currBidderId = ''

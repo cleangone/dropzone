@@ -29,7 +29,11 @@
         <q-item-label header>Navigation</q-item-label>
         <layout-item path="/" label="Drops" iconName="home"/>
 
+         <q-item-label header>Artists</q-item-label>
+         <layout-item v-for="(tag, key) in artistLinks" :key="key" :path="'/artist/' + tag.id" :label="tag.name"/>
+
         <div v-if="loggedIn">
+            <q-item-label header>Account</q-item-label>
             <layout-item path="/account"   label="My Account" iconName="account_circle"/>
             <layout-item path="/favorites" label="Favorites"  iconName="favorite"/>    
             <layout-item path="/actions"   label="History"    iconName="history"/>           
@@ -63,8 +67,8 @@
 
 <script>
    import { mapGetters, mapActions } from 'vuex'
-   // import { openURL } from 'quasar'
-
+   import { TagMgr, TagCategory } from 'src/managers/TagMgr.js'
+   
    export default {
       name: 'MyLayout',
       data () {
@@ -74,10 +78,13 @@
       },
       computed: {
          ...mapGetters('auth', ['userId', 'loggedIn']),
+         ...mapGetters('tag', ['getTags']),
          ...mapGetters('user', ['getUser', 'isAdmin']),
          user() { return this.getUser(this.userId)},
          userIsAdmin() { return this.user && this.user.isAdmin },
          userDisplayName() { return this.user.firstName ? this.user.firstName : this.user.authEmailCopy },
+         artists() { return this.getTags(TagCategory.ARTIST) },
+         artistLinks() { return TagMgr.tagsWithLinks(this.artists) },
       },
       methods: {
          ...mapActions('action',  ['bindActions']),
@@ -108,6 +115,3 @@
       },
   }
 </script>
-
-<style>
-</style>

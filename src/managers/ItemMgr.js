@@ -1,6 +1,7 @@
 import { Config } from 'boot/Config.js'
 
 export const ItemStatus = {
+   PRIVATE:   'Private',
    SETUP:     'Setup',
    AVAILABLE: 'Available',
    DROPPING:  'Dropping',
@@ -36,41 +37,10 @@ export class ItemMgr {
       item.thumbFilePath = filePathPrefix + baseFilename + thumbDimensions + baseExtension
       // console.log("thumbFilePath ", item.thumbFilePath)
    }
-   
-   // static getThumbFilePath(item) {
-   //    console.log("getThumbFilePath ", item)
-            
-   //    if (!item.imageFileName) { return logError("getThumbFilePath: item url does not contain imageFileName") }
-   //    if (!item.imageUrl || !item.imageUrl.includes(item.imageFileName)) {
-   //       return logError("getThumbUrl: uploaded url does not contain filename " + item.imageFileName, item.imageUrl)
-   //    }
 
-   //    let filePathPrefix = item.imageUrl
-   //    filePathPrefix = filePathPrefix.substring(0, filePathPrefix.indexOf(item.imageFileName))            
-   //    filePathPrefix = filePathPrefix.substring(filePathPrefix.lastIndexOf("/"))
-   //    filePathPrefix = decodeURIComponent(filePathPrefix)
-   //    if (!filePathPrefix.startsWith(Config.STORAGE_DIR)) {
-   //       return logError("getThumbUrl: uploaded url file path does not start with directory path " + Config.STORAGE_DIR, filePathPrefix)
-   //    }
+   static isActive(item)    { return !ItemMgr.isPrivate(item) && !ItemMgr.isSetup(item) } 
 
-   //    filePathPrefix = filePathPrefix.substring(1)
-   //    const extension = item.imageFileName.substring(item.imageFileName.lastIndexOf("."))
-   //    const filename = item.imageFileName.substring(0, item.imageFileName.lastIndexOf(".")) 
-   //    const thumbDimensions = "_" + Config.THUMBNAIL_DIMENSION + "x" + Config.THUMBNAIL_DIMENSION
-   //    const thumbnailFilePath = filePathPrefix + filename + thumbDimensions + extension
-      
-   //    return thumbnailFilePath
-      // var storageRef = firebaseStorage.ref()
-      // return storageRef.child(thumbnailFilePath).getDownloadURL().then(function(url) {
-      //    console.log("getThumbUrl: thumbUrl", url)
-      //    return url
-      // })
-      // .catch(function(error) {
-      //    console.log("getThumbUrl: cannot get downloadURL from thumbnail " + thumbnailFilePath, error)
-      //    return null
-      // })
-   // }
-
+   static isPrivate(item)   { return item.status == ItemStatus.PRIVATE }
    static isSetup(item)     { return item.status == ItemStatus.SETUP }
    static isAvailable(item) { return item.status == ItemStatus.AVAILABLE }
    static isDropping(item)  { return item.status == ItemStatus.DROPPING }

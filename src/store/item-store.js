@@ -1,7 +1,8 @@
 import { firestoreAction } from 'vuexfire'
 import { firestore, firebaseStorage } from 'boot/firebase'
 import { uid } from 'quasar'
-import { ItemMgr } from 'src/managers/ItemMgr.js'
+import { ItemMgr } from 'src/managers/ItemMgr.js'   
+import { TagMgr } from 'src/managers/TagMgr.js'   
 
 /*
    item
@@ -68,6 +69,14 @@ function showNegativeNotify(msg) { Notify.create( {type: "negative", timeout: 50
 
 const getters = {
    itemsExist: state => { return state.items && state.items.length > 0 },
+   getItems: state => itemIds => {   
+      // console.log("getItems", itemIds)
+      let items = []
+      state.items.forEach(item => {
+         if (itemIds.includes(item.id) ) { items.push(item) }
+      })
+      return items
+   },
    getItemsInDrop: state => dropId => { 
       // console.log("getItemsInDrop", state.items)
       let items = []
@@ -86,12 +95,14 @@ const getters = {
       })
       return items
    },
-   getItems: state => itemIds => {   
-      // console.log("getItems", itemIds)
+   getActiveItemsWithTag: state => tag => { 
+      // console.log("getItemsWithTag", tag)
       let items = []
       state.items.forEach(item => {
-         if (itemIds.includes(item.id) ) { items.push(item) }
+         if (ItemMgr.isActive(item) && TagMgr.hasTag(item, tag)) { items.push(item) }
       })
+
+      items.sort((a, b) => (a.sortName > b.sortName) ? 1 : -1)
       return items
    },
    getItem: state => itemId => { 

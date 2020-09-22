@@ -11,7 +11,8 @@
 
 <script>
    import { mapState, mapGetters, mapActions } from 'vuex'
-   import { DropStatus } from 'src/managers/DropMgr.js';
+   import { DropStatus } from 'src/managers/DropMgr.js'
+   import { ItemMgr } from 'src/managers/ItemMgr.js'
 	import { ItemDisplayType } from 'src/utils/Constants.js'
 	
 	export default {
@@ -31,18 +32,20 @@
             const dropIds = this.liveDropsExist ? this.liveDropIds : this.droppedDropIds
             const items = this.getItemsInDrops(dropIds)
 
-            // active items shown at top 
-            const activeItems = []
-            const inactiveItems = []
+            // show items with user activity at top 
+            const userActivityItems = []
+            const noActivityItems = []
             for (var item of items) {
-               if (item.lastUserActivityDate == 0) { inactiveItems.push(item) }
-               else { activeItems.push(item) }
+               if (ItemMgr.isActive(item)) {
+                  if (item.lastUserActivityDate == 0) { noActivityItems.push(item) }
+                  else { userActivityItems.push(item) }
+               }
             }
 
-            activeItems.sort((a, b) => (a.lastUserActivityDate > b.lastUserActivityDate) ? -1 : 1)
-            inactiveItems.sort((a, b)  => (a.sortName > b.sortName) ? 1 : -1)
+            userActivityItems.sort((a, b) => (a.lastUserActivityDate > b.lastUserActivityDate) ? -1 : 1)
+            noActivityItems.sort((a, b)  => (a.sortName > b.sortName) ? 1 : -1)
    
-            return activeItems.concat(inactiveItems)
+            return userActivityItems.concat(noActivityItems)
          }
     	},
 		components: {

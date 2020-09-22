@@ -23,7 +23,7 @@
 <script>
 	import { date } from 'quasar'
    import { mapGetters, mapActions } from 'vuex'
-   import { ActionType, ActionResultType } from 'src/utils/Constants.js'
+   import { ActionMgr } from 'src/managers/ActionMgr.js'
    import { dollars } from 'src/utils/Utils'
 
 	export default {
@@ -63,8 +63,8 @@
       }
 	}
 
-   function isPurchased(action)  { return action.actionResult == ActionResultType.PURCHASED }
-   function isWinningBid(action) { return action.actionResult == ActionResultType.WINNING_BID }
+   function isPurchased(action)  { return ActionMgr.isPurchased(action) }
+   function isWinningBid(action) { return ActionMgr.isWinningBid(action) }
    
    function formatDate(dateToFormat) {
       if (!dateToFormat) { return "" }

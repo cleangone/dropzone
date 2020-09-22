@@ -63,7 +63,7 @@
 				itemToSubmit: {
                name: '',
                dropId: '',
-               status: ItemStatus.AVAILABLE,
+               status: ItemStatus.SETUP,
 					startPrice: 0,
 					buyPrice: 0,
 					imageUrl: '',
@@ -73,7 +73,7 @@
             },
             artist: "",
             uploaderDisplayed: false,
-				statusOptions: [ ItemStatus.SETUP, ItemStatus.AVAILABLE, ItemStatus.DROPPING, ItemStatus.HOLD, ItemStatus.SOLD ],
+				statusOptions: [ ItemStatus.PRIVATE, ItemStatus.SETUP, ItemStatus.AVAILABLE, ItemStatus.DROPPING, ItemStatus.HOLD, ItemStatus.SOLD ],
             saleTypeOptions: [ SaleType.DEFAULT, SaleType.BID, SaleType.BUY ],
             uploadedFiles: []
 			}
@@ -103,7 +103,7 @@
 				this.$refs.name.validate()
             if (this.$refs.name.hasError) { return }
             
-            if (this.itemToSubmit.status == ItemStatus.AVAILABLE) { 
+            if (ItemMgr.isSetup(this.itemToSubmit) || ItemMgr.isAvailable(this.itemToSubmit)) {
                this.itemToSubmit.buyPrice = 0 
                this.itemToSubmit.bidderIds = []
                this.itemToSubmit.currBidderId = ''

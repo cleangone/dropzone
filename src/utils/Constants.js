@@ -1,23 +1,4 @@
 
-export const ActionResultType = {
-   HIGH_BID:     'High Bid',
-   INCREASED:    'Increased',
-   OUTBID:       'Outbid',
-   PURCHASED:    'Purchased',
-   ALREADY_SOLD: 'Already Sold',
-   WINNING_BID:  'Winning Bid',
-}
-
-export const ActionStatus = {
-   CREATED:   'Created',
-   PROCESSED: 'Processed',
-}
-
-export const ActionType = {
-   BID:          'Bid',
-   PURCHASE_REQ: 'Purchase Request',
-}
-
 // todo - only used in SettingsPage - move there?
 export const EmailFields = {
    PURCHASE_SUCCESS: 'emailPurchaseSuccess',
@@ -36,6 +17,7 @@ export const ItemDisplayType = {
 }
 
 export const Route = {
+   ARTIST: 'Artist',
    DROP: 'Drop',
    ITEM: 'Item',
    FORGOT: 'ForgotPassword',

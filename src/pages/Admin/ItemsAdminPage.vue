@@ -125,7 +125,9 @@
          showBulkEditButton() { 
             if (this.selectedRowItems.length < 2) { return false } 
             for (var rowItem of this.selectedRowItems) {
-               if (!(ItemMgr.isSetup(rowItem) || ItemMgr.isAvailable(rowItem) || ItemMgr.isHold(rowItem))) { return false }
+               if (!(ItemMgr.isPrivate(rowItem) || ItemMgr.isSetup(rowItem) || ItemMgr.isAvailable(rowItem) || ItemMgr.isHold(rowItem))) { 
+                  return false 
+               }
             }
 
             return true

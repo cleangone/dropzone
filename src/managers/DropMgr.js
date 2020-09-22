@@ -10,8 +10,9 @@ export const DropStatus = {
 }
 
 export class DropMgr {
-   static isStatus(drop, status) { return drop.status == status }
    static isActive(drop)         { return DropMgr.isLive(drop) || DropMgr.isDropped(drop) }
+   
+   static isStatus(drop, status) { return drop.status == status }
    static isSetup(drop)          { return drop.status == DropStatus.SETUP }
    static isSchedule(drop)       { return drop.status == DropStatus.SCHEDULE }		
    static isScheduled(drop)      { return drop.status == DropStatus.SCHEDULED }		

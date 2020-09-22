@@ -41,7 +41,18 @@
 						style="display: block; margin-left: auto; margin-right: auto; max-width: 500px; max-height: 1000px" contains/>
 				</q-card-section>	
 				<q-card-section class="text-subtitle2 q-pa-xs q-mt-sm">
-					<strong>{{ item.name }}</strong>
+					<div :class="orange">
+                  <strong>{{ item.name }}</strong>
+
+                  <router-link :to="{ name: dropPageRoute, params: { dropId: item.dropId } }" class="float-right">{{drop.name}}</router-link>
+                  <!-- <span class="float-right"> {{drop.name}} </span> -->
+
+					</div>
+               
+               <!-- todo - add drop link -->
+               
+               
+               <!-- todo - add link -->
                <div v-if="hasArtist"> {{artist}} </div>
                <div>{{ priceText }}</div>
                <div v-if="userIsBuyer" class="text-bold">You are the buyer</div>
@@ -62,9 +73,9 @@
 <script>
 	import { date } from 'quasar'
 	import { mapGetters, mapActions } from 'vuex'
-	import { ItemDisplayType, SaleType, Colors } from 'src/utils/Constants.js';
-	import { ItemMgr, ItemStatus } from 'src/managers/ItemMgr.js';
-	import { TagMgr } from 'src/managers/TagMgr.js';
+   import { ItemDisplayType, SaleType, Route, Colors } from 'src/utils/Constants.js'
+   import { ItemMgr, ItemStatus } from 'src/managers/ItemMgr.js'
+	import { TagMgr } from 'src/managers/TagMgr.js'
 	import { dollars } from 'src/utils/Utils'
    
 	export default {
@@ -121,7 +132,8 @@
 			userIsHighBidder() { return this.loggedIn && (this.item.currBidderId == this.userId) },
 			userIsOutbid() { return this.loggedIn && !this.userIsHighBidder && this.item.bidderIds && this.item.bidderIds.includes(this.userId) },
          userHasHigherMax() { return this.userIsHighBidder && (this.item.currBidAmount > this.item.buyPrice) },
-         userMaxBid() { return dollars(this.item.currBidAmount) } 
+         userMaxBid() { return dollars(this.item.currBidAmount) },
+         dropPageRoute() { return Route.DROP },
       },
       methods: {
          buildPriceText(prefix) {

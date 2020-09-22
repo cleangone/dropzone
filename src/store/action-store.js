@@ -1,7 +1,7 @@
 import { firestoreAction } from 'vuexfire'
 import { firestore } from 'boot/firebase'
 import { Notify, uid } from 'quasar'
-import { ActionStatus, ActionType } from 'src/utils/Constants.js'
+import { ActionMgr } from 'src/managers/ActionMgr.js'
    
 /*
    action:
@@ -27,14 +27,14 @@ const actions = {
    }),
    submitBid: firestoreAction((context, action) => {
       // console.log("submitBid", action)
-      init(action, ActionType.BID)
+      ActionMgr.initBid(action)
       collection().doc(action.id).set(action)
    
       showPositiveNotify("Bid submitted")
    }),
    submitPurchaseRequest: firestoreAction((context, action) => {
       // console.log("submitPurchaseRequest", action)
-      init(action, ActionType.PURCHASE_REQ)
+      ActionMgr.initPurchaseReq(action)
       collection().doc(action.id).set(action)
    
       showPositiveNotify("Purchase Request submitted")
@@ -42,13 +42,6 @@ const actions = {
 }
 
 function collection() { return firestore.collection('actions') }
-function init(action, actionType) { 
-   action.id = uid()
-   action.actionType = actionType
-   action.createdDate = Date.now()
-   action.status = ActionStatus.CREATED
-}
-
 function showPositiveNotify(msg) { Notify.create( {type: "positive", timeout: 1000, message: msg} )}
 
 const getters = {

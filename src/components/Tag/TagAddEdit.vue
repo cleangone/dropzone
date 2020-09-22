@@ -13,6 +13,9 @@
 		<div class="row q-mb-sm q-gutter-md">
 		   <q-input label="Sort Name" v-model="tagToSubmit.sortName" class="col" filled/>
 		</div>	
+      <div class="row q-mb-sm q-gutter-md">
+		   <q-checkbox label="Show Link" v-model="tagToSubmit.showLink"  class="col" dense />
+		</div>	
 	</q-card-section>
 
     <q-card-actions align="right">
@@ -37,6 +40,7 @@
             tagToSubmit: {
 					name: "",
                sortName: "",
+               showLink: false,
                category: "",
             },
 			}
