@@ -68,9 +68,8 @@
 	import { ItemMgr } from 'src/managers/ItemMgr.js';
 	import { TagMgr } from 'src/managers/TagMgr.js'
    import { dollars } from 'src/utils/Utils'
-   import { formatDateTimeOptYearTz } from 'src/utils/DateUtils'
+   import { formatDateTimeOptYear } from 'src/utils/DateUtils'
 
-	
 	export default {
 		data() {
 	  		return {
@@ -106,7 +105,8 @@
 			...mapGetters('user', ['getUserIdToName']),
 			drop() { return this.getDrop(this.dropId) },
          dropStatus() { 
-            return this.drop.status + (DropMgr.isScheduled(this.drop) ? " " + formatDateTimeOptYearTz(this.drop.startDate) : "")
+            return this.drop.status + 
+               (DropMgr.isSetup(this.drop) || DropMgr.isScheduled(this.drop) ? ", " + formatDateTimeOptYear(this.drop.startDate) : "")
          },
          itemToEdit() { return this.itemIdToEdit ? getItem(this.items, this.itemIdToEdit) : null },
          items() { 

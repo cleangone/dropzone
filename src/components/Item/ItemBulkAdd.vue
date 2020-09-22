@@ -36,7 +36,7 @@
                name: itemName,
                sortName: itemName,
                dropId: this.dropId,
-               status: ItemStatus.AVAILABLE,
+               status: ItemStatus.SETUP,
                imageUrl: emit.url,
                imageBaseName: emit.name,
                isHorizontal: false,
@@ -46,14 +46,9 @@
             ItemMgr.setFilePaths(item)
             this.itemsToAdd.push(item)
             this.itemsToAdd.sort((a, b) => (a.imageBaseName > b.imageBaseName) ? 1 : -1) 
-            // console.log("uploadCompleted", this.itemsToAdd)
          },
          save() {
-            // console.log("save")
-            for (var item of this.itemsToAdd) {
-               this.setItem(item)
-            }
-
+            for (var item of this.itemsToAdd) { this.setItem(item) }
             this.$emit('close')
          },
          cancel() {

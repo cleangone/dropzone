@@ -2,20 +2,19 @@
 	<q-card-actions class="q-my-none q-px-xs q-pb-xs q-pt-none" :class="blue">
 		<span v-if="isAvailable" class="col">
 			<span v-if="loggedIn" class="col">
-            <span v-if="dropIsActive" class="col">
-               <q-btn v-if="isBid"  @click="showBidModal=true" :label="itemSaleType" color="primary" :size="buttonSize" dense/>
-               <q-btn v-else-if="isBuy" @click="promptToBuy()" :label="itemSaleType" color="primary" :size="buttonSize" dense/>
-			   </span>
-            <span v-else class="col">
-               <!-- admin is viewing before drop in live -->
-               <q-btn v-if="isBid"      :label="itemSaleType" disable color="primary" :size="buttonSize" dense/>
-               <q-btn v-else-if="isBuy" :label="itemSaleType" disable color="primary" :size="buttonSize" dense/>
-			   </span>
+            <q-btn v-if="isBid"  @click="showBidModal=true" :label="itemSaleType" color="primary" :size="buttonSize" dense/>
+            <q-btn v-else-if="isBuy" @click="promptToBuy()" :label="itemSaleType" color="primary" :size="buttonSize" dense/>
 			</span>
 			<span v-else class="col">
 				<q-btn @click="login()" :label="'Login to ' + itemSaleType" color="primary" :size="buttonSize" dense/>
 			</span>
 		</span>
+      <span v-else-if="isAdminSetup" class="col">
+         <span class="col">
+            <q-btn v-if="isBid"      :label="itemSaleType" disable color="primary" :size="buttonSize" dense/>
+            <q-btn v-else-if="isBuy" :label="itemSaleType" disable color="primary" :size="buttonSize" dense/>
+         </span>
+      </span>
       <q-dialog v-model="showBidModal">
 			<item-bid :item ="item" @close="showBidModal=false" />
 		</q-dialog>
@@ -44,7 +43,8 @@
 			...mapGetters('user', ['getUser']),
 			...mapGetters('drop', ['getDrop']),
 			...mapGetters('color', Colors),
-         
+         isAvailable() { return ItemMgr.isAvailable(this.item) || ItemMgr.isDropping(this.item) },
+			isAdminSetup() { return this.userIsAdmin && ItemMgr.isSetup(this.item) },         
 			drop() { return this.getDrop(this.item.dropId) },
          itemSaleType() {    
             let itemSaleType = (this.item.saleType == SaleType.DEFAULT ? this.drop.defaultSaleType : this.item.saleType)
@@ -54,8 +54,6 @@
          buttonSize() { return this.displayType == ItemDisplayType.FULL ? "md" : "sm"  },        
          user() { return this.getUser(this.userId)},
          userIsAdmin() { return this.user && this.user.isAdmin },
-			isAvailable() { return ItemMgr.isAvailable(this.item)  || ItemMgr.isDropping(this.item)  },
-         dropIsActive() { return DropMgr.isActive(this.drop) },
 			isBid() { return this.itemSaleType == SaleType.BID && this.item.startPrice },
 			isBuy() { return this.itemSaleType == SaleType.BUY && this.item.startPrice },	
       },
@@ -63,7 +61,7 @@
 			...mapActions('action', ['submitBid', 'submitPurchaseRequest']),
 			login() { this.$router.push("/auth/login") },
 			promptToBuy() {
-				this.$q.dialog({title: 'Confirm', message: 'Buy ' + this.item.name + ' for ' + dollars(this.item.startPrice) + '?', persistent: true,			
+				this.$q.dialog({title: 'Confirm Purchase', message: 'Buy ' + this.item.name + ' for ' + dollars(this.item.startPrice) + '?', persistent: true,			
 	        		ok: { push: true }, cancel: { push: true, color: 'grey' }
 				}).onOk(() => {
 					this.submitPurchaseRequest(
@@ -78,19 +76,11 @@
 			'item-bid' : require('components/Item/ItemBid.vue').default
 		},
 	}
-
-	// todo - this is how you make a global function
-	function zeroPadded(num) {
-		// 4 --> 04
-		return num < 10 ? `0${num}` : num;
-   }
 </script>
 
 <style>
 	.card {
-		
 		max-width: 500px;
-		
 		transition: background 0.3s;
 	}
 	.card-clickable { cursor: pointer; }

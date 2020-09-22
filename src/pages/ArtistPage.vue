@@ -6,7 +6,7 @@
 		</div>
       
 		<div class="row q-mt-sm q-gutter-sm">
-         <item v-for="(item, key) in displayItems" :key="key" :item="item" :displayType="thumb"/>
+         <item v-for="(item, key) in displayItems" :key="key" :item="item" :displayType="displayTypeThumb"/>
       </div>
 	</q-page>
 </template>
@@ -27,7 +27,7 @@
 			...mapGetters('tag', ['getTag']),
          ...mapGetters('item', ['getActiveItemsWithTag']),
          artist() { return this.getTag(this.tagId) },
-         thumb() { return ItemDisplayType.THUMB },
+         displayTypeThumb() { return ItemDisplayType.THUMB },
          items () { return this.getActiveItemsWithTag(this.artist) },
          displayItems () { 
             if (this.showHoldSold) { return this.items }

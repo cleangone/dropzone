@@ -96,7 +96,8 @@
 			drop() { return this.getDrop(this.item.dropId) },
 			hasImageUrl() { return (this.item.imageUrl ? true : false) },
 			textBgColor() {
-				if (this.isNotAvailable) { return (this.userIsBuyer || this.userIsHighBidder ? "bg-green" : "bg-red-5") }
+				if (this.isSetup) { return "bg-grey" }
+				else if (this.isNotAvailable) { return (this.userIsBuyer || this.userIsHighBidder ? "bg-green" : "bg-red-5") }
 				else if (this.isDropping) { return "bg-yellow" }
          },
 
@@ -108,6 +109,7 @@
 			itemSaleType() { return (this.item.saleType == SaleType.DEFAULT ? this.drop.defaultSaleType : this.item.saleType) },
 			style() { return (this.item.isHorizontal ? "width: 300px" : "width: 200px") },			
          userIsAdmin() { return this.isAdmin(this.userId) },
+         isSetup() { return ItemMgr.isSetup(this.item) },
          isNotAvailable() { return ItemMgr.isHold(this.item) || ItemMgr.isInvoiced(this.item) || ItemMgr.isSold(this.item) },
          isDropping() { return ItemMgr.isDropping(this.item) },
 			isBid() { return this.itemSaleType == SaleType.BID },

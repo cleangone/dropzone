@@ -3,9 +3,14 @@
 		<a style="cursor: pointer; text-decoration: underline" v-on:click="navBack()">Back</a>
 		<q-checkbox v-model="showHoldSold" label="Show Hold/Sold" class="float-right" dense />
 		<div v-if="drop">
-			<div class="row q-mt-sm text-h6">{{ drop.name }}</div>
+			<div class="row q-mt-sm text-h6">
+            {{ drop.name }} 
+            <span v-if="adminViewingSetup" > 
+               &nbsp; <q-checkbox v-model="adminView" label="Admin View" class="text-grey-7" dense />
+            </span>
+         </div>
 			<div v-if="showItems" class="row q-mt-sm q-gutter-sm">
-				<item v-for="(item, key) in displayItems" :key="key" :item="item" :displayType="thumb"/>
+				<item v-for="(item, key) in displayItems" :key="key" :item="item" :displayType="displayTypeThumb"/>
 			</div>
          <div v-else class="row q-mt-sm" >
 				<q-img :src="drop.imageUrl ? drop.imageUrl : 'statics/image-placeholder.png'" basic contain>
@@ -30,7 +35,8 @@
 		data() {
 			return {				
 				dropId: 0,
-				showHoldSold: true
+            showHoldSold: true,
+            adminView: false
         }
 		},
 		created() {
@@ -41,7 +47,8 @@
          ...mapGetters('user', ['getUser']),
 			...mapGetters('drop', ['getDrop']),
 			...mapGetters('item', ['getItemsInDrop']),
-			thumb() { return ItemDisplayType.THUMB },
+			adminViewingSetup() { return this.isAdmin && DropMgr.isSetup(this.drop) },
+         displayTypeThumb() { return ItemDisplayType.THUMB },
          drop() { return this.getDrop(this.dropId) },
          isCountdown() { return DropMgr.isCountdown(this.drop) },
          user() { return this.getUser(this.userId) },
@@ -50,7 +57,7 @@
             const visibleItems = []
             const items = this.getItemsInDrop(this.dropId) 
             items.forEach(item => { 
-               if (ItemMgr.isActive(item)) { visibleItems.push(item) }
+               if (ItemMgr.isActive(item) || (this.adminView && ItemMgr.isSetup(item))) { visibleItems.push(item) }
 		      })
             return visibleItems
          },
@@ -63,8 +70,8 @@
 		      })
 				return availableItems
          },
-         showItems() { return DropMgr.isActive(this.drop) || (this.isAdmin && DropMgr.isSetup(this.drop)) },
-			startDateText() { return getStartDateText(this.drop.startDate) },
+         showItems() { return DropMgr.isActive(this.drop) || (this.adminView && DropMgr.isSetup(this.drop)) },
+         startDateText() { return getStartDateText(this.drop.startDate) },
 		},
 		methods: {
 			navBack() { this.$router.go(-1) },
