@@ -146,9 +146,9 @@
                   this.invoiceToSubmit.items.push({ id: item.id, name: item.name, price: item.buyPrice })
                   this.invoiceToSubmit.subTotal += item.buyPrice
                }
-               // console.log("mounted: invoice", this.invoiceToSubmit)
             }
             this.user = this.getUser(this.invoiceToSubmit.userId)
+            if (!this.isEdit) { InvoiceMgr.setUserFullName(this.invoiceToSubmit, this.user) }
             this.userAddress = InvoiceMgr.getUserHtml(this.invoiceToSubmit, this.user)
             // console.log("mounted: userAddress", this.userAddress)
          }, 100)  

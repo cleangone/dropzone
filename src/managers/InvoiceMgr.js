@@ -44,10 +44,14 @@ export class InvoiceMgr {
           
    static finalize(invoice, user, setting) { 
       invoice.total = invoice.subTotal + invoice.shippingCharge - invoice.priceAdjustment 
+      InvoiceMgr.setUserFullName(invoice, user)
+      InvoiceMgr.setHtml(invoice, user, setting)   
+   }
+   
+   static setUserFullName(invoice, user) { 
       invoice.userFullName = (user.firstName || user.lastName) ?
          (user.firstName ? user.firstName : "") + (user.firstName && user.lastName ? " " : "") + (user.lastName ? user.lastName : "") :
          user.authEmailCopy
-      InvoiceMgr.setHtml(invoice, user, setting)   
    }
    
    static getUserHtml(invoice, user) { 
