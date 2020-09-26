@@ -22,21 +22,24 @@
             <template v-slot:body="props">
                <q-tr :props="props">
                   <q-td auto-width>
-                     <q-btn size="xs" color="primary" round dense @click="props.expand = !props.expand" :icon="props.expand ? 'remove' : 'add'" />
+                     <q-btn v-if="hasTracking(props.row)" size="xs" color="primary" round dense @click="props.expand = !props.expand" :icon="props.expand ? 'remove' : 'add'" />
                   </q-td>
                   <q-td v-for="col in props.cols" :key="col.name" :props="props">
-                     <invoice-td :row="props.row" :col="col"/>
+                     <invoice-td :invoice="props.row" :col="col" isAdmin="true"/>
                   </q-td>
                   <q-td auto-width>
                      <q-btn icon="edit" @click="editInvoice(props.row.id)" size="sm" color="primary" flat dense/>
                   </q-td>
                </q-tr>   
                <template v-if="props.expand">
-                  <q-tr v-for="detail in getInvoiceDetails(props.row.id)" :key="detail.name" :props="props">
-                     <q-td />
-                     <q-td />
-                     <q-td class="text-left bg-grey-2">{{ detail.name }}</q-td>
-                     <q-td class="text-right bg-grey-2">{{ detail.price }}</q-td>
+                  <q-tr>
+                     <q-td colspan="2"/>
+                     <q-td class="text-left bg-grey-2" colspan="2">
+                        <a v-if="hasTrackingLink(props.row)" :href="trackingLink(props.row)" target=”_blank”>
+                           {{ props.row.carrier }} - {{ props.row.tracking }}
+                        </a>
+                        <span v-else>Tracking: {{ props.row.carrier }} - {{ props.row.tracking }}</span> 
+                     </q-td>
                   </q-tr>
                </template>
             </template>
@@ -51,7 +54,7 @@
 
 <script>
 	import { mapGetters, mapActions } from 'vuex'
-   import { InvoiceMgr } from 'src/managers/InvoiceMgr.js'
+   import { InvoiceMgr, InvoiceSendStatus } from 'src/managers/InvoiceMgr.js'
    import { dollars } from 'src/utils/Utils'
    
 	export default {
@@ -59,44 +62,33 @@
 	  	   return {
 			   showEditModal: false,
 				tableDataFilter: '',
-            visibleColumns: ['userName', 'items', 'total', 'status', 'tracking', 'sentDate'],
+            visibleColumns: ['userName', 'name', 'total', 'status', 'sentDate'],
  				columns: [
-               { name: 'id', field: 'id' },                 
-               { name: 'userName', label: 'User',     align: 'left',   field: 'userFullName', sortable: true },
-					{ name: 'items',    label: 'Items',    align: 'left',   field: 'items',        sortable: true },
-					{ name: 'total',    label: 'Total',    align: 'right',  field: 'total',        sortable: true, format: val => dollars(val) },
-					{ name: 'status',   label: 'Status',   align: 'center', field: 'status',       sortable: true },
-               { name: 'tracking', label: 'Tracking', align: 'center', field: 'tracking',     sortable: true },
-               { name: 'sentDate', label: 'Date',     align: 'left',   field: 'sentDate',     sortable: true },
+               { name: 'userName', label: 'User',      align: 'left',   field: 'userFullName', sortable: true },
+					{ name: 'name',     label: 'Name',      align: 'left',   field: 'name',         sortable: true },
+					{ name: 'total',    label: 'Total',     align: 'right',  field: 'total',        sortable: true, format: val => dollars(val) },
+					{ name: 'status',   label: 'Status',    align: 'center', field: 'status',       sortable: true },
+               { name: 'sentDate', label: 'Sent Date', align: 'left',   field: 'sentDate',     sortable: true },
             ],
             pagination: { rowsPerPage: 30 },
             invoiceIdToEdit: '',
 			}
 		},
 		computed: {
-         ...mapGetters('invoice', ['invoicesExist', 'getInvoices', 'getInvoice']),
+         ...mapGetters('invoice', ['getInvoices', 'getInvoice']),
          invoiceToEdit() { return this.getInvoice(this.invoiceIdToEdit) },
          invoices() {return this.getInvoices },
       },
 		methods: {
-         ...mapActions('invoice', ['bindInvoices', 'deleteInvoice']),
-         isDataCol(colName) { return (colName !== 'expand' && colName !== 'actions') },
+         ...mapActions('invoice', ['deleteInvoice']),
          getInvoiceDetails(invoiceId) { return InvoiceMgr.getDetails(this.getInvoice(invoiceId)) },
          editInvoice(invoiceId) {
             this.invoiceIdToEdit = invoiceId
 				this.showEditModal = true
          },
-         
-			// promptToDeleteInvoice(dropId) {
-         //    console.log("promptToDeleteDrop", dropId)
-            
-         //    this.$q.dialog({title: 'Confirm', message: 'Delete ' + this.getDrop(dropId).name + '?', persistent: true,			
-	      //   		ok: { push: true }, cancel: { push: true, color: 'grey' }
-			// 	}).onOk(() => {
-			// 		console.log("promptToDeleteDrop: calling deleteDrop", dropId)
-			// 		this.deleteDrop(dropId)
-			// 	})
-         // }
+         hasTracking(invoice) { return InvoiceMgr.hasTracking(invoice) },
+		   hasTrackingLink(invoice) { return InvoiceMgr.hasTrackingLink(invoice) },
+		   trackingLink(invoice) { return InvoiceMgr.getTrackingLink(invoice) }
 		},
 		components: {
 			'invoice-add-edit' : require('components/Invoice/InvoiceAddEdit.vue').default,

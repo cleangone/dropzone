@@ -18,8 +18,6 @@
             <email-settings-edit :emailSetting="emailPurchaseSuccess" />
             <email-settings-edit :emailSetting="emailPurchaseFail" />
             <email-settings-edit :emailSetting="emailWinningBid" />
-            <email-settings-edit :emailSetting="emailInvoice" />
-            <email-settings-edit :emailSetting="emailShipping" />
          </q-card-section>
 			<q-card-actions >
 				<q-btn @click="reset" label="Reset" color="grey" />
@@ -34,6 +32,16 @@
    import { Notify } from 'quasar'
    import { EmailFields } from 'src/utils/Constants.js'
    
+   const EmailType = {
+      PURCHASE_SUCCESS: 'emailPurchaseSuccess',
+      PURCHASE_FAIL:    'emailPurchaseFail',
+      WINNING_BID:      'winningBid',
+      INVOICE:          'emailInvoice',
+      SHIIPPING:        'emailShipping'
+   }
+   const EMAIL_FIELD_SUBJECT_SUFFIX = 'Subject'
+   const EMAIL_FIELD_BODY_SUFFIX    = 'Body'
+
 	export default {
 		data() {
 	  		return {
@@ -52,29 +60,31 @@
 			...mapActions('setting', ['setSetting']),
          reset() { 
             this.settingToUpdate = Object.assign({}, this.getSetting) 
-            this.emailPurchaseSuccess = this.getEmailSetting(EmailFields.PURCHASE_SUCCESS, "Successful Purchase Request")
-            this.emailPurchaseFail    = this.getEmailSetting(EmailFields.PURCHASE_FAIL,    "Failed Purchase Request")
-            this.emailWinningBid      = this.getEmailSetting(EmailFields.WINNING_BID,      "Winning Bid")
-            this.emailInvoice         = this.getEmailSetting(EmailFields.INVOICE,          "Invoice")
-            this.emailShipping        = this.getEmailSetting(EmailFields.SHIIPPING,        "Shipping")
-         },
-         getEmailSetting(field, label) { 
-            return { 
-               subject: this.settingToUpdate[field + EmailFields.SUBJECT_SUFFIX], 
-               body:    this.settingToUpdate[field + EmailFields.BODY_SUFFIX], 
-               label: label }
+            this.emailPurchaseSuccess = this.getEmailSetting(EmailType.PURCHASE_SUCCESS, "Successful Purchase Request")
+            this.emailPurchaseFail    = this.getEmailSetting(EmailType.PURCHASE_FAIL,    "Failed Purchase Request")
+            this.emailWinningBid      = this.getEmailSetting(EmailType.WINNING_BID,      "Winning Bid")
+            this.emailInvoice         = this.getEmailSetting(EmailType.INVOICE,          "Invoice")
+            this.emailShipping        = this.getEmailSetting(EmailType.SHIIPPING,        "Shipping")
          },
          submitUpdate() { 
-            this.setEmailSettings(this.emailPurchaseSuccess, EmailFields.PURCHASE_SUCCESS)
-            this.setEmailSettings(this.emailPurchaseFail,    EmailFields.PURCHASE_FAIL)
-            this.setEmailSettings(this.emailWinningBid,      EmailFields.WINNING_BID)
-            this.setEmailSettings(this.emailInvoice,         EmailFields.INVOICE)
-            this.setEmailSettings(this.emailShipping,        EmailFields.SHIIPPING)
+            this.setEmailSettings(this.emailPurchaseSuccess, EmailType.PURCHASE_SUCCESS)
+            this.setEmailSettings(this.emailPurchaseFail,    EmailType.PURCHASE_FAIL)
+            this.setEmailSettings(this.emailWinningBid,      EmailType.WINNING_BID)
+            this.setEmailSettings(this.emailInvoice,         EmailType.INVOICE)
+            this.setEmailSettings(this.emailShipping,        EmailType.SHIIPPING)
+            
             this.setSetting(this.settingToUpdate)
          },
-         setEmailSettings(emailSetting, field) { 
-            this.settingToUpdate[field + EmailFields.SUBJECT_SUFFIX] = emailSetting.subject
-            this.settingToUpdate[field + EmailFields.BODY_SUFFIX] = emailSetting.body
+         getEmailSetting(emailType, label) { 
+            return { 
+               subject: this.settingToUpdate[emailType + EMAIL_FIELD_SUBJECT_SUFFIX], 
+               body:    this.settingToUpdate[emailType + EMAIL_FIELD_BODY_SUFFIX], 
+               label: label 
+            }
+         },
+         setEmailSettings(emailSetting, emailType) { 
+            this.settingToUpdate[emailType + EMAIL_FIELD_SUBJECT_SUFFIX] = emailSetting.subject
+            this.settingToUpdate[emailType + EMAIL_FIELD_BODY_SUFFIX] = emailSetting.body
          }
       },
       components: {
@@ -83,7 +93,5 @@
 		created() { 
          this.reset() }
    }
-
-  
 
 </script>

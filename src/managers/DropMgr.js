@@ -1,12 +1,12 @@
 
 export const DropStatus = {
-   SETUP:     'Setup',
-   SCHEDULE:  'Schedule',
-   SCHEDULED: 'Scheduled',
+   SETUP:      'Setup',
+   SCHEDULING: 'Scheduling',
+   SCHEDULED:  'Scheduled',
    START_COUNTDOWN: 'Start Countdown',
-   COUNTDOWN: 'Countdown',
-   LIVE:      'Live',
-   DROPPED:   'Dropped'
+   COUNTDOWN:  'Countdown',
+   LIVE:       'Live',
+   DROPPED:    'Dropped'
 }
 
 export class DropMgr {
@@ -14,7 +14,7 @@ export class DropMgr {
    
    static isStatus(drop, status) { return drop.status == status }
    static isSetup(drop)          { return drop.status == DropStatus.SETUP }
-   static isSchedule(drop)       { return drop.status == DropStatus.SCHEDULE }		
+   static isScheduling(drop)     { return drop.status == DropStatus.SCHEDULING }		
    static isScheduled(drop)      { return drop.status == DropStatus.SCHEDULED }		
    static isStartCountdown(drop) { return drop.status == DropStatus.START_COUNTDOWN }		
    static isCountdown(drop)      { return drop.status == DropStatus.COUNTDOWN }		

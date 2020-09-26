@@ -76,7 +76,7 @@
             startTime: '09:00',
             timezone: localTimezone(),
             uploaderDisplayed: false,
-            statusOptions: [ DropStatus.SETUP, DropStatus.SCHEDULE, DropStatus.LIVE, DropStatus.DROPPED ], // DropStatus.START_COUNTDOWN
+            statusOptions: [ DropStatus.SETUP, DropStatus.LIVE, DropStatus.DROPPED ], // DropStatus.START_COUNTDOWN
             saleTypeOptions: [ SaleType.BID, SaleType.BUY ]
 			}
 		},
@@ -89,9 +89,7 @@
 				// console.log("submitForm")
 				this.$refs.name.validate()
 
-            // todo - can't Schedule if startDate has already passed
-
-				if (!this.$refs.name.hasError) {
+            if (!this.$refs.name.hasError) {
                this.submitDrop()
                this.$emit('close')
 				}

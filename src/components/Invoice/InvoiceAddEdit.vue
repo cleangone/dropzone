@@ -36,12 +36,12 @@
     </q-card-section>
 
     <q-card-section>
-    	<div class="row q-mb-sm q-gutter-sm">
+    	<div v-if="isCreatedOrRevised" class="row q-mb-sm q-gutter-sm">
          <q-input v-model.number="invoiceToSubmit.shippingCharge" label="Shipping" type=number prefix="$" filled class="col" />
 			<q-input v-model.number="invoiceToSubmit.priceAdjustment" label="(Price Adjustment)" type=number prefix="$" filled class="col" />
 		</div>
-      <div class="row q-mb-none q-gutter-sm">
-         <q-select v-if="isEdit" label="Status" v-model="invoiceToSubmit.status" :options="statusOptions" class="col" filled/>
+      <div v-if="isEdit" class="row q-mb-none q-gutter-sm">
+         <q-select  v-model="invoiceToSubmit.status" label="Status" :options="statusOptions" class="col" filled/>
          <div class="col"/>
 		</div>
       <div v-if="isShipped" class="row q-mt-sm q-gutter-sm">
@@ -72,15 +72,16 @@
             userAddress: null, 
             invoiceError: null,
 				invoiceToSubmit: {
+               name: '',  // created date and first item
+               createdDate: new Date(),
                userId: null,
-               userName: '',
                items: [], // itemId, name, price
                status: InvoiceStatus.CREATED,
                subTotal: 0,
                shippingCharge: 25,
-               priceAdjustment: 0,
+               priceAdjustment: 0
             },
-            statusOptions: [ InvoiceStatus.UPDATED, InvoiceStatus.PAID, InvoiceStatus.SHIPPED ],
+            statusOptions: [ InvoiceStatus.REVISED, InvoiceStatus.PAID_FULL, InvoiceStatus.SHIPPED ],
             carrierOptions: InvoiceMgr.getCarriers(),
             visibleColumns: [ 'name', 'price'],
  				columns: [
@@ -93,6 +94,8 @@
          ...mapGetters('setting', ['getSetting']),
          ...mapGetters('user', ['getUser']),
          isEdit() { return this.type == "Update" },	
+         isCreatedOrRevised() {
+            return InvoiceMgr.isCreated(this.invoiceToSubmit) || InvoiceMgr.isRevised(this.invoiceToSubmit) },	
          isShipped() { return InvoiceMgr.isShipped(this.invoiceToSubmit) },	
          subtotal() { return dollars(this.invoiceToSubmit.subTotal) },
          shippingCharge() { return dollars(this.invoiceToSubmit.shippingCharge) },
@@ -108,9 +111,31 @@
 			},
 			persistInvoice() {
             // console.log("persistInvoice", this.invoiceToSubmit)
-            InvoiceMgr.finalize(this.invoiceToSubmit, this.user, this.getSetting)
-            if (this.isEdit) { this.setInvoice(this.invoiceToSubmit)}
+            if (this.isEdit) { 
+               if (this.invoiceToSubmit.status != this.invoice.status ||
+                   this.invoiceToSubmit.shippingCharge != this.invoice.shippingCharge ||
+                   this.invoiceToSubmit.priceAdjustment != this.invoice.priceAdjustment ||
+                   this.invoiceToSubmit.carrier != this.invoice.carrier ||
+                   this.invoiceToSubmit.tracking != this.invoice.tracking ) 
+               {
+                  if (this.invoiceToSubmit.shippingCharge != this.invoice.shippingCharge ||
+                      this.invoiceToSubmit.priceAdjustment != this.invoice.priceAdjustment) {
+                     this.invoiceToSubmit.status = InvoiceStatus.REVISED
+                     this.invoiceToSubmit.revisedDate = new Date() 
+                  }
+                  if (InvoiceMgr.isPaidFull(this.invoiceToSubmit)) {
+                     this.invoiceToSubmit.paidDate = new Date()
+                  }
+                  if (InvoiceMgr.isShipped(this.invoiceToSubmit)) {
+                     this.invoiceToSubmit.shippedDate = new Date()
+                  }
+
+                  InvoiceMgr.finalize(this.invoiceToSubmit, this.user, this.getSetting)
+                  this.setInvoice(this.invoiceToSubmit)
+               }
+            }
             else { 
+               InvoiceMgr.finalize(this.invoiceToSubmit, this.user, this.getSetting)
                this.createInvoice(this.invoiceToSubmit)
                for (var item of this.items) {
                   this.updateItem({ id: item.id, status: ItemStatus.INVOICED })
@@ -121,12 +146,12 @@
 		created() {
          // slight delay because param update propagating as modal being popped up
          setTimeout(() => { 
+            // console.log("created: isEdit", this.isEdit)
+
             if (this.isEdit) {
                this.invoiceToSubmit = Object.assign({}, this.invoice) 
-               // console.log("mounted: invoice", this.invoiceToSubmit)
             }
             else {
-               // console.log("mounted", this.items)
                for (var item of this.items) {
                   if (!item.buyerId) { 
                      this.invoiceError = "Not all items have a buyer" 
@@ -143,14 +168,21 @@
                      return
                   }
 
-                  this.invoiceToSubmit.items.push({ id: item.id, name: item.name, price: item.buyPrice })
+                  this.invoiceToSubmit.items.push(
+                     { id: item.id, name: item.name, date: item.buyDate, price: item.buyPrice }) 
                   this.invoiceToSubmit.subTotal += item.buyPrice
                }
             }
+
             this.user = this.getUser(this.invoiceToSubmit.userId)
-            if (!this.isEdit) { InvoiceMgr.setUserFullName(this.invoiceToSubmit, this.user) }
+            // console.log("created", this.user)
+            if (!this.isEdit) { 
+               InvoiceMgr.setUserFullName(this.invoiceToSubmit, this.user) 
+               InvoiceMgr.finalize(this.invoiceToSubmit, this.user, this.getSetting)
+            }
+            // console.log("Creating invoice", this.invoiceToSubmit)
+            
             this.userAddress = InvoiceMgr.getUserHtml(this.invoiceToSubmit, this.user)
-            // console.log("mounted: userAddress", this.userAddress)
          }, 100)  
 		}
    }

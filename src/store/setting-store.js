@@ -27,9 +27,7 @@ const actions = {
 function collection() { return firestore.collection('settings') }
 
 const getters = {
-   getSetting: state => { 
-      console.log("getSetting", state.settings)
-      return (state.settings && state.settings.length > 0) ? state.settings[0] : {} }
+   getSetting: state => { return (state.settings && state.settings.length > 0) ? state.settings[0] : {} }
 }
 
 export default {

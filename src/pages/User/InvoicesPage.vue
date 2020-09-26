@@ -14,26 +14,15 @@
 				</template>            
             <template v-slot:header="props">
                <q-tr :props="props">
-                  <q-th auto-width /> <!-- expand button -->
                   <q-th v-for="col in props.cols" :key="col.name" :props="props">{{ col.label }}</q-th>
                </q-tr>
             </template>
             <template v-slot:body="props">
                <q-tr :props="props">
-                  <q-td auto-width>
-                     <q-btn size="xs" color="primary" round dense @click="props.expand = !props.expand" :icon="props.expand ? 'remove' : 'add'" />
-                  </q-td>
                   <q-td v-for="col in props.cols" :key="col.name" :props="props">
-                     <invoice-td :row="props.row" :col="col"/>
+                     <invoice-td :invoice="props.row" :col="col"/>
                   </q-td>
                </q-tr>
-               <template v-if="props.expand">
-                  <q-tr v-for="detail in getInvoiceDetails(props.row.id)" :key="detail.name" :props="props">
-                     <q-td />
-                     <q-td class="text-left bg-grey-2">{{ detail.name }}</q-td>
-                     <q-td class="text-right bg-grey-2">{{ detail.price }}</q-td>
-                  </q-tr>
-               </template>
             </template>
          </q-table>
 		</div>
@@ -41,42 +30,31 @@
 </template>
 
 <script>
-	import { mapGetters, mapActions } from 'vuex'
-   import { InvoiceMgr } from 'src/managers/InvoiceMgr.js'
+	import { mapGetters } from 'vuex'
    import { dollars } from 'src/utils/Utils'
-
+   
 	export default {
 		data() {
 	  	   return {
 			   tableDataFilter: '',
-            visibleColumns: ['items', 'total', 'status', 'tracking', 'sentDate'],
+            visibleColumns: ['name', 'total', 'status', 'tracking', 'sentDate'],
  				columns: [
-               { name: 'id', field: 'id' },                 
-               { name: 'items',    label: 'Items',    align: 'left',   field: 'items',    sortable: true },
-					{ name: 'total',    label: 'Total',    align: 'right',  field: 'total',    sortable: true, format: val => dollars(val) },
-					{ name: 'status',   label: 'Status',   align: 'center', field: 'status',   sortable: true },
-               { name: 'tracking', label: 'Tracking', align: 'center', field: 'tracking' },
-               { name: 'sentDate', label: 'Date',     align: 'left',   field: 'sentDate', sortable: true },
+               { name: 'name',     label: 'Name',      align: 'left',   field: 'name',        sortable: true },
+					{ name: 'total',    label: 'Total',     align: 'right',  field: 'total',       sortable: true, format: val => dollars(val) },
+					{ name: 'status',   label: 'Status',    align: 'center', field: 'status',      sortable: true },
+               { name: 'tracking', label: 'Tracking',  align: 'center', field: 'tracking' },
+               { name: 'sentDate', label: 'Sent Date', align: 'left',   field: 'sentDate',     sortable: true },
             ],
             pagination: { rowsPerPage: 30 },
 			}
 		},
 		computed: {
          ...mapGetters('auth', ['userId']),
-         ...mapGetters('invoice', ['invoicesExist', 'getUserInvoices', 'getInvoice']),
+         ...mapGetters('invoice', ['getUserInvoices']),
          invoices() { return this.getUserInvoices(this.userId) },
       },
-		methods: {
-         ...mapActions('invoice', ['bindInvoices', 'deleteInvoice']),
-         isDataCol(colName) { return (colName !== 'expand' && colName !== 'actions') },
-         getInvoiceDetails(invoiceId) { return InvoiceMgr.getDetails(this.getInvoice(invoiceId)) },
-      },
-      components: {
+		components: {
          'invoice-td' : require('components/Invoice/InvoiceTd.vue').default,
       },
-      created() {
-         // console.log("InvoicesAdminPage")
-         if (!this.invoicesExist) { this.bindInvoices() }
-      }
 	}
 </script>

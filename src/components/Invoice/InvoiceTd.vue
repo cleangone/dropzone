@@ -1,64 +1,61 @@
 <template>
    <span>
-      <span v-if="col.name == 'items'">
-         {{ itemsText }} 
-         <q-btn @click="showInvoice()" label="View" size="xs" color="primary" dense/>         
+      <!-- userName, name, total (formatted), status, tracking, sentDate -->
+      <span v-if="col.name == 'name'">
+         {{ col.value }} 
+         <!-- todo - tooltip not showing -->
+         <q-btn @click="showInvoice()" icon="pageview" size="sm" color="primary" flat dense /> 
+            <!-- <q-tooltip>View Invoice</q-tooltip> -->
+         <!-- </q-btn>       -->
       </span>
       <span v-else-if="col.name == 'tracking'"> 
-         {{ row.carrier }}
-         <a v-if="hasTrackingLink" :href="trackingLink" target=”_blank”>{{ row.tracking }}</a>
-         <span v-else>{{ row.tracking }}</span>
+         {{ invoice.carrier }}
+         <a v-if="hasTrackingLink" :href="trackingLink" target=”_blank”>{{ invoice.tracking }}</a>
+         <span v-else>{{ invoice.tracking }}</span>
       </span>
-      <span v-else-if="col.name == 'sentDate'">{{ sentDate }}</span>
-      <span v-else>{{ col.value }}</span>   
+      <span v-else-if="col.name == 'sentDate'">
+         {{ sentDate }}
+         <span v-if="isAdmin">
+            <q-btn v-if="needToSend" @click="send()" label="Send" size="xs" color="primary" dense/>   
+            <q-btn v-else-if="needToResend" @click="send()" icon="replay" size="sm" color="primary" flat dense/>            
+         </span>
+      </span>
+      <span v-else>{{ col.value  }}</span>
+
       <q-dialog v-model="showModal">
-			<invoice-display :invoice="row" @close="showModal=false" />
+			<invoice-display :invoice="invoice" @close="showModal=false" />
 		</q-dialog>
    </span>
 </template>
 
 <script>
+   import { mapActions } from 'vuex'
    import { date } from 'quasar'
    import { InvoiceMgr } from 'src/managers/InvoiceMgr.js'
+   import { formatDateOptYear } from 'src/utils/DateUtils'
 
 	export default {
-      props: ['row', 'col'],
+      props: ['invoice', 'col', 'isAdmin'],
       data() {
 	  	   return {
 			   showModal: false,
 			}
 		},
       computed: {
-         itemsText() {  
-            if (!this.row.items) { return "" }
-            
-            let itemsText = ""
-            for (var item of this.row.items) {
-               if (itemsText.length) { itemsText += ", " }
-               itemsText += item.name
-            }
-            return (itemsText.length > 30 ? itemsText.substring(0, 30) + "..." : itemsText)
-         },
-         sentDate() { return formatDate(this.row.sentDate) },
-         hasTrackingLink() { return InvoiceMgr.hasTrackingLink(this.row) },  
-         trackingLink() { return InvoiceMgr.getTrackingLink(this.row) }, 
+         sentDate() { return InvoiceMgr.isSending(this.invoice) ? "Sending" : formatDateOptYear(this.invoice.sentDate) },         
+         hasTrackingLink() { return InvoiceMgr.hasTrackingLink(this.invoice) },  
+         trackingLink() { return InvoiceMgr.getTrackingLink(this.invoice) }, 
+         needToSend() { return !this.invoice.sentDate },
+         needToResend() { return InvoiceMgr.needToResend(this.invoice) },
       },
 		methods: {
+         ...mapActions('invoice', ['sendInvoice']),         
          showInvoice() { this.showModal = true },
+         send() { this.sendInvoice(this.invoice.id) },
       },
       components: {
 			'invoice-display' : require('components/Invoice/InvoiceDisplay.vue').default,
       }
-   }
-   
-   function formatDate(dateToFormat) {
-      if (!dateToFormat) { return "" }
-
-      let now = new Date()
-      let datetime = new Date(dateToFormat)
-      return (now.getYear() == datetime.getYear() ? 
-         date.formatDate(datetime, 'MMM D') :
-         date.formatDate(datetime, 'MMM D, YYYY'))
    }
 
 </script>

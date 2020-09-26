@@ -1,15 +1,4 @@
 
-// todo - only used in SettingsPage - move there?
-export const EmailFields = {
-   PURCHASE_SUCCESS: 'emailPurchaseSuccess',
-   PURCHASE_FAIL:    'emailPurchaseFail',
-   WINNING_BID:      'winningBid',
-   INVOICE:          'emailInvoice',
-   SHIIPPING:        'emailShipping',
-   SUBJECT_SUFFIX:   'Subject',
-   BODY_SUFFIX:      'Body',
-}
-
 export const ItemDisplayType = {
    MINI: 'MiniThumbnail',
    THUMB: 'Thumbnail',

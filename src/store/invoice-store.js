@@ -1,7 +1,7 @@
 import { firestoreAction } from 'vuexfire'
 import { firestore } from 'boot/firebase'
 import { uid } from 'quasar'
-import { InvoiceMgr } from 'src/managers/InvoiceMgr.js'
+import { InvoiceSendStatus } from 'src/managers/InvoiceMgr.js'
    
 /*
    invoice
@@ -25,22 +25,17 @@ const actions = {
       return bindFirestoreRef('invoices', collection())
    }),
    createInvoice: firestoreAction((context, invoice) => {
-      console.log("createInvoice", invoice)
+      // console.log("createInvoice", invoice)
       invoice.id = uid()
-      invoice.createdDate = Date.now()
-      
       collection().doc(invoice.id).set(invoice)
    }),
    setInvoice: firestoreAction((context, invoice) => {
-      console.log("setInvoice", invoice)
-      if (InvoiceMgr.isSent(invoice)) { InvoiceMgr.setUpdated(invoice) }
-      
+      // console.log("setInvoice", invoice)
       collection().doc(invoice.id).set(invoice)
    }),
-   deleteInvoice: firestoreAction((context, id) => { 
-      console.log("deleteInvoice", id)
-      collection().doc(id).delete()
-   }),
+   sendInvoice:   firestoreAction((context, id) => { collection().doc(id).update({ sendStatus: InvoiceSendStatus.SENDING }) }),
+   updateInvoice: firestoreAction((context, invoice) => { collection().doc(invoice.id).update(invoice) }),
+   deleteInvoice: firestoreAction((context, id) => { collection().doc(id).delete() }),
 }
 
 function collection() { return firestore.collection('invoices') }

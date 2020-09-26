@@ -15,7 +15,10 @@
             <q-td slot="body-cell-name" slot-scope="props" :props="props"> 
                <a :href="'#/admin/items/' + props.row.id">{{ props.row.name }}</a>
 	         </q-td>
-
+            <q-td slot="body-cell-status" slot-scope="props" :props="props"> 
+               {{ props.row.status }}
+               <q-btn v-if="canSchedule(props.row)" @click="schedule(props.row)" label="Schedule" size="xs" color="primary" dense/>         
+	         </q-td>
             <q-td slot="body-cell-actions" slot-scope="props" :props="props">
 	            <q-btn icon="edit"   @click="editDrop(props.row.id)"           @click.stop size="sm" flat dense color="primary" />
     				<q-btn icon="delete" @click="promptToDeleteDrop(props.row.id)" @click.stop size="sm" flat dense color="red" />
@@ -37,7 +40,8 @@
 <script>
 	import { date } from 'quasar'
    import { mapState, mapGetters, mapActions } from 'vuex'
-   import { formatDateTimeOptYear, localTimezone } from 'src/utils/DateUtils'
+   import { DropMgr, DropStatus } from 'src/managers/DropMgr.js';
+   import { formatDateTimeOptYear, isFutureDate, localTimezone } from 'src/utils/DateUtils'
 
 	export default {
 		data() {
@@ -61,15 +65,17 @@
 		},
 		computed: {
 			...mapGetters('drop', ['dropsExist', 'getDrops', 'getDrop']),
-			dropToEdit() { return this.getDrop(this.dropIdToEdit) },
+         dropToEdit() { return this.getDrop(this.dropIdToEdit) }
 		},
 		methods: {
-         ...mapActions('drop', ['bindDrops', 'deleteDrop']),
+         ...mapActions('drop', ['bindDrops', 'updateDrop', 'deleteDrop']),
+         canSchedule(drop) { return DropMgr.isSetup(drop) && isFutureDate(drop.startDate) },
+         schedule(drop) { return this.updateDrop({ id: drop.id, status: DropStatus.SCHEDULING }) },
          onRowClick(evt, row) {
             console.log("onRowClick", row.id)
             this.$router.push("/admin/items/" + row.id) 
          },
-			editDrop(dropId) {
+         editDrop(dropId) {
 				// console.log("editDrop", dropId)
 				this.dropIdToEdit = dropId
 				this.showEditModal = true

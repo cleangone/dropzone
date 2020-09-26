@@ -1,11 +1,17 @@
 import { dollars } from 'src/utils/Utils'
-
+import { format_M_DD_YY, format_MMM_D, format_MMM_D_YYYY, toMillis } from 'src/utils/DateUtils'
+      
 export const InvoiceStatus = {
-   CREATED: 'Created',
-   UPDATED: 'Updated',
-   SENT:    'Sent',
-   PAID:    'Paid',
-   SHIPPED: 'Shipped',
+   CREATED:      'Created',
+   REVISED:      'Revised',
+   PAID_FULL:    'Paid in Full',
+   PAID_PARTIAL: 'Partial Payment',
+   SHIPPED:      'Shipped',
+}
+
+export const InvoiceSendStatus = {
+   SENDING: 'Sending',
+   SENT:    'Sent'
 }
 
 const InvoiceCarrier = {
@@ -14,8 +20,13 @@ const InvoiceCarrier = {
 }
 
 export class InvoiceMgr {
-   static isSent(invoice)    { return invoice.status == InvoiceStatus.SENT }
-   static isShipped(invoice) { return invoice.status == InvoiceStatus.SHIPPED }
+   
+   static isCreated(invoice)  { return invoice.status == InvoiceStatus.CREATED }
+   static isRevised(invoice)  { return invoice.status == InvoiceStatus.REVISED }
+   static isPaidFull(invoice) { return invoice.status == InvoiceStatus.PAID_FULL }
+   static isShipped(invoice)  { return invoice.status == InvoiceStatus.SHIPPED }
+   static isSending(invoice)  { return invoice.sendStatus == InvoiceSendStatus.SENDING }
+   static isSent(invoice)     { return invoice.sendStatus == InvoiceSendStatus.SENT }
    
    static getCarriers() { return [ InvoiceCarrier.USPS_PRIORITY, InvoiceCarrier.FEDEX ] }
    static isUspsPriority(invoice) { return invoice.carrier == InvoiceCarrier.USPS_PRIORITY }
@@ -25,10 +36,20 @@ export class InvoiceMgr {
       return (invoice.tracking && invoice.tracking.length > 5 && InvoiceMgr.isUspsPriority(invoice)) 
    }
    static getTrackingLink(invoice) {  
-      if (InvoiceMgr.isUspsPriority(invoice)) { 
-         return "https://tools.usps.com/go/TrackConfirmAction?tLabels=" + invoice.tracking }
-      else { return ""}
-   }         
+      if (InvoiceMgr.hasTrackingLink(invoice)) { 
+         return "https://tools.usps.com/go/TrackConfirmAction?tLabels=" + invoice.tracking 
+      }
+      return ""
+   }     
+   
+   static hasTracking(invoice) { return invoice.carrier || invoice.tracking }
+   
+   static needToResend(invoice) {
+      return invoice.sentDate && 
+         ((invoice.revisedDate && (toMillis(invoice.sentDate) < toMillis(invoice.revisedDate))) ||
+          (invoice.paidDate    && (toMillis(invoice.sentDate) < toMillis(invoice.paidDate)))    ||
+          (invoice.shippedDate && (toMillis(invoice.sentDate) < toMillis(invoice.shippedDate))))
+   }
 
    static getDetails(invoice) { 
       let details = []
@@ -43,6 +64,11 @@ export class InvoiceMgr {
    }
           
    static finalize(invoice, user, setting) { 
+      invoice.name = 
+         (invoice.revisedDate ? format_MMM_D(invoice.revisedDate) : format_MMM_D(invoice.createdDate)) + ": " +
+         invoice.items[0].name + 
+         (invoice.items.length > 1 ? "..." : "")
+
       invoice.total = invoice.subTotal + invoice.shippingCharge - invoice.priceAdjustment 
       InvoiceMgr.setUserFullName(invoice, user)
       InvoiceMgr.setHtml(invoice, user, setting)   
@@ -69,10 +95,15 @@ export class InvoiceMgr {
    }
 
    static setHtml(invoice, user, setting) { 
-      console.log("setHtml: user", user)
-      console.log("setHtml: setting", setting)
+      // console.log("setHtml: user", user)
+      // console.log("setHtml: setting", setting)
       let html = []
       
+      let date = invoice.revisedDate ? 
+         format_MMM_D_YYYY(invoice.revisedDate)  + " (Revised)":
+         format_MMM_D_YYYY(invoice.createdDate)
+      
+
       let paypal = "" 
       if (setting.paypal) {
          let paypalLink = setting.paypal 
@@ -81,33 +112,55 @@ export class InvoiceMgr {
 
          paypal =  a(paypalLink, "https://" + paypalLink)
       }
-
-      html.push(div(
-         div(setting.companyName) + div(paypal), 
-         "align=right"))
-      html.push(br() + br())
-      html.push(InvoiceMgr.getUserHtml(invoice, user) + br())
+      
+      html.push(
+         div(date) + 
+         div(a(setting.companyName, setting.siteUrl), right()) + 
+         div(paypal, right()) +
+         br() + br() + 
+         InvoiceMgr.getUserHtml(invoice, user) + 
+         br())
       
       let detailRows = []
       for (var item of invoice.items) {
-         detailRows.push(tr(td(item.name) + tdRight(dollars(item.price))))
+         detailRows.push(tr(
+            td(format_M_DD_YY(item.date), "width=10%") + 
+            td(item.name) + 
+            tdRight(dollars(item.price))))
       }
 
-      let subtotal = tr(td("SubTotal") + tdRight(dollars(invoice.subTotal)))
-      let shipping = tr(td("Shipping") + tdRight(dollars(invoice.shippingCharge)))
-      let adjustment = invoice.priceAdjustment == 0 ? "" : tr(td("Adjustment") +  tdRight("(" + dollars(invoice.priceAdjustment) + ")"))
-      let line = tr(td(hr(), "colspan=2"))
-      let total = tr(td(b("Total")) + tdRight(b(dollars(invoice.total))))
+      const line = tr(td(hr(), "colspan=3"))
+      const subtotal = tr(td("") + td("SubTotal") + tdRight(dollars(invoice.subTotal)))
+      const shipping = tr(td("") + td("Shipping") + tdRight(dollars(invoice.shippingCharge)))
+      const adjustment = invoice.priceAdjustment == 0 ? "" : tr(td("") + td("Adjustment") +  tdRight("(" + dollars(invoice.priceAdjustment) + ")"))
+      const total = tr(td("") + td(b("Total")) + tdRight(b(dollars(invoice.total))))
+      let paidLine = invoice.paidDate ? line : ""
+      let amountPaid = invoice.paidDate ? tr(td("") + td("Amount Paid") + tdRight(dollars(invoice.total))) : ""
+      let amountRemaing = invoice.paidDate ? tr(td("") + td(b("Amount Remaining")) + tdRight(b('0'))) : ""
       
-      let itemsTable = table(detailRows.join("") + line + subtotal + shipping + adjustment + line + total, "width=100% style='border:1px solid'")
+      let itemsTable = table(
+         detailRows.join("") + line + subtotal + shipping + adjustment + line + total + paidLine + amountPaid + amountRemaing, 
+         "width=100% style='border:1px solid'")
       html.push(itemsTable)
-      html.push(br() + p(setting.invoiceNote))
+
+      let note = setting.invoiceNote
+      if (InvoiceMgr.isPaidFull(invoice)) { note = "" }
+      else if (InvoiceMgr.isShipped(invoice)) {
+         note = "Items shipped. "
+         if (InvoiceMgr.hasTrackingLink(invoice)) { 
+            note += a(invoice.carrier + " - " + invoice.tracking, InvoiceMgr.getTrackingLink(invoice)) 
+         }
+         else if (invoice.tracking) { note += invoice.carrier + ", Tracking: " + invoice.tracking}
+      }
+      html.push(br() + p(note))
 
       invoice.html = html.join("")
    }
 
    static setUpdated(invoice) { invoice.status = InvoiceStatus.UPDATED }
 }
+
+function right()                   { return "align=right" }
 
 function a(innerHtml, href)        { return ele(innerHtml, "a", "href=" + href) }
 function b(innerHtml)              { return ele(innerHtml, "b") }
@@ -116,10 +169,11 @@ function div(innerHtml, attr)      { return ele(innerHtml, "div", attr) }
 function p(innerHtml)              { return ele(innerHtml, "p") }
 function h4(innerHtml)             { return ele(innerHtml, "h4") }
 function hr()                      { return closedEle("hr") }
+// function span(innerHtml, attr)     { return ele(innerHtml, "span", attr) }
 function table(innerHtml, attr)    { return ele(innerHtml, "table", attr) }
 function tr(innerHtml)             { return ele(innerHtml, "tr") }
 function td(innerHtml, attr)       { return ele(innerHtml, "td", attr) }
-function tdRight(innerHtml)        { return td(innerHtml, "align=right") }
+function tdRight(innerHtml)        { return td(innerHtml, right()) }
 
 function ele(innerHtml, tag, attr) { return openTagPrefix(tag, attr) + ">" + innerHtml + "</" + tag +">" }
 function closedEle(tag, attr)      { return openTagPrefix(tag, attr) + "/>" }
