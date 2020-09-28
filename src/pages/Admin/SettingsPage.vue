@@ -36,8 +36,6 @@
       PURCHASE_SUCCESS: 'emailPurchaseSuccess',
       PURCHASE_FAIL:    'emailPurchaseFail',
       WINNING_BID:      'winningBid',
-      INVOICE:          'emailInvoice',
-      SHIIPPING:        'emailShipping'
    }
    const EMAIL_FIELD_SUBJECT_SUFFIX = 'Subject'
    const EMAIL_FIELD_BODY_SUFFIX    = 'Body'
@@ -49,8 +47,6 @@
             emailPurchaseSuccess: {},
             emailPurchaseFail: {},
             emailWinningBid: {},
-            emailInvoice: {},
-            emailShipping: {},
          }
 		},
 		computed: {
@@ -63,16 +59,11 @@
             this.emailPurchaseSuccess = this.getEmailSetting(EmailType.PURCHASE_SUCCESS, "Successful Purchase Request")
             this.emailPurchaseFail    = this.getEmailSetting(EmailType.PURCHASE_FAIL,    "Failed Purchase Request")
             this.emailWinningBid      = this.getEmailSetting(EmailType.WINNING_BID,      "Winning Bid")
-            this.emailInvoice         = this.getEmailSetting(EmailType.INVOICE,          "Invoice")
-            this.emailShipping        = this.getEmailSetting(EmailType.SHIIPPING,        "Shipping")
          },
          submitUpdate() { 
             this.setEmailSettings(this.emailPurchaseSuccess, EmailType.PURCHASE_SUCCESS)
             this.setEmailSettings(this.emailPurchaseFail,    EmailType.PURCHASE_FAIL)
             this.setEmailSettings(this.emailWinningBid,      EmailType.WINNING_BID)
-            this.setEmailSettings(this.emailInvoice,         EmailType.INVOICE)
-            this.setEmailSettings(this.emailShipping,        EmailType.SHIIPPING)
-            
             this.setSetting(this.settingToUpdate)
          },
          getEmailSetting(emailType, label) { 

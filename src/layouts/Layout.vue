@@ -26,28 +26,25 @@
 
     <q-drawer v-model="leftDrawerOpen" :breakpoint="767"  bordered content-class="bg-grey-2">
       <q-list>
-        <q-item-label header>Navigation</q-item-label>
-        <layout-item path="/" label="Drops" iconName="home"/>
+         <q-item-label header>Navigation</q-item-label>
+         <layout-item path="/" label="Drops" iconName="home"/>
 
-         <q-item-label header>Artists</q-item-label>
-         <layout-item v-for="(tag, key) in artistLinks" :key="key" :path="'/artist/' + tag.id" :label="tag.name"/>
-
-        <div v-if="loggedIn">
-            <q-item-label header>Account</q-item-label>
-            <layout-item path="/account"   label="My Account" iconName="account_circle"/>
+         <q-expansion-item label="Artists" switch-toggle-side >
+            <layout-item v-for="(tag, key) in artistLinks" :key="key" :path="'/artist/' + tag.id" :label="tag.name"/>
+         </q-expansion-item>
+         <q-expansion-item v-if="loggedIn" label="My Account" switch-toggle-side >
+            <layout-item path="/account"   label="Account" iconName="account_circle"/>
             <layout-item path="/favorites" label="Favorites"  iconName="favorite"/>    
             <layout-item path="/actions"   label="History"    iconName="history"/>           
             <layout-item path="/invoices"  label="Invoices"   iconName="shopping_cart"/>           
-        </div>
-
-        <div v-if="userIsAdmin">
-            <q-item-label header>Admin</q-item-label>
+         </q-expansion-item>
+         <q-expansion-item v-if="userIsAdmin" label="Admin" switch-toggle-side >
             <layout-item path="/admin/drops"    label="Drop Admin" iconName="get_app"/>
             <layout-item path="/admin/users"    label="User Admin" iconName="group"/>
             <layout-item path="/admin/invoices" label="Invoices"   iconName="shopping_cart"/>
             <layout-item path="/admin/artists"  label="Artists"    iconName="brush"/>
             <layout-item path="/admin/settings" label="Settings"   iconName="settings"/>
-        </div>
+         </q-expansion-item>
       </q-list>
     </q-drawer>
 
