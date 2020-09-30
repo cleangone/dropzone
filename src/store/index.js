@@ -5,9 +5,10 @@ import { vuexfireMutations } from 'vuexfire'
 import action  from './action-store'
 import auth    from './auth-store'
 import color   from './color-store'
+import drop    from './drop-store'
+import error   from './error-store'
 import invoice from './invoice-store'
 import item    from './item-store'
-import drop    from './drop-store'
 import setting from './setting-store'
 import tag     from './tag-store'
 import user    from './user-store'
@@ -21,6 +22,7 @@ export default function () {
       auth,
       color,
       drop,
+      error,
       invoice,
       item,
       setting,

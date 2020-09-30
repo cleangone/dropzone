@@ -54,7 +54,10 @@ const actions = {
       }
    }),
    updateItems: firestoreAction((context, itemUpdates) => { 
-      // todo - research batching - no big deal right now - will only be 5-25 items
+      
+      // todo - research vuexfire batching - no big deal right now - will only be 5-25 items
+      // https://mesqueeb.github.io/vuex-easy-firestore/setup.html#installation
+
       itemUpdates.forEach(update => {
          collection().doc(update.id).update(update)
       })

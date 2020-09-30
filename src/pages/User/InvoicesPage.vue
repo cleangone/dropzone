@@ -30,7 +30,7 @@
 </template>
 
 <script>
-	import { mapGetters } from 'vuex'
+	import { mapGetters, mapActions } from 'vuex'
    import { dollars } from 'src/utils/Utils'
    
 	export default {
@@ -51,10 +51,24 @@
 		computed: {
          ...mapGetters('auth', ['userId']),
          ...mapGetters('invoice', ['getUserInvoices']),
-         invoices() { return this.getUserInvoices(this.userId) },
+         invoices() { 
+            try { return this.getUserInvoices(this.userId) } 
+            catch (error)
+            {
+               console.log("Invoices ERROR", error)
+               this.createError({ 
+                  title: "InvoicesPage.invoices() > getUserInvoices", 
+                  description: error.message })
+               return []
+            }
+         }
+      },
+      methods: {
+         ...mapActions('invoice', ['bindInvoices']),
+         ...mapActions('error', ['createError'])
       },
 		components: {
          'invoice-td' : require('components/Invoice/InvoiceTd.vue').default,
-      },
+      }
 	}
 </script>

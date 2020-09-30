@@ -38,8 +38,32 @@ export class ItemMgr {
       // console.log("thumbFilePath ", item.thumbFilePath)
    }
 
-   static isActive(item)    { return !ItemMgr.isPrivate(item) && !ItemMgr.isSetup(item) } 
+   static itemText(items) {
+      let priv = 0
+      let setup = 0
+      let available = 0
+      let hold = 0
+      let sold = 0
 
+      items.forEach(item => {
+         if (ItemMgr.isPrivate(item)) { priv++ }
+         else if (ItemMgr.isSetup(item)) { setup++ }
+         else if (ItemMgr.isAvailable(item) || ItemMgr.isDropping(item)) { available++ }
+         else if (ItemMgr.isHold(item) || ItemMgr.isInvoiced(item) ) { hold++ }
+         else if (ItemMgr.isSold(item)) { sold++ }
+      })
+
+      const text = []
+      if (priv)      { text.push(priv + " Private") }
+      if (setup)     { text.push(setup + " Setup") }
+      if (available) { text.push(available + " Available") }
+      if (hold)      { text.push(hold + " Hold") }
+      if (sold)      { text.push(sold + " Sold") }
+
+      return text.join(", ")
+   }
+
+   static isActive(item)    { return !ItemMgr.isPrivate(item) && !ItemMgr.isSetup(item) } 
    static isPrivate(item)   { return item.status == ItemStatus.PRIVATE }
    static isSetup(item)     { return item.status == ItemStatus.SETUP }
    static isAvailable(item) { return item.status == ItemStatus.AVAILABLE }

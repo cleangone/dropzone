@@ -22,6 +22,7 @@ export function formatDateOptYear(inputDate) {
 export function format_M_DD_YY(inputDate)    { return format(toMillis(inputDate), 'M/D/YY') }
 export function format_MMM_D(inputDate)      { return format(toMillis(inputDate), 'MMM D') }
 export function format_MMM_D_YYYY(inputDate) { return format(toMillis(inputDate), 'MMM D, YYYY') }
+export function format_MM_DD_YY(inputDate)   { return format(toMillis(inputDate), 'MM-DD-YY') }
 
 // dates are generally timstamp when created by frontend, and millis when created by backend functions
 // easier to handle both than to always be standarizing

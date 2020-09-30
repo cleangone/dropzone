@@ -19,6 +19,9 @@
                {{ props.row.status }}
                <q-btn v-if="canSchedule(props.row)" @click="schedule(props.row)" label="Schedule" size="xs" color="primary" dense/>         
 	         </q-td>
+            <q-td slot="body-cell-items" slot-scope="props" :props="props"> 
+               {{ itemText(props.row.id) }}
+            </q-td>
             <q-td slot="body-cell-actions" slot-scope="props" :props="props">
 	            <q-btn icon="edit"   @click="editDrop(props.row.id)"           @click.stop size="sm" flat dense color="primary" />
     				<q-btn icon="delete" @click="promptToDeleteDrop(props.row.id)" @click.stop size="sm" flat dense color="red" />
@@ -39,8 +42,9 @@
 
 <script>
 	import { date } from 'quasar'
-   import { mapState, mapGetters, mapActions } from 'vuex'
+   import { mapGetters, mapActions } from 'vuex'
    import { DropMgr, DropStatus } from 'src/managers/DropMgr.js';
+   import { ItemMgr } from 'src/managers/ItemMgr.js';
    import { formatDateTimeOptYear, isFutureDate, localTimezone } from 'src/utils/DateUtils'
 
 	export default {
@@ -50,13 +54,15 @@
 				showEditModal: false,
 				dropIdToEdit: '',
 				tableDataFilter: '',
-				visibleColumns: [ 'name', 'startDate', 'status', 'saleType', 'actions'],
+				visibleColumns: [ 'name', 'startDate', 'status', 'items', 'saleType', 'actions'],
  				columns: [
                //  todo - headerStyle doesn't seem to work - use it to center header
         			{ name: 'id', field: 'id' },
-				 	{ name: 'name',      label: 'Name',   align: 'left',   field: 'name',           sortable: true },
-				 	{ name: 'startDate', label: 'Start Date ' + localTimezone(), align: 'center', field: 'startDate', sortable: true, format: val => formatDateTimeOptYear(val) },
-					{ name: 'status',    label: 'Status', align: 'center', field: 'status',          sortable: true },
+				 	{ name: 'name',      label: 'Name',   align: 'left',   field: 'name',      sortable: true },
+               { name: 'startDate', label: 'Start Date ' + localTimezone(), 
+                                                     align: 'center', field: 'startDate', sortable: true, format: val => formatDateTimeOptYear(val) },
+					{ name: 'status',    label: 'Status', align: 'center', field: 'status',    sortable: true },
+					{ name: 'items',     label: 'Items',  align: 'center' },
 					{ name: 'saleType',  label: 'Type',   align: 'center', field: 'defaultSaleType', sortable: true },
 					{ name: 'actions' }
             ],
@@ -65,6 +71,7 @@
 		},
 		computed: {
 			...mapGetters('drop', ['dropsExist', 'getDrops', 'getDrop']),
+         ...mapGetters('item', ['getItemsInDrop']),
          dropToEdit() { return this.getDrop(this.dropIdToEdit) }
 		},
 		methods: {
@@ -75,6 +82,7 @@
             console.log("onRowClick", row.id)
             this.$router.push("/admin/items/" + row.id) 
          },
+         itemText(dropId) { return ItemMgr.itemText(this.getItemsInDrop(dropId)) },
          editDrop(dropId) {
 				// console.log("editDrop", dropId)
 				this.dropIdToEdit = dropId

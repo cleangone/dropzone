@@ -17,12 +17,18 @@ import { InvoiceSendStatus } from 'src/managers/InvoiceMgr.js'
 */
 
 const state = {   
-    invoices: []
+    invoices: [],
+    userInvoices: []
 }
 
 const actions = {
    bindInvoices: firestoreAction(({ bindFirestoreRef }) => {
+      console.log("bindInvoices")
       return bindFirestoreRef('invoices', collection())
+   }),
+   bindUserInvoices: firestoreAction(({ bindFirestoreRef }, userId) => {
+      console.log("bindUserInvoices", userId)
+      return bindFirestoreRef('userInvoices', collection().where('userId', '==', userId)) 
    }),
    createInvoice: firestoreAction((context, invoice) => {
       // console.log("createInvoice", invoice)
@@ -42,6 +48,7 @@ function collection() { return firestore.collection('invoices') }
 
 const getters = {
    invoicesExist: state => { return state.invoices && state.invoices.length > 0 },
+   // userInvoicesExist: state => { return state.userInvoices && state.userInvoices.length > 0 },
    getInvoices: state => { 
       let invoices = []
       for (var invoice of state.invoices) {
@@ -51,12 +58,14 @@ const getters = {
       return invoices
    },
    getUserInvoices: state => userId => {
-      let userInvoices = []
-      for (var invoice of state.invoices) {
-         if (invoice.userId == userId) { userInvoices.push(Object.assign({}, invoice)) }
+      for (var invoice of state.userInvoices) {
+         if (invoice.userId != userId) { throw new Error(
+            "Specified userId " + userId + " different than invoice[id:" + 
+            invoice.id +  ", userId:" + invoice.userId + "]") 
+         }
       }
 
-      return userInvoices
+      return state.userInvoices
    },
    getInvoice: state => invoiceId => {
       for (var invoice of state.invoices) {

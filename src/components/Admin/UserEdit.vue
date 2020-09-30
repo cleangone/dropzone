@@ -12,7 +12,9 @@
 	      <q-input v-model="userToUpdate.lastName" label="Last Name" filled class="col"/>
     	</div>
 		<div class="row q-mb-sm">
-	      <q-toggle v-model="userToUpdate.isAdmin" label="Admin" class="col"/>
+	      <q-checkbox v-model="userToUpdate.email" label="Get Emails" class="col"/>
+         <q-checkbox v-model="userToUpdate.isAdmin" label="Admin" class="col"/>
+         <q-checkbox v-if="userToUpdate.isAdmin" v-model="userToUpdate.errorEmail" label="Get Error Emails" dense/> 
     	</div>
 	</q-card-section>
 
@@ -30,13 +32,14 @@
 		props: ['user'],
 		data() {
 			return {
-				userToUpdate: {},
+            userToUpdate: {}
 			}
 		},
 		methods: {
 			...mapActions('user', ['setUser']),
 			submitUpdate() {
-				console.log("submitForm")
+            console.log("submitForm")
+            if (!this.userToUpdate.isAdmin) { this.userToUpdate.errorEmail = false } 
             this.setUser(this.userToUpdate)
             this.$emit('close')
 			}

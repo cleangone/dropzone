@@ -9,7 +9,7 @@
         <span class="col absolute-center text-h5">Dropzone</span>
         <q-btn label="" dense flat class="col" />
               
-        <q-btn v-if="loggedIn" icon-right="account_circle" :label="userDisplayName" flat dense >
+        <q-btn v-if="userIsLoggedIn" icon-right="account_circle" :label="userDisplayName" flat dense >
           <q-menu content-class="bg-grey-4 ">
             <q-list dense style="min-width: 100px">
                <list-item path="/account"   label="Account" />
@@ -24,26 +24,28 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" :breakpoint="767"  bordered content-class="bg-grey-2">
+    <q-drawer v-model="leftDrawerOpen" :breakpoint="767" :width="225" bordered content-class="bg-grey-2">
       <q-list>
          <q-item-label header>Navigation</q-item-label>
          <layout-item path="/" label="Drops" iconName="home"/>
 
-         <q-expansion-item label="Artists" switch-toggle-side >
+         <q-expansion-item label="Artists" :content-inset-level="1" switch-toggle-side expand-separator>
             <layout-item v-for="(tag, key) in artistLinks" :key="key" :path="'/artist/' + tag.id" :label="tag.name"/>
          </q-expansion-item>
-         <q-expansion-item v-if="loggedIn" label="My Account" switch-toggle-side >
-            <layout-item path="/account"   label="Account" iconName="account_circle"/>
-            <layout-item path="/favorites" label="Favorites"  iconName="favorite"/>    
-            <layout-item path="/actions"   label="History"    iconName="history"/>           
-            <layout-item path="/invoices"  label="Invoices"   iconName="shopping_cart"/>           
+         <q-expansion-item v-if="loggedIn" label="My Account" 
+               :content-inset-level="1" switch-toggle-side expand-separator>
+            <layout-item path="/account"   label="Account"   iconName="account_circle"/>
+            <layout-item path="/favorites" label="Favorites" iconName="favorite"/>    
+            <layout-item path="/actions"   label="History"   iconName="history"/>           
+            <layout-item path="/invoices"  label="Invoices"  iconName="shopping_cart"/>           
          </q-expansion-item>
-         <q-expansion-item v-if="userIsAdmin" label="Admin" switch-toggle-side >
-            <layout-item path="/admin/drops"    label="Drop Admin" iconName="get_app"/>
-            <layout-item path="/admin/users"    label="User Admin" iconName="group"/>
-            <layout-item path="/admin/invoices" label="Invoices"   iconName="shopping_cart"/>
-            <layout-item path="/admin/artists"  label="Artists"    iconName="brush"/>
-            <layout-item path="/admin/settings" label="Settings"   iconName="settings"/>
+         <q-expansion-item v-if="userIsAdmin" label="Admin" 
+               :content-inset-level="1" switch-toggle-side expand-separator>
+            <layout-item path="/admin/drops"    label="Drops"    iconName="get_app"/>
+            <layout-item path="/admin/users"    label="Users"    iconName="group"/>
+            <layout-item path="/admin/invoices" label="Invoices" iconName="shopping_cart"/>
+            <layout-item path="/admin/artists"  label="Artists"  iconName="brush"/>
+            <layout-item path="/admin/settings" label="Settings" iconName="settings"/>
          </q-expansion-item>
       </q-list>
     </q-drawer>
@@ -54,8 +56,8 @@
 
     <q-footer>
       <q-tabs indicator-color="transparent" class="row">
-        <q-route-tab  icon="home" to="/" />
-        <span class="col"/> <!-- filler to push home to left -->
+        <q-route-tab icon="home" to="/" class="col-1" />
+        <span class="col"/> <!-- filler -->
       </q-tabs>
     </q-footer>
 
@@ -70,15 +72,33 @@
       name: 'MyLayout',
       data () {
          return {
-         leftDrawerOpen: this.$q.platform.is.desktop,
+            leftDrawerOpen: this.$q.platform.is.desktop,
+            boundUserId: null  // userId that has data boung to it
          }
       },
       computed: {
          ...mapGetters('auth', ['userId', 'loggedIn']),
+         ...mapGetters('invoice', ['invoicesExist']),
          ...mapGetters('tag', ['getTags']),
          ...mapGetters('user', ['getUser', 'isAdmin']),
          user() { return this.getUser(this.userId)},
-         userIsAdmin() { return this.user && this.user.isAdmin },
+         userIsLoggedIn() { 
+            // console.log("Layout.userIsLoggedIn", this.loggedIn)
+            const userId = this.loggedIn ? this.userId : "-" // placeholder to clear bound data
+            if (userId != this.boundUserId) { 
+               this.bindUserInvoices(userId) 
+               this.boundUserId = userId
+               // console.log("Layout.boundUserId", this.boundUserId)
+            }
+
+            return this.loggedIn
+         },
+         userIsAdmin() { 
+            const isAdmin = this.user && this.user.isAdmin
+            // console.log("Layout.userIsAdmin", isAdmin)
+            if (isAdmin && !this.invoicesExist) { this.bindInvoices() }
+            return isAdmin 
+         },
          userDisplayName() { return this.user.firstName ? this.user.firstName : this.user.authEmailCopy },
          artists() { return this.getTags(TagCategory.ARTIST) },
          artistLinks() { return TagMgr.tagsWithLinks(this.artists) },
@@ -87,7 +107,7 @@
          ...mapActions('action',  ['bindActions']),
          ...mapActions('auth',    ['logoutUser']),
          ...mapActions('drop',    ['bindDrops']),
-         ...mapActions('invoice', ['bindInvoices']),
+         ...mapActions('invoice', ['bindInvoices', 'bindUserInvoices']),
          ...mapActions('item',    ['bindItems']),
          ...mapActions('setting', ['bindSettings']),
          ...mapActions('tag',     ['bindTags']),
@@ -104,7 +124,7 @@
       created() {
          this.bindActions() 
          this.bindDrops()
-         this.bindInvoices() 
+         // this.bindInvoices() 
          this.bindItems()
          this.bindSettings()
          this.bindTags()
