@@ -11,7 +11,7 @@
 </template>
 
 <script>
-	import { mapGetters } from 'vuex'
+	import { mapGetters, mapActions } from 'vuex'
 	import { ItemDisplayType } from 'src/utils/Constants.js'
 	
 	export default {
@@ -28,11 +28,15 @@
          items () { return (this.user.likedItemIds ? this.getItems(this.user.likedItemIds) : []) },
 		},
 		methods: {
+         ...mapActions('localEvent', ['setFavorites']),
 			navBack() { this.$router.go(-1) },
 		},
 		components: {
 	  		'item' : require('components/Item/Item.vue').default,
-	  	}
+      },
+      mounted() {
+			this.setFavorites(false)
+      },
 	}
 
 </script>

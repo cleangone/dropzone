@@ -9,6 +9,7 @@ import drop    from './drop-store'
 import error   from './error-store'
 import invoice from './invoice-store'
 import item    from './item-store'
+import localEvent from './local-event-store'
 import setting from './setting-store'
 import tag     from './tag-store'
 import user    from './user-store'
@@ -25,6 +26,7 @@ export default function () {
       error,
       invoice,
       item,
+      localEvent,
       setting,
       tag,
       user

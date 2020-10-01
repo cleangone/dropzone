@@ -59,6 +59,7 @@
       },
 		methods: {
          ...mapActions('action', ['submitBid', 'submitPurchaseRequest']),
+         ...mapActions('localEvent', ['setFavorites']),
          ...mapActions('user', ['setLikes']),
 			login() { this.$router.push("/auth/login") },
 			promptToBuy() {
@@ -72,6 +73,7 @@
                if (!likedItemIds.includes(this.item.id)) {
                   likedItemIds.push(this.item.id) 
                   this.setLikes({ id: this.user.id, likedItemIds: likedItemIds }) 
+                  this.setFavorites(true) 
                }   
 				})
 			},			

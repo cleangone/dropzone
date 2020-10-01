@@ -35,7 +35,7 @@
          <q-expansion-item v-if="loggedIn" label="My Account" 
                :content-inset-level="1" switch-toggle-side expand-separator>
             <layout-item path="/account"   label="Account"   iconName="account_circle"/>
-            <layout-item path="/favorites" label="Favorites" iconName="favorite"/>    
+            <layout-item path="/favorites" label="Favorites" iconName="favorite" :bold="favoritesUpdated"/>    
             <layout-item path="/actions"   label="History"   iconName="history"/>           
             <layout-item path="/invoices"  label="Invoices"  iconName="shopping_cart"/>           
          </q-expansion-item>
@@ -65,7 +65,7 @@
 </template>
 
 <script>
-   import { mapGetters, mapActions } from 'vuex'
+   import { mapState, mapGetters, mapActions } from 'vuex'
    import { TagMgr, TagCategory } from 'src/managers/TagMgr.js'
    
    export default {
@@ -77,6 +77,7 @@
          }
       },
       computed: {
+         ...mapState('localEvent', ['favoritesUpdated']),
          ...mapGetters('auth', ['userId', 'loggedIn']),
          ...mapGetters('invoice', ['invoicesExist']),
          ...mapGetters('tag', ['getTags']),
