@@ -58,7 +58,8 @@
 			isBuy() { return this.itemSaleType == SaleType.BUY && this.item.startPrice },	
       },
 		methods: {
-			...mapActions('action', ['submitBid', 'submitPurchaseRequest']),
+         ...mapActions('action', ['submitBid', 'submitPurchaseRequest']),
+         ...mapActions('user', ['setLikes']),
 			login() { this.$router.push("/auth/login") },
 			promptToBuy() {
 				this.$q.dialog({title: 'Confirm Purchase', message: 'Buy ' + this.item.name + ' for ' + dollars(this.item.startPrice) + '?', persistent: true,			
@@ -66,6 +67,12 @@
 				}).onOk(() => {
 					this.submitPurchaseRequest(
                   { itemId: this.item.id, itemName: this.item.name, amount: this.item.startPrice, userId: this.userId, userNickname: this.user.nickname,  }) 
+            
+               let likedItemIds = this.user.likedItemIds ? [...this.user.likedItemIds] : []
+               if (!likedItemIds.includes(this.item.id)) {
+                  likedItemIds.push(this.item.id) 
+                  this.setLikes({ id: this.user.id, likedItemIds: likedItemIds }) 
+               }   
 				})
 			},			
 		},

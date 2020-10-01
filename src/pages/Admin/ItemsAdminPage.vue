@@ -24,7 +24,7 @@
               {{ priceText(props.row) }}
             </q-td>
             <q-td slot="body-cell-bids" slot-scope="props" :props="props"> 
-               <a v-if="props.row.numberOfBids > 0" :href="'#/admin/bids/' + props.row.id">{{ props.row.numberOfBids }}</a>
+               <a v-if="props.row.numberOfBids > 0" :href="'#/bids/' + props.row.id">{{ props.row.numberOfBids }}</a>
 	         </q-td>
             <q-td slot="body-cell-actions" slot-scope="props" :props="props" auto-width>
                <q-btn icon="edit"   @click="editItem(props.row.id)"                           size="sm" flat dense color="primary" />

@@ -24,7 +24,7 @@
 				tableDataFilter: '',
 				visibleColumns: [ 'name', 'amount', 'result', 'date'],
  				columns: [ 
-    				{ name: 'name',   label: 'User',   align: 'left',   field: 'userNickname', sortable: true },
+    				{ name: 'name',   label: 'Bidder', align: 'left',   field: 'userNickname', sortable: true },
 				 	{ name: 'amount', label: 'Amount', align: 'right',  field: 'amount', sortable: true, format: val => dollars(val) },
 					{ name: 'date',   label: 'Date',   align: 'center', field: 'date',   sortable: true, format: val => date.formatDate(val, 'MMM D, h:mm:ss a') }
 				],
