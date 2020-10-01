@@ -73,8 +73,8 @@
                if (!likedItemIds.includes(this.item.id)) {
                   likedItemIds.push(this.item.id) 
                   this.setLikes({ id: this.user.id, likedItemIds: likedItemIds }) 
-                  this.setFavorites(true) 
                }   
+               this.setFavorites(true) 
 				})
 			},			
 		},
