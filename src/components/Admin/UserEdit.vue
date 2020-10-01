@@ -12,6 +12,9 @@
 	      <q-input v-model="userToUpdate.lastName" label="Last Name" filled class="col"/>
     	</div>
 		<div class="row q-mb-sm">
+	      <q-input v-model="userToUpdate.nickname" label="Bidding Nickname" filled class="col"/>
+    	</div>
+		<div class="row q-mb-sm">
 	      <q-checkbox v-model="userToUpdate.email" label="Get Emails" class="col"/>
          <q-checkbox v-model="userToUpdate.isAdmin" label="Admin" class="col"/>
          <q-checkbox v-if="userToUpdate.isAdmin" v-model="userToUpdate.errorEmail" label="Get Error Emails" dense/> 

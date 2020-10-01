@@ -1,5 +1,25 @@
 import { Config } from 'boot/Config.js'
 
+/*
+   item
+      id
+      status
+      dropId
+      name
+      startPrice
+      buyPrice
+      buyDate
+      buyerId
+      buyerName
+      bidderIds [id]
+      numberOfBids
+      currBid { actionId, userId, userNickname, amount, date }
+      prevBids [currBid obj]
+      createdDate
+      lastUserActivityDate
+      dropDoneDate
+*/
+
 export const ItemStatus = {
    PRIVATE:   'Private',
    SETUP:     'Setup',

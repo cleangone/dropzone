@@ -2,6 +2,8 @@
 	<div class="column justify-center q-mt-md q-pa-sm rounded-borders bg-grey-4">
 		<div class="self-center text-h6"> 
          <span v-if="liveDropsExist">Live</span> Drop Board
+         <q-btn v-if="isFullPage" @click="collapse()" icon="mdi-arrow-collapse" color="primary"  size="sm" flat dense />
+         <q-btn v-else            @click="expand()"   icon="mdi-arrow-expand"   color="primary"  size="sm" flat dense />
       </div>
 		<div class="row q-mt-xs q-gutter-xs">
 			<item v-for="(item, key) in items" :key="key" :item="item" :displayType="mini"/>
@@ -18,7 +20,8 @@
 	export default {
 		data() {
 			return {
-				showEditModal: false
+            showEditModal: false,
+            isFullPage: false
 			}
 		},
 		computed: {
@@ -47,7 +50,17 @@
    
             return userActivityItems.concat(noActivityItems)
          }
-    	},
+       },
+       methods: {
+         expand() {
+				this.isFullPage = true
+            this.$emit("expand")
+         },
+         collapse() {
+				this.isFullPage = false
+            this.$emit("collapse")
+         },
+		},
 		components: {
 			'item' : require('components/Item/Item.vue').default
 		}

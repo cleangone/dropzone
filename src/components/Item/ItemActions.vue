@@ -65,7 +65,7 @@
 	        		ok: { push: true }, cancel: { push: true, color: 'grey' }
 				}).onOk(() => {
 					this.submitPurchaseRequest(
-                  { itemId: this.item.id, itemName: this.item.name, userId: this.userId, amount: this.item.startPrice }) 
+                  { itemId: this.item.id, itemName: this.item.name, amount: this.item.startPrice, userId: this.userId, userNickname: this.user.nickname,  }) 
 				})
 			},			
 		},

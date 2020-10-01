@@ -126,15 +126,12 @@
 				else if (this.isDropping && this.userIsOutbid) { return "bg-red-5" }
 				else  {return "" }
 			},
-			userIsBuyer() { 
-            return this.loggedIn && this.isNotAvailable && (this.item.buyerId == this.userId) && (this.item.currBidderId == "") 
-         },
-			userIsWinningBidder() { 
-            return this.loggedIn && this.isNotAvailable && (this.item.buyerId == this.userId) && (this.item.currBidderId == this.userId) },
-			userIsHighBidder() { return this.loggedIn && (this.item.currBidderId == this.userId) },
+			userIsBuyer()         { return this.loggedIn && this.isNotAvailable && !this.item.currBid && (this.item.buyerId == this.userId) },
+			userIsWinningBidder() { return this.loggedIn && this.isNotAvailable && this.item.currBid  && (this.item.buyerId == this.userId) },
+			userIsHighBidder() { return this.loggedIn && this.item.currBid && (this.item.currBid.userId == this.userId) },
 			userIsOutbid() { return this.loggedIn && !this.userIsHighBidder && this.item.bidderIds && this.item.bidderIds.includes(this.userId) },
-         userHasHigherMax() { return this.userIsHighBidder && (this.item.currBidAmount > this.item.buyPrice) },
-         userMaxBid() { return dollars(this.item.currBidAmount) },
+         userHasHigherMax() { return this.userIsHighBidder && (this.item.currBid.amount > this.item.buyPrice) },
+         userMaxBid() { return dollars(this.item.currBid.amount) },
          dropPageRoute() { return Route.DROP },
       },
       methods: {

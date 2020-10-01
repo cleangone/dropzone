@@ -4,22 +4,6 @@ import { uid } from 'quasar'
 import { ItemMgr } from 'src/managers/ItemMgr.js'   
 import { TagMgr } from 'src/managers/TagMgr.js'   
 
-/*
-   item
-      id
-      dropId
-      name
-      createdDate
-      startPrice
-      bidderIds
-      currBidderId
-      buyerId
-      buyPrice
-      lastUserActivityDate
-      status: Available, Dropping, Hold
-      dropDoneDate
-*/
-
 const state = { 
    items: [] 
 }

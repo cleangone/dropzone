@@ -17,6 +17,10 @@
                      <q-input v-model="userToUpdate.firstName" label="First Name" class="col" filled />
                      <q-input v-model="userToUpdate.lastName"  label="Last Name"  class="col q-ml-sm"  filled />
                   </div>
+                  <div class="row">
+                     <q-input v-model="userToUpdate.nickname" label="Bidding Nickname" class="col" filled />
+                     <div class="col q-ml-sm"/>
+                  </div>                  
                   <q-input v-model="userToUpdate.address" label="Address" filled/>
                   <q-input v-model="userToUpdate.city"    label="City" filled />
                   <div class="row">

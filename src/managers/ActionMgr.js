@@ -1,14 +1,27 @@
 import { uid } from 'quasar'
 
-
-export const ActionType = {
-   BID:          'Bid',
-   PURCHASE_REQ: 'Purchase Request',
-}
+/*
+   action:
+      id
+      status
+      actionType
+      actionResult
+      itemId
+      itemName
+      userId
+      amount
+      createdDate
+      processedDate    
+*/
 
 export const ActionStatus = {
    CREATED:   'Created',
    PROCESSED: 'Processed',
+}
+
+export const ActionType = {
+   BID:          'Bid',
+   PURCHASE_REQ: 'Purchase Request',
 }
 
 export const ActionResultType = {

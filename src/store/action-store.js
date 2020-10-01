@@ -3,20 +3,6 @@ import { firestore } from 'boot/firebase'
 import { Notify, uid } from 'quasar'
 import { ActionMgr } from 'src/managers/ActionMgr.js'
    
-/*
-   action:
-      id
-      actionType: bid, purchaseRequest
-      itemId
-      itemName
-      userId
-      createdDate
-      amount
-      status: Submitted, Processed 
-      processedDate
-      actionResult: bid, outbid, purchased, alreadySold
-*/
-
 const state = {
 	actions: [],
 }

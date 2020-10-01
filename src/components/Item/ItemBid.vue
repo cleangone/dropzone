@@ -34,7 +34,9 @@
       },
       computed: {
          ...mapGetters('auth', ['userId']),
+         ...mapGetters('user', ['getUser']),
          ...mapGetters('color', Colors),
+         user() { return this.getUser(this.userId)},
          quickBidAmount() { return this.item.buyPrice ? this.item.buyPrice + 25 : this.item.startPrice },
          quickBidDisp() { return dollars(this.quickBidAmount) },
       },
@@ -51,7 +53,7 @@
 			},
 			submitItemBid(itemBidAmount) {
             // console.log("submitItemBid", itemBidAmount)
-            this.submitBid({ itemId: this.item.id, itemName: this.item.name, userId: this.userId, amount: itemBidAmount }) 
+            this.submitBid({ itemId: this.item.id, itemName: this.item.name, amount: itemBidAmount, userId: this.userId, userNickname: this.user.nickname }) 
             this.$emit('close')
          },
 		},

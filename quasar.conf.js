@@ -14,7 +14,9 @@ module.exports = function (ctx) {
 
     extras: [
       'roboto-font',
-      'material-icons' // optional, you are not bound to it
+      'material-icons',
+      'mdi-v3',
+      'fontawesome-v5'
     ],
 
     framework: {

@@ -101,10 +101,12 @@
                   if (ItemMgr.isSetup(update) || ItemMgr.isAvailable(update)) {
                      update.buyPrice = 0 
                      update.bidderIds = []
-                     update.currBidderId = ''
-                     update.currBidAmount = 0
-                     update.currActionId = ''
+                     // update.currBidderId = ''
+                     // update.currBidAmount = 0
+                     // update.currActionId = ''
                      update.numberOfBids = 0
+                     update.currBid = null,
+                     update.prevBids = null,
                      update.buyerId = ''
                      update.buyerName = ''
                      update.dropDoneDate = 0 
