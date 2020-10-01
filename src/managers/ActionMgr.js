@@ -30,6 +30,7 @@ export class ActionMgr {
       action.status = ActionStatus.CREATED
    }
 
+   static isBid(action)        { return action.actionType == ActionType.BID }
    static isPurchased(action)  { return action.actionResult == ActionResultType.PURCHASED }
    static isWinningBid(action) { return action.actionResult == ActionResultType.WINNING_BID }   
 }

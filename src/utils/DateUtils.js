@@ -20,9 +20,11 @@ export function formatDateOptYear(inputDate) {
 }
 
 export function format_M_DD_YY(inputDate)    { return format(toMillis(inputDate), 'M/D/YY') }
+export function format_MM_DD_YY(inputDate)   { return format(toMillis(inputDate), 'MM-DD-YY') }
 export function format_MMM_D(inputDate)      { return format(toMillis(inputDate), 'MMM D') }
 export function format_MMM_D_YYYY(inputDate) { return format(toMillis(inputDate), 'MMM D, YYYY') }
-export function format_MM_DD_YY(inputDate)   { return format(toMillis(inputDate), 'MM-DD-YY') }
+export function format_MMM_DD_optYYYY_h_mm_ss(inputDate) 
+                                             { return formatOptYear(toMillis(inputDate), 'MMM D, h:mm:ss a', 'MMM D, YYYY h:mm:ss a') }
 
 // dates are generally timstamp when created by frontend, and millis when created by backend functions
 // easier to handle both than to always be standarizing
@@ -50,6 +52,15 @@ export function localTimezone() {
 }
 
 function optYearFormat(datetime) { return isThisYear(datetime) ? 'MMM D, h:mm a' : 'MMM D, YYYY h:mm a' }
+
+function formatOptYear(millis, format, yearFormat) {
+   if (!millis) { return "" }
+
+   const now = new Date()
+   const datetime = new Date(millis)
+   return now.getYear() == datetime.getYear() ? date.formatDate(datetime, format) : date.formatDate(datetime, yearFormat)
+}
+
 function isThisYear(datetime) { return new Date().getYear() == datetime.getYear() }
 function formatWithTz(datetime, format) { return date.formatDate(datetime, format) + " " + localTimezone() }
 function format(millis, format) {return millis ? date.formatDate(new Date(millis), format) : "" }
