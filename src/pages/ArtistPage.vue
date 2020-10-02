@@ -1,10 +1,9 @@
 <template>
 	<q-page class="q-pa-md">
-      <div class="q-mt-sm">
-         <span class="text-h6">{{ artist.name }}</span>
-         <q-checkbox v-model="showHoldSold" label="Show Hold/Sold" class="float-right" dense />
+      <div class="row q-mt-sm text-h5">{{ artist.name }}</div>
+      <div class="row q-mt-none">
+			<q-checkbox v-model="showHoldSold" label="Show Hold/Sold" class="text-grey-10" color="grey-10" dense />
 		</div>
-      
 		<div class="row q-mt-sm q-gutter-sm">
          <item v-for="(item, key) in displayItems" :key="key" :item="item" :displayType="displayTypeThumb"/>
       </div>

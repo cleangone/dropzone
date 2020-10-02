@@ -4,9 +4,12 @@
 			<q-card v-if="hasImageUrl" class="q-pt-xs q-px-xs" style="min-height: 250px;" :class="textBgColor">				
 				<item-thumb :item="item" vImageWidth="125px" hImageWidth="250px" imageMaxHeight="200px"/>
 				<q-card-section class="text-caption q-pa-xs" :class="purple">
-					<div :class="orange">{{ item.name }}</div>
-               <div v-if="hasArtist" class="q-ma-none q-pa-none" style="line-height: 1em" :class="pink">{{artist}}</div>
-					<div v-if="priceTextBgColor" :class="priceTextBgColor" class="text-bold q-px-xs">{{ priceTextMini }}</div>	
+					<div style="line-height: 1.25em" :class="orange">
+                  <span>{{ item.name }}</span>
+                  <span v-if="hasArtist && this.item.isHorizontal" class="float-right">{{artist}}</span>
+               </div>
+               <div v-if="hasArtist && !this.item.isHorizontal" style="line-height: 1.5em" class="q-ma-none q-pa-none"> {{artist}} </div>
+               <div v-if="priceTextBgColor" :class="priceTextBgColor" class="text-bold q-px-xs">{{ priceTextMini }}</div>	
 					<div v-else :class="blue">{{ priceTextMini }}</div>	
 					<item-timer v-if="isDropping" :item="item"/>
 				</q-card-section>	
@@ -16,14 +19,17 @@
 			<q-card v-if="hasImageUrl" class="q-pt-xs q-px-xs" style="min-height: 300px;" :class="textBgColor">
 				<item-thumb :item="item" vImageWidth="150px" hImageWidth="300px" imageMaxHeight="250px"/>
 				<q-card-section class="text-caption q-px-xs q-pt-xs q-pb-none" :class="purple">
-					<div  class="text-weight-bold" :class="orange">{{ item.name }}</div>
-               <div v-if="hasArtist" style="line-height: 1em" :class="pink"> {{artist}} </div>
-               <div :class="indigo">
+					<div style="line-height: 1.25em" :class="orange">
+                  <span class="text-weight-bold">{{ item.name }}</span>
+                  <span v-if="hasArtist && this.item.isHorizontal" class="float-right">{{artist}}</span>
+               </div>
+               <div v-if="hasArtist && !this.item.isHorizontal" style="line-height: 1.5em" :class="pink"> {{artist}} </div>
+               <div style="line-height: 1.5em" :class="indigo">
                   {{ priceText }}
                   <span v-if="hasBids"> - <a :href="'#/bids/' + item.id">{{ bidText }}</a></span>
                </div>
-               <div v-if="userIsBuyer" class="text-bold">You are the buyer</div> 
-               <div v-if="userIsWinningBidder" class="text-bold">You are the winning bidder</div> 
+               <div v-if="userIsBuyer" class="text-bold" style="line-height: 1.5em">You are the buyer</div> 
+               <div v-if="userIsWinningBidder" class="text-bold" style="line-height: 1.5em">You are the winning bidder</div> 
                <div v-if="isDropping">
                   <item-timer :item="item"/>
                   <div v-if="userIsHighBidder" class="text-bold bg-green q-px-xs">You are High Bidder</div>
@@ -134,6 +140,8 @@
             else if (this.item.numberOfBids == 1) { return "1 Bid" }
             else { return this.item.numberOfBids + " Bids" }
          },
+         isHorizontal() { return ItemMgr.isSetup(this.item) },
+         
 			userIsBuyer()         { return this.loggedIn && this.isNotAvailable && !this.item.currBid && (this.item.buyerId == this.userId) },
 			userIsWinningBidder() { return this.loggedIn && this.isNotAvailable && this.item.currBid  && (this.item.buyerId == this.userId) },
 			userIsHighBidder() { return this.loggedIn && this.item.currBid && (this.item.currBid.userId == this.userId) },

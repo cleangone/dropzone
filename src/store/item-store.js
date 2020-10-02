@@ -1,8 +1,8 @@
 import { firestoreAction } from 'vuexfire'
 import { firestore, firebaseStorage } from 'boot/firebase'
-import { uid } from 'quasar'
 import { ItemMgr } from 'src/managers/ItemMgr.js'   
-import { TagMgr } from 'src/managers/TagMgr.js'   
+import { TagMgr } from 'src/managers/TagMgr.js'  
+import { dateUid } from 'src/utils/Utils'
 
 const state = { 
    items: [] 
@@ -13,8 +13,7 @@ const actions = {
    setItem: firestoreAction((context, item) => { 
       // console.log("setItem", item)
       if (!item.id) {
-         // console.log("creating item")
-         item.id = uid()
+         item.id = dateUid()
          item.createdDate = Date.now()
       }
       

@@ -1,15 +1,14 @@
 <template>
 	<q-page class="q-pa-md b-pink">
-		<a style="cursor: pointer; text-decoration: underline" v-on:click="navBack()">Back</a>
-		<q-checkbox v-model="showHoldSold" label="Show Hold/Sold" class="float-right" dense />
 		<div v-if="drop">
-			<div class="row q-mt-sm text-h6">
-            {{ drop.name }} 
-            <span v-if="adminViewingSetup" > 
-               &nbsp; <q-checkbox v-model="adminView" label="Admin View" class="text-grey-7" dense />
-            </span>
+			<div class="row q-mt-sm text-h5">{{ drop.name }}</div>
+         <div v-if="adminViewingSetup" class="row q-mt-none">
+            <q-checkbox v-model="adminView" label="Admin View" class="text-grey-7" color="grey-7" dense />
          </div>
-			<div v-if="showItems" class="row q-mt-sm q-gutter-sm">
+			<div v-if="showItems" class="row q-mt-none">
+				<q-checkbox v-model="showHoldSold" label="Show Hold/Sold" class="text-grey-10" color="grey-10" dense />
+			</div>
+         <div v-if="showItems" class="row q-mt-sm q-gutter-sm">
 				<item v-for="(item, key) in displayItems" :key="key" :item="item" :displayType="displayTypeThumb"/>
 			</div>
          <div v-else class="row q-mt-sm" >

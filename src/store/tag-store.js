@@ -1,6 +1,6 @@
 import { firestoreAction } from 'vuexfire'
 import { firestore } from 'boot/firebase'
-import { uid } from 'quasar'
+import { dateUid } from 'src/utils/Utils'
 
 /*
    tag
@@ -17,7 +17,7 @@ const state = {
 const actions = {
    bindTags: firestoreAction(({ bindFirestoreRef }) => { return bindFirestoreRef('tags', collection()) }),
    createTag: firestoreAction((context, tag) => {
-      tag.id = uid()
+      tag.id = dateUid()
       collection().doc(tag.id).set(tag)
    }),
    setTag: firestoreAction((context, tag) => { collection().doc(tag.id).set(tag) }),

@@ -1,7 +1,7 @@
 import { firestoreAction } from 'vuexfire'
 import { firestore } from 'boot/firebase'
-import { uid } from 'quasar'
 import { DropMgr } from 'src/managers/DropMgr.js';
+import { dateUid } from 'src/utils/Utils'
    
 /*
    drop:
@@ -21,7 +21,7 @@ const actions = {
    }),
    createDrop: firestoreAction((context, drop) => {
       // console.log("createDrop", drop)
-      drop.id = uid()
+      drop.id = dateUid()
       collection().doc(drop.id).set(drop)
    }),
    setDrop: firestoreAction((context, drop) => {

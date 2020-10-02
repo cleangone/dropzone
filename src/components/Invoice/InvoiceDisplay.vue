@@ -1,11 +1,8 @@
 <template>
-	<q-card class="form-card">
+	<q-card class="form-card" @click="close()">
       <q-card-section>
          <div v-html="html" />
       </q-card-section>
-      <q-card-actions align="right">
-         <q-btn label="Cancel" color="grey" v-close-popup />
-      </q-card-actions>
   </q-card>
 </template>
 
@@ -16,8 +13,12 @@
 		props: ['invoice'],
 		computed: {	
          html() { return this.invoice.html },
+      },
+      methods: {
+			close() { this.$emit('close') }
       }   
    }
+
 </script>
 
 <style>

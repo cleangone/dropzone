@@ -51,7 +51,7 @@
       </q-list>
       <q-list class="fixed-bottom">
          <!-- v 0.11 - add Current Activity -->
-         <q-item-label header class="text-caption">Ver. 0.11.3 - 10/2/20</q-item-label> 
+         <q-item-label header class="text-caption">Ver. 0.11.4 - 10/2/20</q-item-label> 
       </q-list>
     </q-drawer>
 

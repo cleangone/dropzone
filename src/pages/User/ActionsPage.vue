@@ -1,8 +1,10 @@
 <template>
   <q-page>  
       <div class="q-pt-md q-pl-md text-h5">History</div>
-      <div class="q-pl-md text-subtitle1"><q-checkbox v-model="showOnlyWins" label="Show only Wins/Purchases" class="text-grey-7" dense/></div>
-	   <div class="q-px-sm absolute full-width full-height">
+      <div class="q-pl-md q-mt-none">
+         <q-checkbox v-model="showOnlyWins" label="Show only Wins/Purchases"  class="text-grey-10" color="grey-10" dense/>
+      </div>
+	   <div class="q-px-sm q-mt-none absolute full-width full-height">
 			<q-table :data="displayActions" :columns="columns" :visible-columns="visibleColumns" 
             row-key="id" :filter="tableDataFilter" :pagination.sync="pagination"
 				no-data-label="No Bids or Purchases" 
