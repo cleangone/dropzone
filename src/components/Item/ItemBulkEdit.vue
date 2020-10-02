@@ -100,10 +100,8 @@
                   update.status = this.status 
                   if (ItemMgr.isSetup(update) || ItemMgr.isAvailable(update)) {
                      update.buyPrice = 0 
+                     update.buyDate = 0 
                      update.bidderIds = []
-                     // update.currBidderId = ''
-                     // update.currBidAmount = 0
-                     // update.currActionId = ''
                      update.numberOfBids = 0
                      update.currBid = null,
                      update.prevBids = null,

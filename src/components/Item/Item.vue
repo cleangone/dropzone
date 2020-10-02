@@ -18,7 +18,10 @@
 				<q-card-section class="text-caption q-px-xs q-pt-xs q-pb-none" :class="purple">
 					<div  class="text-weight-bold" :class="orange">{{ item.name }}</div>
                <div v-if="hasArtist" style="line-height: 1em" :class="pink"> {{artist}} </div>
-               <div :class="indigo">{{ priceText }}</div>
+               <div :class="indigo">
+                  {{ priceText }}
+                  <span v-if="hasBids"> - <a :href="'#/bids/' + item.id">{{ bidText }}</a></span>
+               </div>
                <div v-if="userIsBuyer" class="text-bold">You are the buyer</div> 
                <div v-if="userIsWinningBidder" class="text-bold">You are the winning bidder</div> 
                <div v-if="isDropping">
@@ -34,27 +37,26 @@
 		<div v-else>
 			<q-page class="q-pa-sm q-px-sm" :class="textBgColor"> 
 				<q-card-section class="bg-white column">					
-					<!-- todo - class="image-vertical" class="image-horizontal" not working -->
+					<!-- todo - ugly - class="image-vertical" class="image-horizontal" not working -->
 					<q-img v-if="item.isHorizontal" :src="item.imageUrl" 
-						style="display: block; margin-left: auto; margin-right: auto; max-width: 700px; max-height: 1000px" contains/>
-					<q-img v-else :src="item.imageUrl" class="image-vertical"
-						style="display: block; margin-left: auto; margin-right: auto; max-width: 500px; max-height: 1000px" contains/>
-				</q-card-section>	
+						style="display: block; margin-left: auto; margin-right: auto; max-width: 700px; max-height: 1000px" contains>
+                  <item-liked :item="item" size="lg" class="absolute-bottom-right"/>  
+               </q-img>
+               <q-img v-else :src="item.imageUrl" class="image-vertical"
+						style="display: block; margin-left: auto; margin-right: auto; max-width: 500px; max-height: 1000px" contains>
+                  <item-liked :item="item" size="lg" class="absolute-bottom-right"/>  
+               </q-img>
+            </q-card-section>	
 				<q-card-section class="text-subtitle2 q-pa-xs q-mt-sm">
 					<div :class="orange">
                   <strong>{{ item.name }}</strong>
-
-                  <router-link :to="{ name: dropPageRoute, params: { dropId: item.dropId } }" class="float-right">{{drop.name}}</router-link>
-                  <!-- <span class="float-right"> {{drop.name}} </span> -->
-
+                  <router-link :to="{ name: dropPageRoute, params: { dropId: item.dropId } }" class="float-right">{{drop.name}}</router-link>                  
 					</div>
-               
-               <!-- todo - add drop link -->
-               
-               
-               <!-- todo - add link -->
                <div v-if="hasArtist"> {{artist}} </div>
-               <div>{{ priceText }}</div>
+               <div>
+                  {{ priceText }}    
+                  <span v-if="hasBids"> - <a :href="'#/bids/' + item.id">{{ bidText }}</a></span>
+               </div>
                <div v-if="userIsBuyer" class="text-bold">You are the buyer</div>
                <div v-if="userIsWinningBidder" class="text-bold">You are the winning bidder</div> 
                <div v-if="isDropping">
@@ -120,12 +122,18 @@
             const prefix = ItemMgr.isDropping(this.item) ? "Current Bid: " : "Price: "
             return this.buildPriceText(prefix) 
          },
-			priceTextMini() { return this.buildPriceText("") },
+			priceTextMini() { return this.buildPriceText("") + (this.isDropping && this.hasBids ? " (" + this.bidText + ")" : "") },
 			priceTextBgColor() { 
 				if (this.isDropping && this.userIsHighBidder)  { return "bg-green" }
 				else if (this.isDropping && this.userIsOutbid) { return "bg-red-5" }
 				else  {return "" }
-			},
+         },
+         hasBids() { return this.item.numberOfBids && this.item.numberOfBids > 0 },
+			bidText() { 
+            if (!this.hasBids) { return "" }
+            else if (this.item.numberOfBids == 1) { return "1 Bid" }
+            else { return this.item.numberOfBids + " Bids" }
+         },
 			userIsBuyer()         { return this.loggedIn && this.isNotAvailable && !this.item.currBid && (this.item.buyerId == this.userId) },
 			userIsWinningBidder() { return this.loggedIn && this.isNotAvailable && this.item.currBid  && (this.item.buyerId == this.userId) },
 			userIsHighBidder() { return this.loggedIn && this.item.currBid && (this.item.currBid.userId == this.userId) },
@@ -136,13 +144,9 @@
       },
       methods: {
          buildPriceText(prefix) {
-            let bidText = ""
-            if (this.item.numberOfBids && this.item.numberOfBids == 1) { bidText = " (1 Bid)" }
-            else if (this.item.numberOfBids && this.item.numberOfBids > 1) { bidText = " (" + this.item.numberOfBids + " Bids)" }
-
 				if (ItemMgr.isSold(this.item)) { return ItemStatus.SOLD }
 				else if (ItemMgr.isHold(this.item) || ItemMgr.isInvoiced(this.item)) { return ItemStatus.HOLD + " (" + this.currPrice + ")" }
-            else if (ItemMgr.isDropping(this.item)) { return prefix + this.currPrice + bidText }
+            else if (ItemMgr.isDropping(this.item)) { return prefix + this.currPrice }
             else return prefix + this.currPrice
 			},
       },
@@ -151,6 +155,7 @@
 		},	
 		components: {
 			'item-actions' : require('components/Item/ItemActions.vue').default,
+			'item-liked' : require('components/Item/ItemLiked.vue').default,
 			'item-thumb' : require('components/Item/ItemThumb.vue').default,
 			'item-timer' : require('components/Item/ItemTimer.vue').default
 		}

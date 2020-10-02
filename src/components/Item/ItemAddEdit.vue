@@ -105,10 +105,8 @@
             
             if (ItemMgr.isSetup(this.itemToSubmit) || ItemMgr.isAvailable(this.itemToSubmit)) {
                this.itemToSubmit.buyPrice = 0 
+               this.itemToSubmit.buyDate = 0 
                this.itemToSubmit.bidderIds = []
-               //this.itemToSubmit.currBidderId = ''
-               //this.itemToSubmit.currBidAmount = 0
-               //this.itemToSubmit.currActionId = ''
                this.itemToSubmit.currBid = null,
                this.itemToSubmit.prevBids = null,
                this.itemToSubmit.numberOfBids = 0

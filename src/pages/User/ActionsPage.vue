@@ -13,11 +13,11 @@
 						<template v-slot:append><q-icon name="search"/></template>
 					</q-input>
             </template>
+            <q-td slot="body-cell-name" slot-scope="props" :props="props"> 
+               <a :href="'#/item/' + props.row.itemId">{{ props.value }}</a>
+	         </q-td> 
             <q-td slot="body-cell-amount" slot-scope="props" :props="props"> 
                {{ props.value }} {{ maxAmount(props.row) }}
-	         </q-td> 
-            <q-td slot="body-cell-bids" slot-scope="props" :props="props"> 
-               {{ bids(props.row.itemId) }}
 	         </q-td> 
             <q-td slot="body-cell-bids" slot-scope="props" :props="props"> 
                <a v-if="bids(props.row.itemId)" :href="'#/bids/' + props.row.itemId">{{ bids(props.row.itemId) }}</a>

@@ -1,4 +1,4 @@
-import { uid } from 'quasar'
+import { dateUid } from 'src/utils/Utils'
 
 /*
    action:
@@ -37,7 +37,7 @@ export class ActionMgr {
    static initBid(action) { ActionMgr.init(action, ActionType.BID) }
    static initPurchaseReq(action) { ActionMgr.init(action, ActionType.PURCHASE_REQ) }
    static init(action, actionType) { 
-      action.id = uid()
+      action.id = dateUid()
       action.actionType = actionType
       action.createdDate = Date.now()
       action.status = ActionStatus.CREATED

@@ -1,12 +1,14 @@
 <template>
   <q-page>
 	  	<!-- todo - long table scrolls off bottom -->
+
+      <div class="q-pt-md q-pl-md text-h6">
+         Bids - <a :href="'#/item/' + itemId">{{ item.name }}</a>
+	   </div>
+
 		<div class="q-pa-sm absolute full-width full-height">
-			<q-table :title="'Bids - ' + item.name" 
-				:columns="columns" :visible-columns="visibleColumns" :data="bids" 
-				row-key="name" :filter="tableDataFilter" 
-				:pagination.sync="pagination"
-            :dense="$q.screen.lt.md" class="q-mb-sm">
+			<q-table :data="bids"  :columns="columns" :visible-columns="visibleColumns" row-key="name" 
+            :filter="tableDataFilter" :pagination.sync="pagination" :dense="$q.screen.lt.md" class="q-mb-sm" flat>
 			</q-table>
 		</div>
   	</q-page>
