@@ -26,7 +26,7 @@
 
     <q-drawer v-model="leftDrawerOpen" :breakpoint="767" :width="225" bordered content-class="bg-grey-2">
       <q-list>
-         <q-item-label header>Navigation</q-item-label>
+         <q-item-label header></q-item-label>
          <layout-item path="/" label="Drops" iconName="home"/>
          <layout-item v-if="activeItemsExist" path="/activity" :class="activeItemsClass" label="Current Activity" iconName="fas fa-gavel"/>
 
@@ -48,6 +48,10 @@
             <layout-item path="/admin/artists"  label="Artists"  iconName="brush"/>
             <layout-item path="/admin/settings" label="Settings" iconName="settings"/>
          </q-expansion-item>
+      </q-list>
+      <q-list class="fixed-bottom">
+         <!-- v 0.11 - add Current Acitivity -->
+         <q-item-label header class="text-caption">Ver. 0.11.2 - 10/1/20</q-item-label> 
       </q-list>
     </q-drawer>
 
