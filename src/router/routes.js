@@ -13,6 +13,7 @@ const routes = [
       { path: '/item/:itemId',  component: () => import('pages/ItemPage.vue'),                name: Route.ITEM },      
       { path: '/artist/:id',    component: () => import('pages/ArtistPage.vue'),              name: Route.ARTIST },      
       { path: '/bids/:itemId',  component: () => import('pages/BidsPage.vue') },      
+      { path: '/activity',      component: () => import('pages/User/CurrentActivityPage.vue') },
       { path: '/account',       component: () => import('pages/User/AccountPage.vue') },
       { path: '/favorites',     component: () => import('pages/User/FavoritesPage.vue') },
       { path: '/actions',       component: () => import('pages/User/ActionsPage.vue') },

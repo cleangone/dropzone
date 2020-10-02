@@ -59,7 +59,7 @@
       },
 		methods: {
          ...mapActions('action', ['submitBid', 'submitPurchaseRequest']),
-         ...mapActions('localEvent', ['setFavorites']),
+         ...mapActions('event', ['addActiveItemId']),
          ...mapActions('user', ['setLikes']),
 			login() { this.$router.push("/auth/login") },
 			promptToBuy() {
@@ -67,14 +67,8 @@
 	        		ok: { push: true }, cancel: { push: true, color: 'grey' }
 				}).onOk(() => {
 					this.submitPurchaseRequest(
-                  { itemId: this.item.id, itemName: this.item.name, amount: this.item.startPrice, userId: this.userId, userNickname: this.user.nickname,  }) 
-            
-               let likedItemIds = this.user.likedItemIds ? [...this.user.likedItemIds] : []
-               if (!likedItemIds.includes(this.item.id)) {
-                  likedItemIds.push(this.item.id) 
-                  this.setLikes({ id: this.user.id, likedItemIds: likedItemIds }) 
-               }   
-               this.setFavorites(true) 
+                  { itemId: this.item.id, itemName: this.item.name, amount: this.item.startPrice, userId: this.userId, userNickname: this.user.nickname }) 
+               this.addActiveItemId(this.item.id) 
 				})
 			},			
 		},

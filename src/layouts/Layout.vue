@@ -28,6 +28,7 @@
       <q-list>
          <q-item-label header>Navigation</q-item-label>
          <layout-item path="/" label="Drops" iconName="home"/>
+         <layout-item v-if="activeItemsExist" path="/activity" :class="activeItemsClass" label="Current Activity" iconName="fas fa-gavel"/>
 
          <q-expansion-item label="Artists" :content-inset-level="1" switch-toggle-side expand-separator>
             <layout-item v-for="(tag, key) in artistLinks" :key="key" :path="'/artist/' + tag.id" :label="tag.name"/>
@@ -35,7 +36,7 @@
          <q-expansion-item v-if="loggedIn" label="My Account" 
                :content-inset-level="1" switch-toggle-side expand-separator>
             <layout-item path="/account"   label="Account"   iconName="account_circle"/>
-            <layout-item path="/favorites" label="Favorites" iconName="favorite" :bold="favoritesUpdated"/>    
+            <layout-item path="/favorites" label="Favorites" iconName="favorite" />    
             <layout-item path="/actions"   label="History"   iconName="history"/>           
             <layout-item path="/invoices"  label="Invoices"  iconName="shopping_cart"/>           
          </q-expansion-item>
@@ -65,7 +66,7 @@
 </template>
 
 <script>
-   import { mapState, mapGetters, mapActions } from 'vuex'
+   import { mapGetters, mapActions } from 'vuex'
    import { TagMgr, TagCategory } from 'src/managers/TagMgr.js'
    
    export default {
@@ -77,11 +78,17 @@
          }
       },
       computed: {
-         ...mapState('localEvent', ['favoritesUpdated']),
          ...mapGetters('auth', ['userId', 'loggedIn']),
+         ...mapGetters('event', ['activeItemsExist', 'immediateItemActivityExists']),
          ...mapGetters('invoice', ['invoicesExist']),
+         ...mapGetters('event', ['activeItemsExist', 'immediateItemActivityExists']),
          ...mapGetters('tag', ['getTags']),
          ...mapGetters('user', ['getUser', 'isAdmin']),
+         activeItemsClass() { 
+            if (!this.immediateItemActivityExists) { return "" }
+            setTimeout(() => {  this.setImmediateItemActivity(false)  }, 3000)              
+            return "text-bold bg-yellow-4"
+         },         
          user() { return this.getUser(this.userId)},
          userIsLoggedIn() { 
             // console.log("Layout.userIsLoggedIn", this.loggedIn)
@@ -108,6 +115,7 @@
          ...mapActions('action',  ['bindActions']),
          ...mapActions('auth',    ['logoutUser']),
          ...mapActions('drop',    ['bindDrops']),
+         ...mapActions('event',   ['setImmediateItemActivity']),
          ...mapActions('invoice', ['bindInvoices', 'bindUserInvoices']),
          ...mapActions('item',    ['bindItems']),
          ...mapActions('setting', ['bindSettings']),

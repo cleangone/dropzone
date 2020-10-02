@@ -42,8 +42,7 @@
       },
 		methods: {
          ...mapActions('action', ['submitBid']),
-         ...mapActions('localEvent', ['setFavorites']),
-         ...mapActions('user', ['setLikes']),
+         ...mapActions('event', ['addActiveItemId']),
          quickBid() { this.submitItemBid(this.quickBidAmount) },
          promptToBid() {
             // console.log("promptToBid")
@@ -56,14 +55,7 @@
 			submitItemBid(itemBidAmount) {
             // console.log("submitItemBid", itemBidAmount)
             this.submitBid({ itemId: this.item.id, itemName: this.item.name, amount: itemBidAmount, userId: this.userId, userNickname: this.user.nickname }) 
-            
-            let likedItemIds = this.user.likedItemIds ? [...this.user.likedItemIds] : []
-            if (!likedItemIds.includes(this.item.id)) {
-               likedItemIds.push(this.item.id) 
-               this.setLikes({ id: this.user.id, likedItemIds: likedItemIds }) 
-            }   
-
-            this.setFavorites(true) 
+            this.addActiveItemId(this.item.id) 
             this.$emit('close')
          },
 		},

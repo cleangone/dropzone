@@ -1,7 +1,7 @@
 <template>
-	<q-page class="q-pa-md b-pink">
+	<q-page class="q-pa-md">
 		<a style="cursor: pointer; text-decoration: underline" v-on:click="navBack()">Back</a>
-      <div class="row q-mt-sm text-h6">Favorites</div>
+      <div class="row q-mt-sm q-pl-xs text-h6">Current Activity</div>
       <div class="row q-mt-sm q-gutter-sm">
          <item v-for="(item, key) in items" :key="key" :item="item" :displayType="thumb"/>
       </div>
@@ -9,24 +9,18 @@
 </template>
 
 <script>
-	import { mapGetters, mapActions } from 'vuex'
+	import { mapGetters } from 'vuex'
 	import { ItemDisplayType } from 'src/utils/Constants.js'
 	
 	export default {
-		data() {
-			return {
-        }
-		},
-	  	computed: {
-			...mapGetters('auth', ['userId']),
-			...mapGetters('user', ['getUser']),
+		computed: {
+			...mapGetters('event', ['getActiveItemIds']), 
 			...mapGetters('item', ['getItems']),
 			thumb() { return ItemDisplayType.THUMB },
-			user() { return this.getUser(this.userId) },
-         items () { return (this.user.likedItemIds ? this.getItems(this.user.likedItemIds) : []) },
+         items () { return this.getItems(this.getActiveItemIds) },
 		},
 		methods: {
-         navBack() { this.$router.go(-1) }
+         navBack() { this.$router.go(-1) },
 		},
 		components: {
 	  		'item' : require('components/Item/Item.vue').default,
@@ -36,7 +30,4 @@
 </script>
 
 <style>
-	.q-img { max-height: 400px; 
-	max-width: 500px;
-	}
 </style>
