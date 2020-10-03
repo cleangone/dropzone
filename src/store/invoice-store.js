@@ -57,11 +57,11 @@ const getters = {
 
       return invoices
    },
-   getUserInvoices: state => userId => {
+   getUserInvoices: state => userId => {  // pass in userId as double-check
       for (var invoice of state.userInvoices) {
          if (invoice.userId != userId) { throw new Error(
-            "Specified userId " + userId + " different than invoice[id:" + 
-            invoice.id +  ", userId:" + invoice.userId + "]") 
+            "Error in getUserInvoices.  Specified userId " + 
+               userId + " different than invoice[id:" + invoice.id +  ", userId:" + invoice.userId + "]") 
          }
       }
 

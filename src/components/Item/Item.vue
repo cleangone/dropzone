@@ -41,23 +41,16 @@
 			</q-card>
 		</div>
 		<div v-else>
-			<q-page class="q-pa-sm q-px-sm" :class="textBgColor"> 
-				<q-card-section class="bg-white column">					
-					<!-- todo - ugly - class="image-vertical" class="image-horizontal" not working -->
-					<q-img v-if="item.isHorizontal" :src="item.imageUrl" 
-						style="display: block; margin-left: auto; margin-right: auto; max-width: 700px; max-height: 1000px" contains>
-                  <item-liked :item="item" size="lg" class="absolute-bottom-right"/>  
-               </q-img>
-               <q-img v-else :src="item.imageUrl" class="image-vertical"
-						style="display: block; margin-left: auto; margin-right: auto; max-width: 500px; max-height: 1000px" contains>
-                  <item-liked :item="item" size="lg" class="absolute-bottom-right"/>  
-               </q-img>
+			<q-card-section :class="textFullBgColor">
+            <q-card-section class="bg-white column">					
+               <item-image-full :src="item.imageUrl" :width="imageFullWidth"/>
+               <item-liked :item="item" size="lg"/> 
             </q-card-section>	
-				<q-card-section class="text-subtitle2 q-pa-xs q-mt-sm">
-					<div :class="orange">
+            <q-card-section class="text-subtitle2 q-pa-xs q-mt-sm">
+               <div :class="orange">
                   <strong>{{ item.name }}</strong>
                   <router-link :to="{ name: dropPageRoute, params: { dropId: item.dropId } }" class="float-right">{{drop.name}}</router-link>                  
-					</div>
+               </div>
                <div v-if="hasArtist"> {{artist}} </div>
                <div>
                   {{ priceText }}    
@@ -71,9 +64,9 @@
                   <div v-if="userHasHigherMax" class="text-bold bg-green q-px-xs">Max bid {{ userMaxBid }}</div>
                   <div v-if="userIsOutbid"     class="text-bold bg-red-5 q-px-xs">You have been outbid</div> 
                </div> 
-				</q-card-section>	
-				<item-actions :item="item" :displayType="displayType"/>
-			</q-page>
+            </q-card-section>	
+            <item-actions :item="item" :displayType="displayType"/>
+         </q-card-section>
 		</div>
   	</div>
 </template>
@@ -90,7 +83,6 @@
 		props: ['item', 'displayType'], 
 		data() {
 			return {
-				showEditModal: false
 			}
 		},
 		computed: {
@@ -106,14 +98,19 @@
 			textBgColor() {
 				if (this.isSetup) { return "bg-grey" }
 				else if (this.isNotAvailable) { return (this.userIsBuyer || this.userIsHighBidder ? "bg-green" : "bg-red-5") }
-				else if (this.isDropping) { return "bg-yellow" }
+            else if (this.isDropping) { return "bg-yellow" }
+            else { return "" }
          },
-
+         textFullBgColor() {
+            const color = this.textBgColor
+            return color == "" ? "bg-grey-3" : color
+         },
          hasArtist() { return this.artist.length > 0 },
          artist() { return TagMgr.artist(this.item) },
 
 			imageWidth() { return ("width: " + (this.item.isHorizontal ? this.hImageWidth : this.vImageWidth)) },		
-			imageUrl() { return this.item.imageUrl ? this.item.imageUrl : 'statics/image-placeholder.png' },
+         imageFullWidth() { return this.item.isHorizontal ? "700" : "400" },		
+         imageUrl() { return this.item.imageUrl ? this.item.imageUrl : 'statics/image-placeholder.png' },
 			itemSaleType() { return (this.item.saleType == SaleType.DEFAULT ? this.drop.defaultSaleType : this.item.saleType) },
 			style() { return (this.item.isHorizontal ? "width: 300px" : "width: 200px") },			
          userIsAdmin() { return this.isAdmin(this.userId) },
@@ -162,36 +159,17 @@
 			formatPrice(priceObj) { return "$" + priceObj + (String(priceObj).includes(".") ? "" : ".00") }
 		},	
 		components: {
-			'item-actions' : require('components/Item/ItemActions.vue').default,
-			'item-liked' : require('components/Item/ItemLiked.vue').default,
-			'item-thumb' : require('components/Item/ItemThumb.vue').default,
-			'item-timer' : require('components/Item/ItemTimer.vue').default
+			'item-actions'    : require('components/Item/ItemActions.vue').default,
+			'item-image-full' : require('components/Item/ItemImageFull.vue').default,
+     	   'item-liked'      : require('components/Item/ItemLiked.vue').default,
+			'item-thumb'      : require('components/Item/ItemThumb.vue').default,
+         'item-timer'      : require('components/Item/ItemTimer.vue').default,
 		}
-	}
-
-	// todo - this is how you make a global function
-	function zeroPadded(num) {
-		// 4 --> 04
-		return num < 10 ? `0${num}` : num;
-	}
+   }
+   
 </script>
 
 <style>
-	.image-vertical {
-		display: block; 
-		margin-left: auto; 
-		margin-right: auto; 
-		max-width: 500px; 
-		max-height: 1000px;
-	}
-
-	.image-horizontal {
-		display: block; 
-		margin-left: auto; 
-		margin-right: auto; 
-		max-width: 700px; 
-		max-height: 1000px;
-	}
 </style>
 
 

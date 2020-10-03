@@ -59,7 +59,7 @@
       },
 		methods: {
          ...mapActions('action', ['submitBid', 'submitPurchaseRequest']),
-         ...mapActions('event', ['addActiveItemId']),
+         ...mapActions('current', ['setCurrentActivity']),
          ...mapActions('user', ['setLikes']),
 			login() { this.$router.push("/auth/login") },
 			promptToBuy() {
@@ -68,7 +68,7 @@
 				}).onOk(() => {
 					this.submitPurchaseRequest(
                   { itemId: this.item.id, itemName: this.item.name, amount: this.item.startPrice, userId: this.userId, userNickname: this.user.nickname }) 
-               this.addActiveItemId(this.item.id) 
+               this.setCurrentActivity(true) 
 				})
 			},			
 		},

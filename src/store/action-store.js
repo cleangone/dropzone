@@ -1,6 +1,6 @@
 import { firestoreAction } from 'vuexfire'
 import { firestore } from 'boot/firebase'
-import { Notify, uid } from 'quasar'
+import { Notify } from 'quasar'
 import { ActionMgr } from 'src/managers/ActionMgr.js'
    
 const state = {

@@ -5,9 +5,9 @@ import { vuexfireMutations } from 'vuexfire'
 import action  from './action-store'
 import auth    from './auth-store'
 import color   from './color-store'
+import current from './current-store'
 import drop    from './drop-store'
 import error   from './error-store'
-import event   from './event-store'
 import invoice from './invoice-store'
 import item    from './item-store'
 import setting from './setting-store'
@@ -22,9 +22,9 @@ export default function () {
       action,
       auth,
       color,
+      current,
       drop,
       error,
-      event,
       invoice,
       item,
       setting,

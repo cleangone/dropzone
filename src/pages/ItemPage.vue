@@ -2,7 +2,9 @@
 	<q-page class="q-pa-md" :class="pink"> 
 		<a style="cursor: pointer; text-decoration: underline" v-on:click="navBack()">Back</a>
       <!-- will have to wait for items if user followed a link directly to this page -->
-		<item v-if="itemsExist" :item="item" :displayType="displayType" class="q-mt-md"/>	
+      <div v-if="itemsExist" class="row q-mt-sm">
+			<item  :item="item" :displayType="displayTypeThumb" class="q-mt-md"/>	
+		</div>
 	</q-page>
 </template>
 

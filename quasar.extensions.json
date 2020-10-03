@@ -1,3 +1,4 @@
 {
-  "qdecimal": {}
+  "qdecimal": {},
+  "@quasar/qzoom": {}
 }

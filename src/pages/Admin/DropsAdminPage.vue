@@ -78,6 +78,8 @@
          ...mapActions('drop', ['bindDrops', 'updateDrop', 'deleteDrop']),
          canSchedule(drop) { return DropMgr.isSetup(drop) && isFutureDate(drop.startDate) },
          schedule(drop) { return this.updateDrop({ id: drop.id, status: DropStatus.SCHEDULING }) },
+         
+         // todo - row click now working after quasar upgrade - use it instead of linked name?
          onRowClick(evt, row) {
             console.log("onRowClick", row.id)
             this.$router.push("/admin/items/" + row.id) 

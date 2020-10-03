@@ -10,15 +10,16 @@
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
-    "@quasar/extras": "^1.0.0",
+    "@quasar/extras": "^1.9.7",
     "firebase": "^7.16.1",
     "help": "^3.0.2",
-    "quasar": "^1.0.0-beta.0",
+    "quasar": "^1.14.1",
     "v-money": "^0.8.1",
     "vuexfire": "^3.2.4"
   },
   "devDependencies": {
-    "@quasar/app": "^1.0.0-beta.0",
+    "@quasar/app": "^1.9.6",
+    "@quasar/quasar-app-extension-qzoom": "^1.0.0-alpha.7",
     "node-sass": "^4.14.1",
     "quasar-app-extension-qdecimal": "^1.0.0-beta.3",
     "sass-loader": "^9.0.2",

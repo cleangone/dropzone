@@ -42,7 +42,7 @@
       },
 		methods: {
          ...mapActions('action', ['submitBid']),
-         ...mapActions('event', ['addActiveItemId']),
+         ...mapActions('current', ['setCurrentActivity']),
          quickBid() { this.submitItemBid(this.quickBidAmount) },
          promptToBid() {
             // console.log("promptToBid")
@@ -55,7 +55,7 @@
 			submitItemBid(itemBidAmount) {
             // console.log("submitItemBid", itemBidAmount)
             this.submitBid({ itemId: this.item.id, itemName: this.item.name, amount: itemBidAmount, userId: this.userId, userNickname: this.user.nickname }) 
-            this.addActiveItemId(this.item.id) 
+            this.setCurrentActivity(true) 
             this.$emit('close')
          },
 		},
@@ -70,6 +70,4 @@
 	.form-card { min-width: 400px; }
 	.form-card .heading { text-transform: capitalize; }
 	.form-card .q-card-section { width: 100%; }
-	
-	
 </style>

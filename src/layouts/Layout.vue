@@ -28,8 +28,7 @@
       <q-list>
          <q-item-label header></q-item-label>
          <layout-item path="/" label="Drops" iconName="home"/>
-         <layout-item v-if="activeItemsExist" path="/activity" :class="activeItemsClass" label="Current Activity" iconName="fas fa-gavel"/>
-
+         <layout-item v-if="currentUserActionsExist" path="/current" :class="activeItemsClass" label="Current Activity" iconName="fas fa-gavel"/>
          <q-expansion-item label="Artists" :content-inset-level="1" switch-toggle-side expand-separator>
             <layout-item v-for="(tag, key) in artistLinks" :key="key" :path="'/artist/' + tag.id" :label="tag.name"/>
          </q-expansion-item>
@@ -50,8 +49,9 @@
          </q-expansion-item>
       </q-list>
       <q-list class="fixed-bottom">
-         <!-- v 0.11 - add Current Activity -->
-         <q-item-label header class="text-caption">Ver. 0.11.4 - 10/2/20</q-item-label> 
+         <q-item-label header class="text-caption">v0.12.0 - 10/3/20</q-item-label>       
+         <!-- v0.12.x - quasar upgrade, CurrentActivity shows last 24 hours, QZoom extension for fullscreen images -->
+         <!-- v0.11.x - add CurrentActivity -->      
       </q-list>
     </q-drawer>
 
@@ -83,26 +83,19 @@
       },
       computed: {
          ...mapGetters('auth', ['userId', 'loggedIn']),
-         ...mapGetters('event', ['activeItemsExist', 'immediateItemActivityExists']),
+         ...mapGetters('action', ['getUserActions']),
+         ...mapGetters('current', ['currentActivityExists']),
          ...mapGetters('invoice', ['invoicesExist']),
-         ...mapGetters('event', ['activeItemsExist', 'immediateItemActivityExists']),
          ...mapGetters('tag', ['getTags']),
          ...mapGetters('user', ['getUser', 'isAdmin']),
-         activeItemsClass() { 
-            if (!this.immediateItemActivityExists) { return "" }
-            setTimeout(() => {  this.setImmediateItemActivity(false)  }, 3000)              
-            return "text-bold bg-yellow-4"
-         },         
          user() { return this.getUser(this.userId)},
          userIsLoggedIn() { 
-            // console.log("Layout.userIsLoggedIn", this.loggedIn)
             const userId = this.loggedIn ? this.userId : "-" // placeholder to clear bound data
             if (userId != this.boundUserId) { 
-               this.bindUserInvoices(userId) 
+               // console.log("binding user data")
                this.boundUserId = userId
-               // console.log("Layout.boundUserId", this.boundUserId)
+               this.bindUserInvoices(userId) 
             }
-
             return this.loggedIn
          },
          userIsAdmin() { 
@@ -112,14 +105,26 @@
             return isAdmin 
          },
          userDisplayName() { return this.user.firstName ? this.user.firstName : this.user.authEmailCopy },
+         currentUserActionsExist() { 
+            const yesterday = new Date().getTime() - 1000*60*60*24 // 24 hours ago in millis
+            for (var action of this.getUserActions(this.userId)) {
+               if (action.createdDate > yesterday) { return true }
+            }
+            return false
+         }, 
+         activeItemsClass() { 
+            if (!this.currentActivityExists) { return "" }
+            setTimeout(() => { this.setCurrentActivity(false) }, 3000)              
+            return "text-bold bg-yellow-4"
+         },
          artists() { return this.getTags(TagCategory.ARTIST) },
          artistLinks() { return TagMgr.tagsWithLinks(this.artists) },
       },
       methods: {
          ...mapActions('action',  ['bindActions']),
          ...mapActions('auth',    ['logoutUser']),
+         ...mapActions('current', ['setCurrentActivity']),
          ...mapActions('drop',    ['bindDrops']),
-         ...mapActions('event',   ['setImmediateItemActivity']),
          ...mapActions('invoice', ['bindInvoices', 'bindUserInvoices']),
          ...mapActions('item',    ['bindItems']),
          ...mapActions('setting', ['bindSettings']),
