@@ -25,7 +25,7 @@
 	import { date } from 'quasar'
 	import { mapGetters, mapActions } from 'vuex'
    import { ItemMgr } from 'src/managers/ItemMgr.js';
-	import { DropMgr } from 'src/managers/DropMgr.js';
+   import { DropMgr } from 'src/managers/DropMgr.js';
    import { ItemDisplayType, SaleType, Colors } from 'src/utils/Constants.js';
    import { dollars } from 'src/utils/Utils'
    
@@ -41,14 +41,20 @@
 		computed: {
 			...mapGetters('auth', ['loggedIn', 'userId']),
 			...mapGetters('user', ['getUser']),
-			...mapGetters('drop', ['getDrop']),
-			...mapGetters('color', Colors),
+         ...mapGetters('drop', ['getDrop']),
+         ...mapGetters('setting', ['getSetting']),
+         ...mapGetters('color', Colors),
+         setting() { return this.getSetting },
          isAvailable() { return ItemMgr.isAvailable(this.item) || ItemMgr.isDropping(this.item) },
 			isAdminSetup() { return this.userIsAdmin && ItemMgr.isSetup(this.item) },         
 			drop() { return this.getDrop(this.item.dropId) },
          itemSaleType() {    
             let itemSaleType = (this.item.saleType == SaleType.DEFAULT ? this.drop.defaultSaleType : this.item.saleType)
             if (DropMgr.isDropped(this.drop)) { itemSaleType = SaleType.BUY }
+            if (itemSaleType == SaleType.BID && this.item.numberOfBids == 0) {
+               const bidPeriodEndMillis = this.drop.startDate.seconds*1000 + this.setting.bidPeriod*60*1000
+               if (new Date().getTime() > bidPeriodEndMillis) { itemSaleType = SaleType.BUY }
+            }
             return itemSaleType
          },
          buttonSize() { return this.displayType == ItemDisplayType.FULL ? "md" : "sm"  },        

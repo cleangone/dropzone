@@ -1,22 +1,25 @@
 <template>
   <q-page>
-	  	<!-- todo - long table scrolls off bottom -->
-
-      <div class="q-pt-md q-pl-md text-h6">
-         Bids - <a :href="'#/item/' + itemId">{{ item.name }}</a>
-	   </div>
-
-		<div class="q-pa-sm absolute full-width full-height">
-			<q-table :data="bids"  :columns="columns" :visible-columns="visibleColumns" row-key="name" 
-            :filter="tableDataFilter" :pagination.sync="pagination" :dense="$q.screen.lt.md" class="q-mb-sm" flat>
-			</q-table>
-		</div>
+      <div class="q-pt-md q-pl-md text-h6">{{ item.name }}</div>
+		<div class="row">
+         <div class="q-pa-sm" :class="'width: ' + itemDivWidth">
+            <item :item="item" :displayType="displayType" class="q-pa-sm col-2"/>
+         </div>
+         <div class="q-pa-sm col">
+         <!-- todo - long table scrolls off bottom -->
+            <q-table :data="bids"  :columns="columns" :visible-columns="visibleColumns" row-key="name" 
+               :filter="tableDataFilter" :pagination.sync="pagination" :hide-pagination="hidePagination"
+               :dense="$q.screen.lt.md" class="q-mb-sm" flat>
+            </q-table>
+         </div>
+      </div>
   	</q-page>
 </template>
 
 <script>
 	import { date } from 'quasar'
    import { mapGetters } from 'vuex'
+   import { Colors, ItemDisplayType } from 'src/utils/Constants.js'
    import { dollars } from 'src/utils/Utils'
 
 	export default {
@@ -30,13 +33,18 @@
 				 	{ name: 'amount', label: 'Amount', align: 'right',  field: 'amount', sortable: true, format: val => dollars(val) },
 					{ name: 'date',   label: 'Date',   align: 'center', field: 'date',   sortable: true, format: val => date.formatDate(val, 'MMM D, h:mm:ss a') }
 				],
-				pagination: { rowsPerPage: 25} 
-			}
+            pagination: { rowsPerPage: 25 },
+            hidePagination: true
+         }
 		},
 		computed: {
 			...mapGetters('item', ['getItem']),
-			item() { return this.getItem(this.itemId) },
-			bids() { 
+         item() { return this.getItem(this.itemId) },
+         imageW() { return "width: " + (this.item.isHorizontal ? this.hImageWidth : this.vImageWidth) },	
+         
+         itemDivWidth() { return this.item.isHorizontal ? 200 : 350 },
+         displayType() { return ItemDisplayType.BID_THUMB },
+         bids() { 
             const bids = []
             let currBidder = 1
             const userIdToNickname = new Map()
@@ -63,9 +71,13 @@
             highBid.amount = this.item.buyPrice
             bids.unshift(highBid)
 
+            this.hidePagination = (bids.length <25)
             return bids
 			}
       },
+      components: {
+	  	   'item' : require('components/Item/Item.vue').default,
+	  	},
       created() { this.itemId = this.$route.params.itemId }
    }
 </script>

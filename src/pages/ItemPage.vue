@@ -1,9 +1,9 @@
 <template>
 	<q-page class="q-pa-md" :class="pink"> 
-		<a style="cursor: pointer; text-decoration: underline" v-on:click="navBack()">Back</a>
+		<!-- <a style="cursor: pointer; text-decoration: underline" v-on:click="navBack()">Back</a> -->
       <!-- will have to wait for items if user followed a link directly to this page -->
       <div v-if="itemsExist" class="row q-mt-sm">
-			<item  :item="item" :displayType="displayTypeThumb" class="q-mt-md"/>	
+			<item :item="item" :displayType="displayType" class="q-mt-md"/>	
 		</div>
 	</q-page>
 </template>
@@ -26,7 +26,7 @@
 			item() { return this.getItem(this.itemId) },
 		},
 		methods: {
-         navBack() { this.$router.go(-1) },
+         // navBack() { this.$router.go(-1) },
 		},
 		components: {
 	  		'item' : require('components/Item/Item.vue').default,
@@ -39,27 +39,5 @@
 </script>
 
 <style>
-	/* .card {
-		min-height: 250px;
-		max-width: 500px;
-		min-width: 400px;
-		transition: background 0.3s;
-	}
-
-	.card {
-		min-height: 250px;
-		max-width: 500px;
-		min-width: 400px;
-		transition: background 0.3s;
-	}
-	.card-clickable { cursor: pointer; }
-	.card-clickable:hover {
-		background: #bdbdbd!important;
-	} */
-	.q-img { max-height: 400px; 
-	max-width: 500px;
-	}
-	/*
-	.card .q-img__image { background-size: cover !important; }
-	 */
+	
 </style>

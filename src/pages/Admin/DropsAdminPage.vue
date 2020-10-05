@@ -1,11 +1,8 @@
 <template>
    <q-page>
 		<div class="q-pa-sm absolute full-width full-height">
-			<q-table title="Drops" :data="getDrops" 
-				:columns="columns" :visible-columns="visibleColumns" row-key="name" :filter="tableDataFilter" 
-            @row-click="onRowClick"
-            no-data-label="No Drops" :pagination.sync="pagination"
-				:dense="$q.screen.lt.md" class="q-mb-sm"> -->
+			<q-table title="Drops" :data="getDrops" :columns="columns" :visible-columns="visibleColumns" row-key="name" @row-click="onRowClick"
+            no-data-label="No Drops" :filter="tableDataFilter" :pagination.sync="pagination" :dense="$q.screen.lt.md" class="q-mb-sm">
 				<template v-slot:top-right>
 				   <q-space />
 					<q-input borderless dense debounce="300" v-model="tableDataFilter" placeholder="Search">
@@ -78,12 +75,7 @@
          ...mapActions('drop', ['bindDrops', 'updateDrop', 'deleteDrop']),
          canSchedule(drop) { return DropMgr.isSetup(drop) && isFutureDate(drop.startDate) },
          schedule(drop) { return this.updateDrop({ id: drop.id, status: DropStatus.SCHEDULING }) },
-         
-         // todo - row click now working after quasar upgrade - use it instead of linked name?
-         onRowClick(evt, row) {
-            console.log("onRowClick", row.id)
-            this.$router.push("/admin/items/" + row.id) 
-         },
+         onRowClick(evt, row) { this.$router.push("/admin/items/" + row.id) },
          itemText(dropId) { return ItemMgr.itemText(this.getItemsInDrop(dropId)) },
          editDrop(dropId) {
 				// console.log("editDrop", dropId)

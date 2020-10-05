@@ -23,7 +23,7 @@
 </template>
 
 <script>
-	import { date } from 'quasar'
+   import { date } from 'quasar'
 	import { mapState, mapGetters, mapActions } from 'vuex'
    import { DropMgr } from 'src/managers/DropMgr.js';
 	import { ItemMgr } from 'src/managers/ItemMgr.js'
@@ -46,7 +46,15 @@
          ...mapGetters('user', ['getUser']),
 			...mapGetters('drop', ['getDrop']),
 			...mapGetters('item', ['getItemsInDrop']),
-			adminViewingSetup() { return this.isAdmin && DropMgr.isSetup(this.drop) },
+			adminViewingSetup() { 
+            
+//               const { viewport } = dom
+// let {height, width} = viewport()
+// console.log("dom", dom)
+// const { height, width } = dom
+// console.log("width", this.$q.screen.width)
+
+            return this.isAdmin && DropMgr.isSetup(this.drop) },
          displayTypeThumb() { return ItemDisplayType.THUMB },
          drop() { return this.getDrop(this.dropId) },
          isCountdown() { return DropMgr.isCountdown(this.drop) },

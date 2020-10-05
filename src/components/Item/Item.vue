@@ -15,7 +15,7 @@
 				</q-card-section>	
 			</q-card>
 		</div>
-		<div v-else-if="displayThumb">
+		<div v-else-if="displayThumb || displayBidThumb">
 			<q-card v-if="hasImageUrl" class="q-pt-xs q-px-xs" style="min-height: 300px;" :class="textBgColor">
 				<item-thumb :item="item" vImageWidth="150px" hImageWidth="300px" imageMaxHeight="250px"/>
 				<q-card-section class="text-caption q-px-xs q-pt-xs q-pb-none" :class="purple">
@@ -26,7 +26,7 @@
                <div v-if="hasArtist && !this.item.isHorizontal" style="line-height: 1.5em" :class="pink"> {{artist}} </div>
                <div style="line-height: 1.5em" :class="indigo">
                   {{ priceText }}
-                  <span v-if="hasBids"> - <a :href="'#/bids/' + item.id">{{ bidText }}</a></span>
+                  <span v-if="hasBids && displayThumb"> - <a :href="'#/bids/' + item.id">{{ bidText }}</a></span>
                </div>
                <div v-if="userIsBuyer" class="text-bold" style="line-height: 1.5em">You are the buyer</div> 
                <div v-if="userIsWinningBidder" class="text-bold" style="line-height: 1.5em">You are the winning bidder</div> 
@@ -72,8 +72,7 @@
 </template>
 
 <script>
-	import { date } from 'quasar'
-	import { mapGetters, mapActions } from 'vuex'
+   import { mapGetters } from 'vuex'
    import { ItemDisplayType, SaleType, Route, Colors } from 'src/utils/Constants.js'
    import { ItemMgr, ItemStatus } from 'src/managers/ItemMgr.js'
 	import { TagMgr } from 'src/managers/TagMgr.js'
@@ -88,11 +87,11 @@
 		computed: {
 			...mapGetters('auth', ['loggedIn', 'userId']),
 			...mapGetters('user', ['isAdmin']),
-			...mapGetters('drop', ['getDrop']),
-			...mapGetters('color', Colors),
-			
+         ...mapGetters('drop', ['getDrop']),
+         ...mapGetters('color', Colors),
 			displayMini() { return ItemDisplayType.MINI  == this.displayType },
 			displayThumb() { return ItemDisplayType.THUMB == this.displayType },
+			displayBidThumb() { return ItemDisplayType.BID_THUMB == this.displayType },
 			drop() { return this.getDrop(this.item.dropId) },
 			hasImageUrl() { return (this.item.imageUrl ? true : false) },
 			textBgColor() {
@@ -107,9 +106,13 @@
          },
          hasArtist() { return this.artist.length > 0 },
          artist() { return TagMgr.artist(this.item) },
-
 			imageWidth() { return ("width: " + (this.item.isHorizontal ? this.hImageWidth : this.vImageWidth)) },		
-         imageFullWidth() { return this.item.isHorizontal ? "700" : "400" },		
+         imageFullWidth() { 
+            // todo - doesn't factor in layout drawer open 
+            let width = this.item.isHorizontal ? "700" : "400"
+            if (width > this.$q.screen.width - 100) { width = this.$q.screen.width - 100 }
+            return width
+         },		
          imageUrl() { return this.item.imageUrl ? this.item.imageUrl : 'statics/image-placeholder.png' },
 			itemSaleType() { return (this.item.saleType == SaleType.DEFAULT ? this.drop.defaultSaleType : this.item.saleType) },
 			style() { return (this.item.isHorizontal ? "width: 300px" : "width: 200px") },			

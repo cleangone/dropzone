@@ -49,9 +49,7 @@
          </q-expansion-item>
       </q-list>
       <q-list class="fixed-bottom">
-         <q-item-label header class="text-caption">v0.12.0 - 10/3/20</q-item-label>       
-         <!-- v0.12.x - quasar upgrade, CurrentActivity shows last 24 hours, QZoom extension for fullscreen images -->
-         <!-- v0.11.x - add CurrentActivity -->      
+         <q-item-label header class="text-caption">{{ version }}</q-item-label>       
       </q-list>
     </q-drawer>
 
@@ -62,7 +60,7 @@
     <q-footer>
       <q-tabs indicator-color="transparent" class="row">
         <q-route-tab icon="home" to="/" class="col-1" />
-        <span class="col"/> <!-- filler -->
+        <span class="col"/>
       </q-tabs>
     </q-footer>
 
@@ -72,13 +70,14 @@
 <script>
    import { mapGetters, mapActions } from 'vuex'
    import { TagMgr, TagCategory } from 'src/managers/TagMgr.js'
-   
+   import { Versions } from 'src/utils/Constants'
+
    export default {
       name: 'MyLayout',
       data () {
          return {
             leftDrawerOpen: this.$q.platform.is.desktop,
-            boundUserId: null  // userId that has data boung to it
+            boundUserId: null  // userId that has data bound to it
          }
       },
       computed: {
@@ -119,6 +118,7 @@
          },
          artists() { return this.getTags(TagCategory.ARTIST) },
          artistLinks() { return TagMgr.tagsWithLinks(this.artists) },
+         version() { return Versions[0] },
       },
       methods: {
          ...mapActions('action',  ['bindActions']),
@@ -142,7 +142,6 @@
       created() {
          this.bindActions() 
          this.bindDrops()
-         // this.bindInvoices() 
          this.bindItems()
          this.bindSettings()
          this.bindTags()

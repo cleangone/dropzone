@@ -8,10 +8,8 @@
          {{ dropStatus }}, Default Sale Type: {{ drop.defaultSaleType }}
       </div>
 		<div class="q-pa-sm absolute full-width full-height">
-			<q-table title="Items" :columns="columns" :visible-columns="visibleColumns" :data="items" 
-				row-key="name" :filter="tableDataFilter" 
-            selection="multiple" :selected.sync="selectedRowItems" :pagination.sync="pagination"
-            :dense="$q.screen.lt.md" class="q-mb-sm">
+         <q-table title="Items" :data="items" :columns="columns" :visible-columns="visibleColumns" row-key="name" :filter="tableDataFilter"
+            selection="multiple" :selected.sync="selectedRowItems" :pagination.sync="pagination" :dense="$q.screen.lt.md" class="q-mb-sm">
 				<template v-slot:top-right>
 					<q-input borderless dense debounce="300" v-model="tableDataFilter" placeholder="Search">
 						<template v-slot:append><q-icon name="search"/></template>
@@ -110,7 +108,7 @@
          },
          itemToEdit() { return this.itemIdToEdit ? getItem(this.items, this.itemIdToEdit) : null },
          items() { 
-            // make copies - vuex not happy with table minipulation of elements
+            // make copies - table adds an index to objs
             let items = this.getItemsInDrop(this.dropId) 
             let copies = []
             items.forEach(item => { copies.push(Object.assign({}, item)) })

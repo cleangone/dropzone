@@ -9,12 +9,6 @@
 <script>
 	export default {
 		props: ['src', 'width'],
-      // computed: {
-         
-		// 	widthie() { 
-      //       console.log("ItemImageFull.width", "width: " + this.width + "px")
-      //       return "width: " + this.width + "px" }
-      // }   
    }
 </script>
 
