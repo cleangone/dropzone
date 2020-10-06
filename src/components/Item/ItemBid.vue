@@ -1,7 +1,6 @@
 <template>
 	<q-card class="form-card">
       <q-card-section>    
-         <div v-if="msg" class="text-h6 row justify-center q-mb-lg">{{ msg }}</div>
          <div class="text-h6">Bid: {{ item.name }}</div>
       </q-card-section>
       <q-card-section>    	

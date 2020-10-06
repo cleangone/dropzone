@@ -1,7 +1,15 @@
 <template>
    <div>
-   	<item-bid v-if="isOutbidAlert" msg="You have been outbid" :item="alertItem" @close="cancelAlert()" />
-      <q-card v-else class="form-card">
+      <q-card v-if="isOutbidAlert"> 
+         <q-card-section  >   
+            <item-thumb :item="alertItem" vImageWidth="125px" hImageWidth="250px" imageMaxHeight="200px" style="min-height: 200px"/>
+            <span class="text-h2 absolute-center text-red text-weight-bolder">OUTBID</span>
+         </q-card-section>
+         <q-card-section class="q-pt-none">  
+            <item-bid v-if="isOutbidAlert" :item="alertItem" @close="cancelAlert()" class="col" />
+         </q-card-section>
+      </q-card>
+      <q-card v-else>
          <q-card-section>    
             <div v-if="isLateBidAlert" class="text-h6">{{ alert.itemName }} bidding already ended.</div>
             <div v-else class="text-h6">Unknown Alert</div>
@@ -38,7 +46,8 @@
          }
       },
       components: {
-         'item-bid' : require('components/Item/ItemBid.vue').default
+         'item-thumb' : require('components/Item/ItemThumb.vue').default,
+         'item-bid'   : require('components/Item/ItemBid.vue').default,
       },		
 	}
 </script>
