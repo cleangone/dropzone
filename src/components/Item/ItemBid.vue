@@ -73,7 +73,7 @@
 </script>
 
 <style>
-	.form-card { min-width: 400px; }
+	.form-card { min-width: 250px; }
 	.form-card .heading { text-transform: capitalize; }
 	.form-card .q-card-section { width: 100%; }
 </style>

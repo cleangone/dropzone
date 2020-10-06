@@ -22,6 +22,7 @@ export const SaleType = {
 }
 
 export const Versions = [
+   "v0.14.2 - 10/6/20", // Update bid popup width
    "v0.14.1 - 10/6/20", // Add thumbnail to Outbid Alert popup
    "v0.14.0 - 10/6/20", // Outbid Alert
    "v0.13.1 - 10/5/20", // handle null/blank user.nickname, click-stop on Schedule Drop
