@@ -29,7 +29,7 @@ const actions = {
       collection().doc(drop.id).set(drop)
    }),
    updateDrop: firestoreAction((context, drop) => {
-      console.log("updateDrop", drop)
+      // console.log("updateDrop", drop)
       collection().doc(drop.id).update(drop)
    }),
    deleteDrop: firestoreAction((context, id) => { 

@@ -1,32 +1,34 @@
 <template>
 	<q-card class="form-card">
-    <q-card-section>
-      <div class="text-h6 heading">Bid: {{ item.name }}</div>
-    </q-card-section>
-    <q-card-section>    	
-         <q-btn @click="quickBid()" :label="'Quick Bid ' + quickBidDisp" class="full-width" color="primary"/>
-         <div class="text-center q-my-md" :class="blue">or</div>
-         <div class="row q-gutter-sm">
-            <div class="col-2"/>
-            <q-input v-model.number="bidAmount" label="Bid Amount" type=number prefix="$" filled class="q-ml-lg col-4" />
-            <q-btn @click="promptToBid()" label="Bid" color="primary" class="q-mr-lg col-2"/>
-            <div class="col-2"/>
-         </div>
-	</q-card-section>
+      <q-card-section>    
+         <div v-if="msg" class="text-h6 row justify-center q-mb-lg">{{ msg }}</div>
+         <div class="text-h6">Bid: {{ item.name }}</div>
+      </q-card-section>
+      <q-card-section>    	
+            <q-btn @click="quickBid()" :label="'Quick Bid ' + quickBidDisp" class="full-width" color="primary"/>
+            <div class="text-center q-my-md" :class="blue">or</div>
+            <div class="row q-gutter-sm">
+               <div class="col-2"/>
+               <q-input v-model.number="bidAmount" label="Bid Amount" type=number prefix="$" filled class="q-ml-lg col-4" />
+               <q-btn @click="promptToBid()" label="Bid" color="primary" class="q-mr-lg col-2"/>
+               <div class="col-2"/>
+            </div>
+      </q-card-section>
 
-   <q-card-actions align="right">
-      <q-btn label="Cancel" color="grey" v-close-popup />
-   </q-card-actions>
-  </q-card>
+      <q-card-actions align="right">
+         <q-btn label="Cancel" @click="close()" color="grey" />
+      </q-card-actions>
+   </q-card>
 </template>
 
 <script>
 	import { mapGetters, mapActions } from 'vuex'
-	import { Colors } from 'src/utils/Constants.js';
+   import { UserMgr } from 'src/managers/UserMgr.js';
+   import { Colors } from 'src/utils/Constants.js';
    import { dollars } from 'src/utils/Utils'
    
 	export default {
-      props: ['item'],
+      props: ['msg', 'item'],
 		data() {
 			return {
             bidAmount: 0
@@ -36,6 +38,7 @@
          ...mapGetters('auth', ['userId']),
          ...mapGetters('user', ['getUser']),
          ...mapGetters('color', Colors),
+         actionTitle() { return this.title ? this.title : "Bid" },
          user() { return this.getUser(this.userId)},
          quickBidAmount() { return this.item.buyPrice ? this.item.buyPrice + 25 : this.item.startPrice },
          quickBidDisp() { return dollars(this.quickBidAmount) },
@@ -54,10 +57,14 @@
 			},
 			submitItemBid(itemBidAmount) {
             // console.log("submitItemBid", itemBidAmount)
-            this.submitBid({ itemId: this.item.id, itemName: this.item.name, amount: itemBidAmount, userId: this.userId, userNickname: this.user.nickname }) 
+            this.submitBid({ 
+               itemId: this.item.id, itemName: this.item.name, amount: itemBidAmount, 
+               userId: this.userId, userNickname: UserMgr.getNickname(this.user)  
+            }) 
             this.setCurrentActivity(true) 
-            this.$emit('close')
+            this.close()
          },
+         close() { this.$emit('close') }
 		},
 		mounted() {
          // slight delay because param update propagating as modal being popped up

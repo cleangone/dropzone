@@ -14,7 +14,7 @@
 	         </q-td>
             <q-td slot="body-cell-status" slot-scope="props" :props="props"> 
                {{ props.row.status }}
-               <q-btn v-if="canSchedule(props.row)" @click="schedule(props.row)" label="Schedule" size="xs" color="primary" dense/>         
+               <q-btn v-if="canSchedule(props.row)" label="Schedule" @click="schedule(props.row)" @click.stop size="xs" color="primary" dense/>         
 	         </q-td>
             <q-td slot="body-cell-items" slot-scope="props" :props="props"> 
                {{ itemText(props.row.id) }}

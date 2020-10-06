@@ -16,9 +16,6 @@ const actions = {
          item.id = dateUid()
          item.createdDate = Date.now()
       }
-      
-      item.thumbFilePath
-
       if (item.thumbUrl || !item.thumbFilePath) { 
          // image not set/changed
          collection().doc(item.id).set(item) 
@@ -37,10 +34,8 @@ const actions = {
       }
    }),
    updateItems: firestoreAction((context, itemUpdates) => { 
-      
       // todo - research vuexfire batching - no big deal right now - will only be 5-25 items
       // https://mesqueeb.github.io/vuex-easy-firestore/setup.html#installation
-
       itemUpdates.forEach(update => {
          collection().doc(update.id).update(update)
       })

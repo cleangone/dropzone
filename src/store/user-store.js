@@ -24,6 +24,9 @@ const actions = {
       // console.log("setUser", user)
       collection().doc(user.id).set(user)
    }),
+   updateUser: firestoreAction((context, user) => {
+      collection().doc(user.id).update(user)
+   }),
    setLikes: firestoreAction((context, user) => {
       // console.log("setLikes", user.likedItemIds) 
       collection().doc(user.id).update({ likedItemIds: user.likedItemIds })

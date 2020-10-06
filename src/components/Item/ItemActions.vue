@@ -26,6 +26,7 @@
 	import { mapGetters, mapActions } from 'vuex'
    import { ItemMgr } from 'src/managers/ItemMgr.js';
    import { DropMgr } from 'src/managers/DropMgr.js';
+   import { UserMgr } from 'src/managers/UserMgr.js';
    import { ItemDisplayType, SaleType, Colors } from 'src/utils/Constants.js';
    import { dollars } from 'src/utils/Utils'
    
@@ -69,11 +70,13 @@
          ...mapActions('user', ['setLikes']),
 			login() { this.$router.push("/auth/login") },
 			promptToBuy() {
-				this.$q.dialog({title: 'Confirm Purchase', message: 'Buy ' + this.item.name + ' for ' + dollars(this.item.startPrice) + '?', persistent: true,			
+            this.$q.dialog({title: 'Confirm Purchase', message: 'Buy ' + this.item.name + ' for ' + dollars(this.item.startPrice) + '?', persistent: true,			
 	        		ok: { push: true }, cancel: { push: true, color: 'grey' }
 				}).onOk(() => {
-					this.submitPurchaseRequest(
-                  { itemId: this.item.id, itemName: this.item.name, amount: this.item.startPrice, userId: this.userId, userNickname: this.user.nickname }) 
+               this.submitPurchaseRequest( {
+                  itemId: this.item.id, itemName: this.item.name, amount: this.item.startPrice, 
+                  userId: this.userId, userNickname: UserMgr.getNickname(this.user) 
+               }) 
                this.setCurrentActivity(true) 
 				})
 			},			

@@ -25,6 +25,7 @@ export const ActionType = {
 }
 
 export const ActionResultType = {
+   LATE_BID:     'Late Bid',
    HIGH_BID:     'High Bid',
    INCREASED:    'Increased',
    OUTBID:       'Outbid',

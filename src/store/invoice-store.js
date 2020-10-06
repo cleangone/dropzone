@@ -24,11 +24,15 @@ const state = {
 const actions = {
    bindInvoices: firestoreAction(({ bindFirestoreRef }) => {
       console.log("bindInvoices")
-      return bindFirestoreRef('invoices', collection())
+      bindFirestoreRef('invoices', collection())
    }),
    bindUserInvoices: firestoreAction(({ bindFirestoreRef }, userId) => {
       console.log("bindUserInvoices", userId)
-      return bindFirestoreRef('userInvoices', collection().where('userId', '==', userId)) 
+      bindFirestoreRef('userInvoices', collection().where('userId', '==', userId)) 
+   }),
+   unbindUserInvoices: firestoreAction(({ unbindFirestoreRef }) => {
+      console.log("unbindUserInvoices")
+      unbindFirestoreRef('userInvoices')
    }),
    createInvoice: firestoreAction((context, invoice) => {
       // console.log("createInvoice", invoice)
