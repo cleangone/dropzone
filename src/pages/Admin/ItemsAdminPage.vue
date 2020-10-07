@@ -62,9 +62,9 @@
 <script>
 	import { date } from 'quasar'
    import { mapGetters, mapActions } from 'vuex'
-   import { DropMgr } from 'src/managers/DropMgr.js';
-	import { ItemMgr } from 'src/managers/ItemMgr.js';
-	import { TagMgr } from 'src/managers/TagMgr.js'
+   import { DropMgr } from 'src/managers/DropMgr'
+	import { ItemMgr } from 'src/managers/ItemMgr'
+	import { TagMgr } from 'src/managers/TagMgr'
    import { dollars } from 'src/utils/Utils'
    import { formatDateTimeOptYear } from 'src/utils/DateUtils'
 

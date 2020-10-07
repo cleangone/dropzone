@@ -1,8 +1,10 @@
 <template>
 	<q-page class="q-pa-md">
 		<div class="text-h5">Current Activity</div>
-      <div>
-         <q-checkbox v-model="showBuysOnly" label="Show only Wins/Purchases"  class="text-grey-10" color="grey-10" dense/>
+      <div>  
+         <q-checkbox v-model="showDropping" label="Show Dropping"   class="text-grey-10"         color="grey-10" dense/>
+         <q-checkbox v-model="showBuys" label="Show Wins/Purchases" class="q-ml-lg text-grey-10" color="grey-10" dense/>
+         <q-checkbox v-model="showOutbid"   label="Show Outbid"     class="q-ml-lg text-grey-10" color="grey-10" dense/>
       </div>
       <div class="row q-mt-sm q-gutter-sm">
          <item v-for="(item, key) in displayItems" :key="key" :item="item" :displayType="thumb"/>
@@ -12,12 +14,15 @@
 
 <script>
 	import { mapGetters } from 'vuex'
-	import { ItemDisplayType } from 'src/utils/Constants.js'
+	import { ItemMgr } from 'src/managers/ItemMgr'
+	import { ItemDisplayType } from 'src/utils/Constants'
 	
 	export default {
       data() {
 	  		return {
-            showBuysOnly: false
+            showDropping: true,
+            showBuys: true,
+            showOutbid: true
          }
       },
 		computed: {
@@ -37,13 +42,15 @@
          }, 
          displayItems() { 
             const displayItems = []
+            const buyItems = []
+            const outbidItems = []
             this.currentItems.forEach(item => { 
-               if (!this.showBuysOnly || item.buyerId == this.userId) { 
-                  // displayItems.push(Object.assign({}, item)) }
-                  displayItems.push(item) 
-               }
+               if (this.showDropping && ItemMgr.isDropping(item)) { displayItems.push(item) }
+               else if (this.showBuys && ItemMgr.isGone(item) && ItemMgr.isBuyerId(item, this.userId))  { buyItems.push(item) }
+               else if (this.showOutbid && ItemMgr.isGone(item) && !ItemMgr.isBuyerId(item, this.userId)) { outbidItems.push(item) }
             })
-            return displayItems
+            
+            return displayItems.concat(buyItems).concat(outbidItems)
          }
       },
 		components: {

@@ -1,4 +1,4 @@
-import { Config } from 'boot/Config.js'
+import { Config } from 'boot/Config'
 
 /*
    item
@@ -83,7 +83,11 @@ export class ItemMgr {
       return text.join(", ")
    }
 
+   static isBuyerId(item, userId) { return item.buyerId == userId } 
+                    
    static isActive(item)    { return !ItemMgr.isPrivate(item) && !ItemMgr.isSetup(item) } 
+   static isGone(item)      { return ItemMgr.isHold(item) || ItemMgr.isInvoiced(item) || ItemMgr.isSold(item) } 
+   
    static isPrivate(item)   { return item.status == ItemStatus.PRIVATE }
    static isSetup(item)     { return item.status == ItemStatus.SETUP }
    static isAvailable(item) { return item.status == ItemStatus.AVAILABLE }
