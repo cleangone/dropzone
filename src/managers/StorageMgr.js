@@ -1,12 +1,26 @@
 import { firebaseStorage } from 'boot/firebase'
 
 export class StorageMgr {   
-   static deleteItemFiles(items) { 
-      let files = []
+   static deleteItemsFiles(items) { 
+      if (!items) { return }
       for (var item of items) {
-         files.push(item.imageFilePath)
-         files.push(item.thumbFilePath)
+         StorageMgr.deleteItemFiles(item)
       }
+   }
+   
+   static deleteItemFiles(item) { 
+      if (!item) { return }
+      if (item.primaryImage) { StorageMgr.deleteImageFiles(item.primaryImage) }
+      if (item.images) {
+         for (var image of item.images) { StorageMgr.deleteImageFiles(image) }
+      }
+   }
+
+   static deleteImageFiles(image) { 
+      if (!image) { return }
+      let files = []
+      if (image.filePath) { files.push(image.filePath) }
+      if (image.thumbFilePath) { files.push(image.thumbFilePath) }
 
       StorageMgr.deleteFiles(files)
    }

@@ -22,6 +22,7 @@ export const SaleType = {
 }
 
 export const Versions = [
+   "v0.15.0 - 10/7/20", // Multiple images groundwork - item.images[] 
    "v0.14.3 - 10/7/20", // update CurrentActivity w showDropping/Buys/Outbid
    "v0.14.2 - 10/6/20", // Update bid popup width
    "v0.14.1 - 10/6/20", // Add thumbnail to Outbid Alert popup

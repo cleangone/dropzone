@@ -26,12 +26,12 @@
             </div>
             <div v-else class="col q-gutter-sm" :class="yellow">
                <q-btn @click="uploaderDisplayed=true" label="Upload Image" color="primary" />
-               <q-checkbox v-model="itemToSubmit.isHorizontal" label="Horizontal Image" dense/>
+               <q-checkbox v-model="itemToSubmit.primaryImage.isHorizontal" label="Horizontal Image" dense/>
                <q-select label="Status" v-model="itemToSubmit.status" :options="statusOptions" filled/>
                <q-select label="Sale Type" v-model="itemToSubmit.saleType" :options="saleTypeOptions" filled/>
             </div>
             <div v-if="!uploaderDisplayed" class="col" style="height: 200px" :class="blue">
-               <q-img  style="height: 200px; width: 200px" :src="itemToSubmit.imageUrl ? itemToSubmit.imageUrl : 'statics/image-placeholder.png'" class="q-ml-lg" contain />
+               <q-img style="height: 200px; width: 200px" :src="itemToSubmit.primaryImage.url ? itemToSubmit.primaryImage.url : 'statics/image-placeholder.png'" class="q-ml-lg" contain />
             </div>
          </div>
       </q-card-section>
@@ -60,27 +60,25 @@
          'item'],
 		data() {
 			return {
-				itemToSubmit: {
+            itemToSubmit: {
                name: '',
                dropId: '',
                status: ItemStatus.SETUP,
 					startPrice: 0,
 					buyPrice: 0,
-					imageUrl: '',
-					isHorizontal: false,
-               saleType: 'Default',
-               bidderIds: []
+					saleType: SaleType.DEFAULT,
+               primaryImage: { isHorizontal: false },
             },
             artist: "",
             uploaderDisplayed: false,
 				statusOptions: [ ItemStatus.PRIVATE, ItemStatus.SETUP, ItemStatus.AVAILABLE, ItemStatus.DROPPING, ItemStatus.HOLD, ItemStatus.SOLD ],
             saleTypeOptions: [ SaleType.DEFAULT, SaleType.BID, SaleType.BUY ],
-            uploadedFiles: []
-			}
+         }
       },
       computed: {
          ...mapGetters('tag', ['getTags']),
          ...mapGetters('color', Colors),
+         isEdit() { return this.type == 'edit' },
          artistMap() { 
             let map = new Map()
             for (var tag of this.getTags(TagCategory.ARTIST) ) {
@@ -121,6 +119,13 @@
                TagMgr.setTag(this.itemToSubmit, tag) 
             }
             
+            // delete prev primaryImage files if they have changed
+            if (this.isEdit) {
+               const prevFilePath = this.item.primaryImage ? this.item.primaryImage.filePath : null
+               const currFilePath = this.itemToSubmit.primaryImage ? this.itemToSubmit.primaryImage.filePath : null
+               if (currFilePath != prevFilePath) { StorageMgr.deleteImageFiles(this.item.primaryImage) }
+            }
+              
             this.setItem(this.itemToSubmit)             
             this.$emit('close')
 			},
@@ -129,18 +134,24 @@
          
             if (!this.itemToSubmit.name) { this.itemToSubmit.name = itemName }
             if (!this.itemToSubmit.sortName) { this.itemToSubmit.sortName = itemName }
-            this.itemToSubmit.imageUrl = emit.url
-            this.itemToSubmit.imageBaseName = emit.name
-            this.itemToSubmit.thumbUrl = ""
-            ItemMgr.setFilePaths(this.itemToSubmit)
-            this.uploadedFiles.push(this.itemToSubmit.imageFilePath)
-            this.uploadedFiles.push(this.itemToSubmit.thumbFilePath)
 
+            const image = this.itemToSubmit.primaryImage
+            image.url = emit.url
+            image.baseName = emit.name
+            image.thumbUrl = ""
+            ItemMgr.setFilePaths(image)
+            
             this.uploaderDisplayed = false
          },
          cancel(emit) {
-            // console.log("cancel")
-            StorageMgr.deleteFiles(this.uploadedFiles) 
+            // delete primaryImage files if they are new
+            if (this.isEdit) {
+               const prevFilePath = this.item.primaryImage ? this.item.primaryImage.filePath : null
+               const currFilePath = this.itemToSubmit.primaryImage ? this.itemToSubmit.primaryImage.filePath : null
+               if (currFilePath != prevFilePath) { StorageMgr.deleteImageFiles(this.itemToSubmit.primaryImage) }
+            }
+            else { StorageMgr.deleteImageFiles(this.itemToSubmit.primaryImage) }
+
             this.$emit('close')
          }
 		},
@@ -150,10 +161,11 @@
 		mounted() {
          // slight delay because param update propagating as modal being popped up
          setTimeout(() => {    
-            if (this.type == 'edit') { 
+            if (this.isEdit) { 
                this.itemToSubmit = Object.assign({}, this.item) 
+               this.itemToSubmit.primaryImage = Object.assign({}, this.item.primaryImage) // item copy not deep
 
-               // copy maps to make vuex happy
+               // copy maps to make vuex happy 
                if (this.itemToSubmit.tagIds) { this.itemToSubmit.tagIds = {...this.item.tagIds} }
                if (this.itemToSubmit.tagNames) { this.itemToSubmit.tagNames = {...this.item.tagNames} }
                this.artist = TagMgr.artist(this.itemToSubmit)

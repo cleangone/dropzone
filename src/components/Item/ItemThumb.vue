@@ -9,17 +9,17 @@
 	import { Route } from 'src/utils/Constants.js';
 	
 	export default {
-		props: ['item', 'hImageWidth', 'vImageWidth', 'imageMaxHeight'], 
+		props: ['item', 'image', 'hImageWidth', 'vImageWidth', 'imageMaxHeight'], 
 		computed: {
          ...mapGetters('auth', ['loggedIn', 'userId']),
          ...mapGetters('user', ['getUser']),
          user() { return this.getUser(this.userId)},
 			itemPageRoute() { return Route.ITEM },
 			// cellHeight() { return this.height ? "height: " + this.height : ""},			
-         imageW() { return "width: " + (this.item.isHorizontal ? this.hImageWidth : this.vImageWidth) },	
+         imageW() { return "width: " + (this.image.isHorizontal ? this.hImageWidth : this.vImageWidth) },	
          imageH() { return "height: " + this.imageHeight },	
-         imageWH() { return "width: " + (this.item.isHorizontal ? this.hImageWidth : this.vImageWidth) +"; max-height: " + this.imageMaxHeight },	
-         thumbUrl() { return this.item.thumbUrl },	
+         imageWH() { return "width: " + (this.image.isHorizontal ? this.hImageWidth : this.vImageWidth) + "; max-height: " + this.imageMaxHeight },	
+         thumbUrl() { return this.image.thumbUrl },	
       },
       methods: {
          navToItemPage() { this.$router.push("/item/" + this.item.id) },

@@ -11,13 +11,15 @@ import { Config } from 'boot/Config'
       buyDate
       buyerId
       buyerName
-      bidderIds [id]
+      bidderIds [ id ]
       numberOfBids
       currBid { actionId, userId, userNickname, amount, date }
-      prevBids [currBid obj]
+      prevBids [ currBid obj ]
       createdDate
       lastUserActivityDate
       dropDoneDate
+      primaryImage { baseName, isHorizontal, url, filePath, thumbUrl, thumbFilePath }
+      images [ Image Obj ]
 */
 
 export const ItemStatus = {
@@ -31,30 +33,32 @@ export const ItemStatus = {
 }
 
 export class ItemMgr {
-   static setFilePaths(item) {     
-      if (!item.imageBaseName) { return logError("setFilePaths: item url does not contain imageBaseName") }
-      if (!item.imageUrl || !item.imageUrl.includes(item.imageBaseName)) {
-         return logError("setFilePaths: imageUrl does not contain baseName " + item.imageBaseName, item.imageUrl)
+   // note - image.thumbUrl set when stored - have to wiat for file to be created by resize function
+   static setFilePaths(image) {   
+      // console.log("setFilePaths ", image)
+      if (!image.baseName) { return logError("setFilePaths: baseName not set") }
+      if (!image.url || !image.url.includes(image.baseName)) {
+         return logError("setFilePaths: url does not contain baseName " + image.baseName, image.url)
       }
 
-      let filePathPrefix = item.imageUrl
-      filePathPrefix = filePathPrefix.substring(0, filePathPrefix.indexOf(item.imageBaseName))            
+      let filePathPrefix = image.url
+      filePathPrefix = filePathPrefix.substring(0, filePathPrefix.indexOf(image.baseName))            
       filePathPrefix = filePathPrefix.substring(filePathPrefix.lastIndexOf("/"))
       filePathPrefix = decodeURIComponent(filePathPrefix)
       // console.log("filePathPrefix", filePathPrefix)
 
       if (!filePathPrefix.startsWith(Config.STORAGE_DIR)) {
-         return logError("setFilePaths: imageUrl file path does not start with directory path " + Config.STORAGE_DIR, filePathPrefix)
+         return logError("setFilePaths: url file path does not start with directory path " + Config.STORAGE_DIR, filePathPrefix)
       }
 
       filePathPrefix = filePathPrefix.substring(1)
-      item.imageFilePath = filePathPrefix + item.imageBaseName
+      image.filePath = filePathPrefix + image.baseName
       // console.log("imageFilePath ", item.imageFilePath)
 
-      const baseExtension = item.imageBaseName.substring(item.imageBaseName.lastIndexOf("."))
-      const baseFilename = item.imageBaseName.substring(0, item.imageBaseName.lastIndexOf(".")) 
+      const baseExtension = image.baseName.substring(image.baseName.lastIndexOf("."))
+      const baseFilename = image.baseName.substring(0, image.baseName.lastIndexOf(".")) 
       const thumbDimensions = "_" + Config.THUMBNAIL_DIMENSION + "x" + Config.THUMBNAIL_DIMENSION
-      item.thumbFilePath = filePathPrefix + baseFilename + thumbDimensions + baseExtension
+      image.thumbFilePath = filePathPrefix + baseFilename + thumbDimensions + baseExtension
       // console.log("thumbFilePath ", item.thumbFilePath)
    }
 

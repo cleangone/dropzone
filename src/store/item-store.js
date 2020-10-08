@@ -16,16 +16,19 @@ const actions = {
          item.id = dateUid()
          item.createdDate = Date.now()
       }
-      if (item.thumbUrl || !item.thumbFilePath) { 
+
+      const image = item.primaryImage
+      if (!image || image.thumbUrl) { 
          // image not set/changed
+         // console.log("setItem", item)
          collection().doc(item.id).set(item) 
       }
       else {
-         console.log("getting thumbUrl", item.thumbFilePath)
+         console.log("getting thumbUrl", image.thumbFilePath)
          var storageRef = firebaseStorage.ref()
-         storageRef.child(item.thumbFilePath).getDownloadURL().then(function(url) {
-            // console.log("getDownloadURL", url)
-            item.thumbUrl = url
+         storageRef.child(image.thumbFilePath).getDownloadURL().then(function(url) {
+            image.thumbUrl = url
+            // console.log("setItem", item)
             collection().doc(item.id).set(item) 
          })
          .catch(function(error) {

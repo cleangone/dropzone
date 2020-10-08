@@ -2,13 +2,13 @@
 	<div>
 		<div v-if="displayMini">
 			<q-card v-if="hasImageUrl" class="q-pt-xs q-px-xs" style="min-height: 250px;" :class="textBgColor">				
-				<item-thumb :item="item" vImageWidth="125px" hImageWidth="250px" imageMaxHeight="200px"/>
+				<item-thumb :item="item" :image="image" vImageWidth="125px" hImageWidth="250px" imageMaxHeight="200px"/>
 				<q-card-section class="text-caption q-pa-xs" :class="purple">
 					<div style="line-height: 1.25em" :class="orange">
                   <span>{{ item.name }}</span>
-                  <span v-if="hasArtist && this.item.isHorizontal" class="float-right">{{artist}}</span>
+                  <span v-if="hasArtist && this.image.isHorizontal" class="float-right">{{artist}}</span>
                </div>
-               <div v-if="hasArtist && !this.item.isHorizontal" style="line-height: 1.5em" class="q-ma-none q-pa-none"> {{artist}} </div>
+               <div v-if="hasArtist && !this.image.isHorizontal" style="line-height: 1.5em" class="q-ma-none q-pa-none"> {{artist}} </div>
                <div v-if="priceTextBgColor" :class="priceTextBgColor" class="text-bold q-px-xs">{{ priceTextMini }}</div>	
 					<div v-else :class="blue">{{ priceTextMini }}</div>	
 					<item-timer v-if="isDropping" :item="item"/>
@@ -17,13 +17,13 @@
 		</div>
 		<div v-else-if="displayThumb || displayBidThumb">
 			<q-card v-if="hasImageUrl" class="q-pt-xs q-px-xs" style="min-height: 300px;" :class="textBgColor">
-				<item-thumb :item="item" vImageWidth="150px" hImageWidth="300px" imageMaxHeight="250px"/>
+				<item-thumb :item="item" :image="image" vImageWidth="150px" hImageWidth="300px" imageMaxHeight="250px"/>
 				<q-card-section class="text-caption q-px-xs q-pt-xs q-pb-none" :class="purple">
 					<div style="line-height: 1.25em" :class="orange">
                   <span class="text-weight-bold">{{ item.name }}</span>
-                  <span v-if="hasArtist && this.item.isHorizontal" class="float-right">{{artist}}</span>
+                  <span v-if="hasArtist && this.image.isHorizontal" class="float-right">{{artist}}</span>
                </div>
-               <div v-if="hasArtist && !this.item.isHorizontal" style="line-height: 1.5em" :class="pink"> {{artist}} </div>
+               <div v-if="hasArtist && !this.image.isHorizontal" style="line-height: 1.5em" :class="pink"> {{artist}} </div>
                <div style="line-height: 1.5em" :class="indigo">
                   {{ priceText }}
                   <span v-if="hasBids && displayThumb"> - <a :href="'#/bids/' + item.id">{{ bidText }}</a></span>
@@ -43,7 +43,7 @@
 		<div v-else>
 			<q-card-section :class="textFullBgColor">
             <q-card-section class="bg-white column">					
-               <item-image-full :src="item.imageUrl" :width="imageFullWidth"/>
+               <item-image-full :src="image.url" :width="imageFullWidth"/>
                <item-liked :item="item" size="lg"/> 
             </q-card-section>	
             <q-card-section class="text-subtitle2 q-pa-xs q-mt-sm">
@@ -93,8 +93,20 @@
 			displayThumb() { return ItemDisplayType.THUMB == this.displayType },
 			displayBidThumb() { return ItemDisplayType.BID_THUMB == this.displayType },
 			drop() { return this.getDrop(this.item.dropId) },
-			hasImageUrl() { return (this.item.imageUrl ? true : false) },
-			textBgColor() {
+			image() { 
+            console.log("image", this.item.primaryImage )
+            return this.item.primaryImage },		
+
+         hasImageUrl() { return (this.image.url ? true : false) },
+			imageUrl() { return this.image.url ? this.image.url : 'statics/image-placeholder.png' },
+			imageWidth() { return ("width: " + (this.image.isHorizontal ? this.hImageWidth : this.vImageWidth)) },		
+         imageFullWidth() { 
+            // todo - doesn't factor in layout drawer open 
+            let width = this.image.isHorizontal ? "700" : "400"
+            if (width > this.$q.screen.width - 100) { width = this.$q.screen.width - 100 }
+            return width
+         },	
+         textBgColor() {
 				if (this.isSetup) { return "bg-grey" }
 				else if (this.isNotAvailable) { return (this.userIsBuyer || this.userIsHighBidder ? "bg-green" : "bg-red-5") }
             else if (this.isDropping) { return "bg-yellow" }
@@ -106,16 +118,8 @@
          },
          hasArtist() { return this.artist.length > 0 },
          artist() { return TagMgr.artist(this.item) },
-			imageWidth() { return ("width: " + (this.item.isHorizontal ? this.hImageWidth : this.vImageWidth)) },		
-         imageFullWidth() { 
-            // todo - doesn't factor in layout drawer open 
-            let width = this.item.isHorizontal ? "700" : "400"
-            if (width > this.$q.screen.width - 100) { width = this.$q.screen.width - 100 }
-            return width
-         },		
-         imageUrl() { return this.item.imageUrl ? this.item.imageUrl : 'statics/image-placeholder.png' },
-			itemSaleType() { return (this.item.saleType == SaleType.DEFAULT ? this.drop.defaultSaleType : this.item.saleType) },
-			style() { return (this.item.isHorizontal ? "width: 300px" : "width: 200px") },			
+         itemSaleType() { return (this.item.saleType == SaleType.DEFAULT ? this.drop.defaultSaleType : this.item.saleType) },
+			style() { return (this.image.isHorizontal ? "width: 300px" : "width: 200px") },			
          userIsAdmin() { return this.isAdmin(this.userId) },
          isSetup() { return ItemMgr.isSetup(this.item) },
          isNotAvailable() { return ItemMgr.isHold(this.item) || ItemMgr.isInvoiced(this.item) || ItemMgr.isSold(this.item) },

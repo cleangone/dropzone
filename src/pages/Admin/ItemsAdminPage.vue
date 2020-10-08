@@ -8,7 +8,7 @@
          {{ dropStatus }}, Default Sale Type: {{ drop.defaultSaleType }}
       </div>
 		<div class="q-pa-sm absolute full-width full-height">
-         <q-table title="Items" :data="items" :columns="columns" :visible-columns="visibleColumns" row-key="name" :filter="tableDataFilter"
+         <q-table v-if="itemsExist" title="Items" :data="items" :columns="columns" :visible-columns="visibleColumns" row-key="name" :filter="tableDataFilter"
             selection="multiple" :selected.sync="selectedRowItems" :pagination.sync="pagination" :dense="$q.screen.lt.md" class="q-mb-sm">
 				<template v-slot:top-right>
 					<q-input borderless dense debounce="300" v-model="tableDataFilter" placeholder="Search">
@@ -29,6 +29,7 @@
                <q-btn icon="delete" @click="promptToDeleteItem(props.row.id, props.row.name)" size="sm" flat dense color="red" />
             </q-td> 
 			</q-table>
+
          <div class="q-mt-md"> 
 			   <q-btn v-if="!rowsSelected"      @click="showAddModal=true"      icon="add"             unelevated color="primary"/>
             <q-btn v-if="!rowsSelected"      @click="showBulkAddModal=true"  label="Bulk Add"       unelevated color="primary" class="q-ml-xs"/>
@@ -107,6 +108,7 @@
                (DropMgr.isSetup(this.drop) || DropMgr.isScheduled(this.drop) ? ", " + formatDateTimeOptYear(this.drop.startDate) : "")
          },
          itemToEdit() { return this.itemIdToEdit ? getItem(this.items, this.itemIdToEdit) : null },
+         itemsExist() { return this.items.length > 0 },
          items() { 
             // make copies - table adds an index to objs
             let items = this.getItemsInDrop(this.dropId) 

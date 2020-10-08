@@ -2,7 +2,7 @@
 	<q-card class="form-card">
       <q-card-section>
          <div class="text-h6 heading">Add Multiple Items</div>
-         <li v-for="(item, key) in itemsToAdd" :key="key">{{item.imageBaseName}}</li>			
+         <li v-for="(item, key) in itemsToAdd" :key="key">{{item.primaryImage.baseName}}</li>			
       </q-card-section>
       <q-card-section>
          <q-firebase-uploader path="drops/" multiple @upload="uploadCompleted" /> 
@@ -37,22 +37,24 @@
                sortName: itemName,
                dropId: this.dropId,
                status: ItemStatus.SETUP,
-               imageUrl: emit.url,
-               imageBaseName: emit.name,
-               isHorizontal: false,
-					saleType: SaleType.DEFAULT
+               saleType: SaleType.DEFAULT,
+               primaryImage: { 
+                  baseName: emit.name, 
+                  isHorizontal: false, 
+                  url: emit.url 
+               }
             }
+            ItemMgr.setFilePaths(item.primaryImage)
 
-            ItemMgr.setFilePaths(item)
             this.itemsToAdd.push(item)
-            this.itemsToAdd.sort((a, b) => (a.imageBaseName > b.imageBaseName) ? 1 : -1) 
+            this.itemsToAdd.sort((a, b) => (a.primaryImage.baseName > b.primaryImage.baseName) ? 1 : -1) 
          },
          save() {
             for (var item of this.itemsToAdd) { this.setItem(item) }
             this.$emit('close')
          },
          cancel() {
-            StorageMgr.deleteItemFiles(this.itemsToAdd) 
+            StorageMgr.deleteItemsFiles(this.itemsToAdd) 
             this.$emit('close')
          }
       },
