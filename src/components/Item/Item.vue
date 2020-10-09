@@ -93,10 +93,7 @@
 			displayThumb() { return ItemDisplayType.THUMB == this.displayType },
 			displayBidThumb() { return ItemDisplayType.BID_THUMB == this.displayType },
 			drop() { return this.getDrop(this.item.dropId) },
-			image() { 
-            console.log("image", this.item.primaryImage )
-            return this.item.primaryImage },		
-
+			image() { return this.item.primaryImage }, 
          hasImageUrl() { return (this.image.url ? true : false) },
 			imageUrl() { return this.image.url ? this.image.url : 'statics/image-placeholder.png' },
 			imageWidth() { return ("width: " + (this.image.isHorizontal ? this.hImageWidth : this.vImageWidth)) },		

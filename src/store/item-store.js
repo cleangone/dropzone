@@ -17,24 +17,8 @@ const actions = {
          item.createdDate = Date.now()
       }
 
-      const image = item.primaryImage
-      if (!image || image.thumbUrl) { 
-         // image not set/changed
-         // console.log("setItem", item)
-         collection().doc(item.id).set(item) 
-      }
-      else {
-         console.log("getting thumbUrl", image.thumbFilePath)
-         var storageRef = firebaseStorage.ref()
-         storageRef.child(image.thumbFilePath).getDownloadURL().then(function(url) {
-            image.thumbUrl = url
-            // console.log("setItem", item)
-            collection().doc(item.id).set(item) 
-         })
-         .catch(function(error) {
-            console.log("Cannot get downloadURL from thumbnail " + thumbFilePath, error)
-         })
-      }
+      collection().doc(item.id).set(item) 
+      setThumbUrls(item)
    }),
    updateItems: firestoreAction((context, itemUpdates) => { 
       // todo - research vuexfire batching - no big deal right now - will only be 5-25 items
@@ -43,13 +27,63 @@ const actions = {
          collection().doc(update.id).update(update)
       })
    }),
-   updateItem: firestoreAction((context, item) => { collection().doc(item.id).update(item) }),
+   updateItem: firestoreAction((context, item) => { 
+      collection().doc(item.id).update(item) 
+      setThumbUrls(item)
+   }),
    deleteItem: firestoreAction((context, id) => { collection().doc(id).delete() }),
 }
-
+   
 function collection() { return firestore.collection('items') }
-function showPositiveNotify(msg) { Notify.create( {type: "positive", timeout: 1000, message: msg} )}
-function showNegativeNotify(msg) { Notify.create( {type: "negative", timeout: 5000, message: msg} )}
+
+// not done by functions because they do not have access to downloadURL
+function setThumbUrls(item) { setTimeout(() => { setThumbUrl(item, 0) }, 5000) }
+function setThumbUrl(item, retry) { 
+   const itemDesc = "item[id: " + item.id + "]"   
+   const retryDesc =  retry ? ", "  + retry + " retries" : ""
+   // console.log("setThumbUrl: " + itemDesc + retryDesc)
+      
+   if (retry > 5) { 
+      console.log("setThumbUrl:" + itemDesc + " retries exceeded")
+      return
+   }
+
+   let imageToUpdate = null
+   let isPrimaryImage = false
+   if (item.primaryImage && !item.primaryImage.thumbUrl) { 
+      imageToUpdate = item.primaryImage 
+      isPrimaryImage = true
+   } 
+
+   if (!imageToUpdate && item.images) {
+      for (var image of item.images) {
+         if (!image.thumbUrl) { imageToUpdate = image }
+      }
+   }
+
+   if (!imageToUpdate) { 
+      // console.log("setThumbUrl:" + itemDesc + " images updated")
+      return
+   }
+   
+   const imageDesc = "image " + imageToUpdate.baseName + " of " + itemDesc
+   console.log("setThumbUrl: updating " + imageDesc)
+   var storageRef = firebaseStorage.ref()
+   storageRef.child(imageToUpdate.thumbFilePath).getDownloadURL().then(function(url) {
+      imageToUpdate.thumbUrl = url
+      const itemUpdate = isPrimaryImage ? { primaryImage: item.primaryImage } : { images: item.images }
+      collection().doc(item.id).update(itemUpdate) 
+      
+      // recursive call to set next thumb that needs it
+      setThumbUrl(item, retry)
+   })
+   .catch(function(error) {
+      console.log("setThumbUrl: error updating " + imageDesc, error)
+      // recursive call to try check for thumb again after a delay
+      // todo - if one in particular is having a problem, put it on a bypass list
+      setTimeout(() => { setThumbUrl(item, ++retry) }, 1000)
+   })
+}
 
 const getters = {
    itemsExist: state => { return state.items && state.items.length > 0 },

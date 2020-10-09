@@ -1,7 +1,7 @@
 <template>
    <div>
       <q-card v-if="isOutbidAlert"> 
-         <q-card-section  >   
+         <q-card-section>   
             <item-thumb :item="alertItem" vImageWidth="125px" hImageWidth="250px" imageMaxHeight="200px" style="min-height: 200px"/>
             <span class="text-h2 absolute-center text-red text-weight-bolder">OUTBID</span>
          </q-card-section>

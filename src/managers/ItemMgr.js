@@ -33,7 +33,7 @@ export const ItemStatus = {
 }
 
 export class ItemMgr {
-   // note - image.thumbUrl set when stored - have to wiat for file to be created by resize function
+   // note - image.thumbUrl set when stored - have to wait for file to be created by resize function
    static setFilePaths(image) {   
       // console.log("setFilePaths ", image)
       if (!image.baseName) { return logError("setFilePaths: baseName not set") }

@@ -8,7 +8,8 @@
          {{ dropStatus }}, Default Sale Type: {{ drop.defaultSaleType }}
       </div>
 		<div class="q-pa-sm absolute full-width full-height">
-         <q-table v-if="itemsExist" title="Items" :data="items" :columns="columns" :visible-columns="visibleColumns" row-key="name" :filter="tableDataFilter"
+         <q-table v-if="itemsExist" title="Items" :data="items" 
+            :columns="columns" :visible-columns="visibleColumns" row-key="name" :filter="tableDataFilter"
             selection="multiple" :selected.sync="selectedRowItems" :pagination.sync="pagination" :dense="$q.screen.lt.md" class="q-mb-sm">
 				<template v-slot:top-right>
 					<q-input borderless dense debounce="300" v-model="tableDataFilter" placeholder="Search">
@@ -25,8 +26,9 @@
                <a v-if="props.row.numberOfBids > 0" :href="'#/bids/' + props.row.id">{{ props.row.numberOfBids }}</a>
 	         </q-td>
             <q-td slot="body-cell-actions" slot-scope="props" :props="props" auto-width>
-               <q-btn icon="edit"   @click="editItem(props.row.id)"                           size="sm" flat dense color="primary" />
-               <q-btn icon="delete" @click="promptToDeleteItem(props.row.id, props.row.name)" size="sm" flat dense color="red" />
+               <q-btn icon="edit"   @click="editItem(props.row.id)"   @click.stop size="sm" flat dense color="primary" />
+               <q-btn icon="photo"  @click="editImages(props.row.id)" @click.stop size="sm" flat dense color="primary" />
+               <q-btn icon="delete" @click="promptToDeleteItem(props.row.id, props.row.name)" @click.stop size="sm" flat dense color="red" />
             </q-td> 
 			</q-table>
 
@@ -147,7 +149,6 @@
 			...mapActions('item', ['bindItems', 'deleteItem']),
 			editDrop() { },
          editItem(itemId) {
-				// console.log("editItem", itemId)
 				this.itemIdToEdit = itemId
 				this.showEditModal = true
          },
@@ -166,7 +167,8 @@
          bulkEditDone() {
             this.selectedRowItems = []
             this.showBulkEditModal = false
-         }
+         },
+         editImages(itemId) { this.$router.push("/admin/images/" + itemId) },
 		},
 		components: {
          'drop-add-edit'    : require('components/Drop/DropAddEdit.vue').default,
