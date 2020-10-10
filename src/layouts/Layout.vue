@@ -86,7 +86,7 @@
       },
       computed: {
          ...mapGetters('auth', ['userId', 'loggedIn']),
-         ...mapGetters('action', ['getUserActions']),
+         ...mapGetters('action', ['actionsExist', 'getUserActions']),
          ...mapGetters('current', ['currentActivityExists']),
          ...mapGetters('invoice', ['invoicesExist']),
          ...mapGetters('tag', ['getTags']),
@@ -97,6 +97,7 @@
             if (this.loggedIn) {
                if (this.userId != this.boundUserId) { 
                   // console.log("binding userId " + this.userId)
+                  this.bindUserActions(this.userId) 
                   this.bindUserInvoices(this.userId) 
                   this.boundUserId = this.userId
                }
@@ -104,6 +105,7 @@
             else {
                if (this.boundUserId != null) { 
                   // console.log("unbinding userId " + this.boundUserId)
+                  this.unbindUserActions() 
                   this.unbindUserInvoices() 
                   this.boundUserId = null
                }
@@ -113,8 +115,9 @@
          userIsAdmin() { 
             const isAdmin = this.user && this.user.isAdmin
             // console.log("Layout.userIsAdmin", isAdmin)
-            if (isAdmin && !this.invoicesExist) { 
-               this.bindInvoices() 
+            if (isAdmin) {
+               if (!this.actionsExist) { this.bindActions() }
+               if (!this.invoicesExist) { this.bindInvoices() }
             }
             return isAdmin 
          },
@@ -145,7 +148,7 @@
          version() { return Versions[0] },
       },
       methods: {
-         ...mapActions('action',  ['bindActions']),
+         ...mapActions('action',  ['bindActions', 'bindUserActions', 'unbindUserActions']),
          ...mapActions('auth',    ['logoutUser']),
          ...mapActions('current', ['setCurrentActivity']),
          ...mapActions('drop',    ['bindDrops']),
@@ -165,7 +168,6 @@
          'user-alert'  : require('components/User/UserAlert.vue').default,
       },
       created() {
-         this.bindActions() 
          this.bindDrops()
          this.bindItems()
          this.bindSettings()

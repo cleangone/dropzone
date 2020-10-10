@@ -26,7 +26,8 @@ export const UI = {
 }
 
 export const Versions = [
-   "v0.15.1 - 10/8/20", // Add/edit multiple images
+   "v0.15.2 - 10/9/20", // Add quick pricing modal, sep bind for userActions
+   "v0.15.1 - 10/8/20", // Multiple images CRUD
    "v0.15.0 - 10/7/20", // Multiple images groundwork - item.primaryImage
    "v0.14.3 - 10/7/20", // update CurrentActivity w showDropping/Buys/Outbid
    "v0.14.2 - 10/6/20", // Update bid popup width

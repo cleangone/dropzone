@@ -61,28 +61,25 @@ function setThumbUrl(item, retry) {
       }
    }
 
-   if (!imageToUpdate) { 
-      // console.log("setThumbUrl:" + itemDesc + " images updated")
-      return
+   if (imageToUpdate) { 
+      const imageDesc = "image " + imageToUpdate.baseName + " of " + itemDesc
+      console.log("setThumbUrl: updating " + imageDesc)
+      var storageRef = firebaseStorage.ref()
+      storageRef.child(imageToUpdate.thumbFilePath).getDownloadURL().then(function(url) {
+         imageToUpdate.thumbUrl = url
+         const itemUpdate = isPrimaryImage ? { primaryImage: item.primaryImage } : { images: item.images }
+         collection().doc(item.id).update(itemUpdate) 
+         
+         // recursive call to set next thumb that needs it
+         setThumbUrl(item, retry)
+      })
+      .catch(function(error) {
+         console.log("setThumbUrl: error updating " + imageDesc, error)
+         // recursive call to try check for thumb again after a delay
+         // todo - if one in particular is having a problem, put it on a bypass list
+         setTimeout(() => { setThumbUrl(item, ++retry) }, 1000)
+      })
    }
-   
-   const imageDesc = "image " + imageToUpdate.baseName + " of " + itemDesc
-   console.log("setThumbUrl: updating " + imageDesc)
-   var storageRef = firebaseStorage.ref()
-   storageRef.child(imageToUpdate.thumbFilePath).getDownloadURL().then(function(url) {
-      imageToUpdate.thumbUrl = url
-      const itemUpdate = isPrimaryImage ? { primaryImage: item.primaryImage } : { images: item.images }
-      collection().doc(item.id).update(itemUpdate) 
-      
-      // recursive call to set next thumb that needs it
-      setThumbUrl(item, retry)
-   })
-   .catch(function(error) {
-      console.log("setThumbUrl: error updating " + imageDesc, error)
-      // recursive call to try check for thumb again after a delay
-      // todo - if one in particular is having a problem, put it on a bypass list
-      setTimeout(() => { setThumbUrl(item, ++retry) }, 1000)
-   })
 }
 
 const getters = {

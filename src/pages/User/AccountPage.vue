@@ -14,23 +14,22 @@
                      <q-btn @click="showEditEmailModal=true" icon="edit" color="primary" size="xs" flat dense/> 
                   </div>
                   <div class="row">
-                     <q-input v-model="userToUpdate.firstName" label="First Name" class="col" filled />
+                     <q-input v-model="userToUpdate.firstName" label="First Name" class="col-5" filled />
                      <q-input v-model="userToUpdate.lastName"  label="Last Name"  class="col q-ml-sm"  filled />
                   </div>
                   <div class="row">
-                     <q-input v-model="userToUpdate.nickname" label="Bidding Nickname" class="col" filled />
-                     <div class="col q-ml-sm"/>
+                     <q-input v-model="userToUpdate.nickname" label="Bidding Nickname" class="col-5" filled />
+                     <q-input v-model="userToUpdate.phone" label="Phone"  mask="(###) ### - ####" fill-mask class="col-4 q-ml-sm" filled/>
+                     <q-checkbox v-model="userToUpdate.acceptTexts" label="Accept Texts" class="col q-ml-sm" color="grey-7" dense />
                   </div>                  
                   <q-input v-model="userToUpdate.address" label="Address" filled/>
                   <q-input v-model="userToUpdate.city"    label="City" filled />
                   <div class="row">
-                     <q-input v-model="userToUpdate.state" label="State" class="col" filled />
-                     <q-input v-model="userToUpdate.zip"   label="Zip"   class="col q-ml-sm" filled />
+                     <q-input v-model="userToUpdate.state" label="State" class="col-3" filled />
+                     <q-input v-model="userToUpdate.zip"   label="Zip"   class="col-4 q-ml-sm" filled />
+                     <q-input v-model="userToUpdate.country" label="Country (if not USA)" class="col q-ml-sm" filled />
                   </div>
-                  <div class="row">
-                     <q-input v-model="userToUpdate.country" label="Country (if not USA)" class="col" filled />
-                     <div class="col q-ml-sm"/>
-                  </div>
+                  
                </div>
                <div class="col" :class="orange"/>
             </div>

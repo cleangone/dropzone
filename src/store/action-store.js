@@ -5,11 +5,20 @@ import { ActionMgr } from 'src/managers/ActionMgr.js'
    
 const state = {
 	actions: [],
+	userActions: [],
 }
 
 const actions = {
    bindActions: firestoreAction(({ bindFirestoreRef }) => {
       return bindFirestoreRef('actions', collection())
+   }),
+   bindUserActions: firestoreAction(({ bindFirestoreRef }, userId) => {
+      // console.log("bindUserActions", userId)
+      bindFirestoreRef('userActions', collection().where('userId', '==', userId)) 
+   }),
+   unbindUserActions: firestoreAction(({ unbindFirestoreRef }) => {
+      // console.log("unbindUserActions")
+      unbindFirestoreRef('userActions')
    }),
    submitBid: firestoreAction((context, action) => {
       // console.log("submitBid", action)
@@ -34,8 +43,12 @@ const getters = {
    actionsExist: state => { return state.actions && state.actions.length > 0 },
    getUserActions: state => userId => {
       let userActions = []
-      for (var action of state.actions) {
-         if (action.userId == userId) { userActions.push(action) }
+      for (var action of state.userActions) {
+         if (action.userId != userId) { throw new Error("getUserActions - specified userId " + userId + 
+            " different than action[id:" + action.id +  ", userId:" + action.userId + "]") 
+         }
+      
+         userActions.push(action)
       }
 
       userActions.sort((a, b) => (a.createdDate > b.createdDate) ? -1 : 1)
