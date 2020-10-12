@@ -18,9 +18,9 @@
                      <q-input v-model="userToUpdate.lastName"  label="Last Name"  class="col q-ml-sm"  filled />
                   </div>
                   <div class="row">
-                     <q-input v-model="userToUpdate.nickname" label="Bidding Nickname" class="col-5" filled />
-                     <q-input v-model="userToUpdate.phone" label="Phone"  mask="(###) ### - ####" fill-mask class="col-4 q-ml-sm" filled/>
-                     <q-checkbox v-model="userToUpdate.acceptTexts" label="Accept Texts" class="col q-ml-sm" color="grey-7" dense />
+                     <q-input v-model="userToUpdate.nickname" label="Bidding Nickname"        class="col-5" filled />
+                     <q-input v-model="phone" label="Phone" mask="(###) ### - ####" fill-mask class="col-4 q-ml-sm" filled/>
+                     <q-checkbox v-model="userToUpdate.acceptTexts" label="Accept Texts"      class="col q-ml-sm" color="grey-7" dense />
                   </div>                  
                   <q-input v-model="userToUpdate.address" label="Address" filled/>
                   <q-input v-model="userToUpdate.city"    label="City" filled />
@@ -54,13 +54,15 @@
    import { mapGetters, mapActions } from 'vuex'
    import { Notify } from 'quasar'
    import { firebaseAuth } from 'boot/firebase'
-   import { Colors } from 'src/utils/Constants.js';
+   import { Colors } from 'src/utils/Constants.js'
+   import { formatPhone, unformatPhone } from 'src/utils/Utils'
 
 	export default {
 		data() {
 	  		return {
             userToUpdate: {},
             email: '',
+            phone: '',
             showEditEmailModal: false
 			}
 		},
@@ -77,8 +79,12 @@
             console.log("AccountPage.reset")
             this.userToUpdate = Object.assign({}, this.user) 
             this.email = this.currentUser.email
+            this.phone = formatPhone(this.currentUser.phone)
          },
-         submitUpdate() { this.setUser(this.userToUpdate) },
+         submitUpdate() {
+            this.userToUpdate.phone = unformatPhone(this.phone)
+            this.setUser(this.userToUpdate) 
+         },
          async updatePassword() { 
             try {
                // todo - the user stays logged in even when the password changes - fix?

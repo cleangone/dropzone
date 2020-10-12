@@ -11,6 +11,7 @@ import error   from './error-store'
 import invoice from './invoice-store'
 import item    from './item-store'
 import setting from './setting-store'
+import sms     from './sms-store'
 import tag     from './tag-store'
 import user    from './user-store'
 
@@ -28,6 +29,7 @@ export default function () {
       invoice,
       item,
       setting,
+      sms,
       tag,
       user
     },
