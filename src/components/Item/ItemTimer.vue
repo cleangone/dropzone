@@ -19,7 +19,7 @@
 		},
 		methods: {
 			setTimerSeconds() {
-				console.log("setTimerSeconds")
+				// console.log("setTimerSeconds")
 				let nowTime = new Date().getTime()
 				let dropDoneTime = this.item.dropDoneDate ? this.item.dropDoneDate : 0
 				if (dropDoneTime == 0 || dropDoneTime < nowTime) { 

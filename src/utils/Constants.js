@@ -26,6 +26,7 @@ export const UI = {
 }
 
 export const Versions = [
+   "v0.16.1 - 10/12/20", // Fixed outbid popup image
    "v0.16.0 - 10/12/20", // Initial inbound/outbound sms
    "v0.15.2 - 10/9/20",  // Add quick pricing modal, sep bind for userActions
    "v0.15.1 - 10/8/20",  // Multiple images CRUD

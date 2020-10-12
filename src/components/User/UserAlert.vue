@@ -2,7 +2,7 @@
    <div>
       <q-card v-if="isOutbidAlert"> 
          <q-card-section>   
-            <item-thumb :item="alertItem" vImageWidth="125px" hImageWidth="250px" imageMaxHeight="200px" style="min-height: 200px"/>
+            <item-thumb :item="alertItem" :image="image" vImageWidth="125px" hImageWidth="250px" imageMaxHeight="200px" style="min-height: 200px"/>
             <span class="text-h2 absolute-center text-red text-weight-bolder">OUTBID</span>
          </q-card-section>
          <q-card-section class="q-pt-none">  
@@ -32,6 +32,7 @@
          isOutbidAlert()  { return UserMgr.isOutbid(this.alert) },
          isLateBidAlert() { return UserMgr.isLateBid(this.alert) },
          alertItem() { return this.getItem(this.alert.itemId) },
+         image() { return this.alertItem.primaryImage },
       },
 		methods: {
          ...mapActions('user', ['updateUser']),

@@ -17,7 +17,7 @@
 			itemPageRoute() { return Route.ITEM },
 			// cellHeight() { return this.height ? "height: " + this.height : ""},			
          imageW() { return "width: " + (this.image.isHorizontal ? this.hImageWidth : this.vImageWidth) },	
-         imageH() { return "height: " + this.imageHeight },	
+         // imageH() { return "height: " + this.imageHeight },	
          imageWH() { return "width: " + (this.image.isHorizontal ? this.hImageWidth : this.vImageWidth) + "; max-height: " + this.imageMaxHeight },	
          thumbUrl() { return this.image.thumbUrl },	
       },
