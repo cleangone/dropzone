@@ -39,11 +39,12 @@
 				showEditModal: false,
 				tagIdToEdit: '',
 				tableDataFilter: '',
-				visibleColumns: [ 'name', 'sort', 'link', 'actions'],
+				visibleColumns: [ 'name', 'sort', 'link', 'video', 'actions'],
  				columns: [
                { name: 'name',    label: 'Name',      align: 'left',   field: 'name',     sortable: true },
 				 	{ name: 'sort',    label: 'Sort Name', align: 'left',   field: 'sortName', sortable: true },
-					{ name: 'link',    label: 'Show Link', align: 'center', field: 'showLink', sortable: true, format: val => val ? "True" : "" },
+					{ name: 'link',    label: 'Show Link', align: 'center', field: 'showLink', sortable: true, format: val => val ? "Yes" : "" },
+					{ name: 'video',   label: 'Video',     align: 'center', field: 'video',    sortable: true, format: val => val ? "Yes" : ""},
 					{ name: 'actions' }
             ],
             pagination: { rowsPerPage: 30 },

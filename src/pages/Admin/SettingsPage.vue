@@ -5,11 +5,13 @@
 			<q-card-section>
 				<div class="row q-mb-sm q-gutter-sm">
                <q-input v-model="settingToUpdate.companyName" label="Company Name" filled class="col-4" />
-				   <q-input v-model="settingToUpdate.fromEmail" label="From Email Address" filled class="col" />
+				   <q-input v-model="settingToUpdate.fromEmail" label="From Email Address" filled class="col-4" />
+               <q-input v-model="settingToUpdate.siteUrl" label="Site URL" filled class="col" />   
             </div>
             <div class="row q-mb-sm q-gutter-sm">
-            	<q-input v-model="settingToUpdate.siteUrl" label="Site URL" filled class="col-4" />   
-               <q-input v-model="settingToUpdate.paypal" label="Paypal Address" filled class="col" />
+            	<q-input v-model="settingToUpdate.paypal" label="Paypal Address" filled class="col-4" />
+               <q-input v-model="settingToUpdate.twitterId" label="Twitter ID" filled class="col-4" />
+               <div class="col"/>
             </div>
             <div class="row q-mb-sm q-gutter-sm">
 				   <q-input v-model.number="settingToUpdate.bidPeriod" label="Bidding Period (mins)" type="number" filled class="col-3"/>

@@ -29,18 +29,18 @@
             <q-item-label header></q-item-label>
             <layout-item path="/" label="Drops" iconName="home"/>
             <layout-item v-if="currentUserActionsExist" path="/current" :class="activeItemsClass" label="Current Activity" iconName="fas fa-gavel"/>
-            <q-expansion-item label="Artists" :content-inset-level="1" switch-toggle-side expand-separator>
-               <layout-item v-for="(tag, key) in artistLinks" :key="key" :path="'/artist/' + tag.id" :label="tag.name"/>
+            <q-expansion-item label="Artists" :content-inset-level="0.25" switch-toggle-side expand-separator>
+               <layout-item v-for="(tag, key) in artistLinks" :key="key" :path="'/artist/' + tag.id" :label="tag.name" :tag="tag" />
             </q-expansion-item>
             <q-expansion-item v-if="loggedIn" label="My Account" 
-                  :content-inset-level="1" switch-toggle-side expand-separator>
+                  :content-inset-level="0.25" switch-toggle-side expand-separator>
                <layout-item path="/account"   label="Account"   iconName="account_circle"/>
                <layout-item path="/favorites" label="Favorites" iconName="favorite" />    
                <layout-item path="/actions"   label="History"   iconName="history"/>           
                <layout-item path="/invoices"  label="Invoices"  iconName="shopping_cart"/>           
             </q-expansion-item>
             <q-expansion-item v-if="userIsAdmin" label="Admin" 
-                  :content-inset-level="1" switch-toggle-side expand-separator>
+                  :content-inset-level="0.25" switch-toggle-side expand-separator>
                <layout-item path="/admin/drops"    label="Drops"    iconName="get_app"/>
                <layout-item path="/admin/users"    label="Users"    iconName="group"/>
                <layout-item path="/admin/invoices" label="Invoices" iconName="shopping_cart"/>

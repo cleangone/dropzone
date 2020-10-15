@@ -4,7 +4,7 @@
       <div class="row q-mt-none">
 			<q-checkbox v-model="showHoldSold" label="Show Hold/Sold" class="text-grey-10" color="grey-10" dense />
 		</div>
-		<div class="row q-mt-sm q-gutter-sm">
+      <div class="row q-mt-sm q-gutter-sm">
          <item v-for="(item, key) in displayItems" :key="key" :item="item" :displayType="displayTypeThumb"/>
       </div>
 	</q-page>
@@ -50,7 +50,7 @@
       },
       watch: {
          $route() {
-            console.log("watch", this.$route.params.id)
+            // console.log("watch", this.$route.params.id)
             this.tagId = this.$route.params.id
          }
       },

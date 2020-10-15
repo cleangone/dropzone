@@ -5,6 +5,15 @@
             <drop-timer v-if="isCountdown" :drop="drop"/>
             <div v-else class="absolute-bottom text-h6">{{ drop.name }}</div>
 			</q-img>
+         <!-- parallax only works when you have to scroll on a page  -->
+         <!-- <q-parallax :height="150" :speed="0.5">
+            <template v-slot:media>
+               <img :src="drop.imageUrl ? drop.imageUrl : 'statics/image-placeholder.png'">
+            </template>
+
+            <drop-timer v-if="isCountdown" :drop="drop"/>
+            <div v-else class="absolute-bottom text-h6">{{ drop.name }}</div>
+         </q-parallax> -->
 		</router-link>
 		<q-card-section class="q-px-xs q-py-md" :class="purple">
          <div v-if="isPreDrop">
@@ -20,7 +29,7 @@
 	import { mapGetters } from 'vuex'
 	import { Route, Colors } from 'src/utils/Constants.js'
    import { DropMgr } from 'src/managers/DropMgr.js'
-   import { getStartDateText } from 'src/utils/DateUtils'
+   import { formatTodayOr_ddd_MMM_D_h_mm } from 'src/utils/DateUtils'
    
 	export default {
 		props: ['drop'],
@@ -29,7 +38,7 @@
          isPreDrop() { return !DropMgr.isActive(this.drop) },
          isCountdown() { return DropMgr.isCountdown(this.drop) },
 			dropPageRoute() { return Route.DROP },
-         startDateText() { return getStartDateText(this.drop.startDate) }
+         startDateText() { return this.drop.startDate ? formatTodayOr_ddd_MMM_D_h_mm(this.drop.startDate) : "Date not set" }
       },
       components: {
          'drop-timer' : require('components/Drop/DropTimer.vue').default

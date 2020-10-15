@@ -8,10 +8,13 @@
     	<div class="row q-mb-sm">
 	      <q-input v-model="tagToSubmit.name" label="Name" ref="name" class="col" filled
 	      	:rules="[ val => !!val || '* Required',
-	          	val => val.length < 21 || 'Please use maximum 20 characters' ]" />
+	          	val => val.length < 31 || 'Please use maximum 30 characters' ]" />
     	</div>
 		<div class="row q-mb-sm q-gutter-md">
 		   <q-input label="Sort Name" v-model="tagToSubmit.sortName" class="col" filled/>
+		</div>	
+      <div class="row q-mb-sm q-gutter-md">
+		   <q-input label="Video" v-model="tagToSubmit.video" class="col" filled/>
 		</div>	
       <div class="row q-mb-sm q-gutter-md">
 		   <q-checkbox label="Show Link" v-model="tagToSubmit.showLink"  class="col" dense />
@@ -27,7 +30,7 @@
 
 <script>
 	import { mapState, mapActions } from 'vuex'
-	import { DropMgr, DropStatus } from 'src/managers/DropMgr.js';
+	import { DropMgr, DropStatus } from 'src/managers/DropMgr'
    
    const UPDATE_ADD = "Add"
    const UPDATE_EDIT = "Edit"

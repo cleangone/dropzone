@@ -11,6 +11,7 @@ export const DropStatus = {
 
 export class DropMgr {
    static isActive(drop)         { return DropMgr.isLive(drop) || DropMgr.isDropped(drop) }
+   static isInCountdown(drop)    { return DropMgr.isStartCountdown(drop) || DropMgr.isCountdown(drop) }
    
    static isStatus(drop, status) { return drop.status == status }
    static isSetup(drop)          { return drop.status == DropStatus.SETUP }

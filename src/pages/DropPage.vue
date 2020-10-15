@@ -28,7 +28,7 @@
    import { DropMgr } from 'src/managers/DropMgr.js';
 	import { ItemMgr } from 'src/managers/ItemMgr.js'
    import { ItemDisplayType } from 'src/utils/Constants.js'
-   import { getStartDateText } from 'src/utils/DateUtils'
+   import { formatTodayOr_ddd_MMM_D_h_mm } from 'src/utils/DateUtils'
    
 	export default {
 		data() {
@@ -46,15 +46,7 @@
          ...mapGetters('user', ['getUser']),
 			...mapGetters('drop', ['getDrop']),
 			...mapGetters('item', ['getItemsInDrop']),
-			adminViewingSetup() { 
-            
-//               const { viewport } = dom
-// let {height, width} = viewport()
-// console.log("dom", dom)
-// const { height, width } = dom
-// console.log("width", this.$q.screen.width)
-
-            return this.isAdmin && DropMgr.isSetup(this.drop) },
+			adminViewingSetup() { return this.isAdmin && DropMgr.isSetup(this.drop) },
          displayTypeThumb() { return ItemDisplayType.THUMB },
          drop() { return this.getDrop(this.dropId) },
          isCountdown() { return DropMgr.isCountdown(this.drop) },
@@ -78,7 +70,7 @@
 				return availableItems
          },
          showItems() { return DropMgr.isActive(this.drop) || (this.adminView && DropMgr.isSetup(this.drop)) },
-         startDateText() { return getStartDateText(this.drop.startDate) },
+         startDateText() { return this.drop.startDate ? formatTodayOr_ddd_MMM_D_h_mm(this.drop.startDate) : "Date not set" },
 		},
 		methods: {
 			navBack() { this.$router.go(-1) },

@@ -15,6 +15,7 @@
     "help": "^3.0.2",
     "quasar": "^1.14.1",
     "v-money": "^0.8.1",
+    "vue-tweet-embed": "^2.4.0",
     "vuexfire": "^3.2.4"
   },
   "devDependencies": {
