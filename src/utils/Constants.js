@@ -26,6 +26,7 @@ export const UI = {
 }
 
 export const Versions = [
+   "v0.17.1 - 10/15/20", // mini-drawer, transparent footer
    "v0.17.0 - 10/14/20", // Add twitter, artist video,'Drops today'
    "v0.16.1 - 10/12/20", // Fixed outbid popup image
    "v0.16.0 - 10/12/20", // Initial inbound/outbound sms

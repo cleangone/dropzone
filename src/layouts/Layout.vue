@@ -1,5 +1,5 @@
 <template>
-   <q-layout view="lHh Lpr lFf">
+   <q-layout view="hHh Lpr lFf">
       <q-header elevated>
          <q-toolbar class="row">
          
@@ -10,12 +10,13 @@
          <q-btn label="" dense flat class="col" />
                
          <q-btn v-if="userIsLoggedIn" icon-right="account_circle" :label="userDisplayName" flat dense >
-            <q-menu content-class="bg-grey-4 ">
+            <q-menu content-class="bg-white">
                <q-list dense style="min-width: 100px">
                   <list-item path="/account"   label="Account" />
                   <list-item path="/favorites" label="Favorites" />    
                   <list-item path="/actions"   label="History" />           
                   <list-item path="/invoices"  label="Invoices" />
+                  <q-separator />
                   <q-item clickable v-close-popup><q-item-section @click="logoutUser">Logout</q-item-section></q-item>
                </q-list>
             </q-menu>
@@ -24,23 +25,21 @@
          </q-toolbar>
       </q-header>
 
-      <q-drawer v-model="leftDrawerOpen" :breakpoint="767" :width="225" bordered content-class="bg-grey-2">
+      <q-drawer id="drawer" v-model="leftDrawerOpen" :breakpoint="767" :width="225" bordered
+         :mini="miniState" mini-to-overlay @mouseover="miniState = false" @mouseout="miniState = true">
          <q-list>
-            <q-item-label header></q-item-label>
-            <layout-item path="/" label="Drops" iconName="home"/>
-            <layout-item v-if="currentUserActionsExist" path="/current" :class="activeItemsClass" label="Current Activity" iconName="fas fa-gavel"/>
-            <q-expansion-item label="Artists" :content-inset-level="0.25" switch-toggle-side expand-separator>
+            <layout-item path="/" label="Home" iconName="home"/>
+            <layout-item v-if="currentUserActionsExist" path="/current" :class="activeItemsClass" label="Current Activity" iconName="fas fa-gavel"/>          
+            <q-expansion-item label="Artists" icon="brush" :content-inset-level="0.25" expand-separator>
                <layout-item v-for="(tag, key) in artistLinks" :key="key" :path="'/artist/' + tag.id" :label="tag.name" :tag="tag" />
-            </q-expansion-item>
-            <q-expansion-item v-if="loggedIn" label="My Account" 
-                  :content-inset-level="0.25" switch-toggle-side expand-separator>
+            </q-expansion-item>                
+            <q-expansion-item v-if="loggedIn" label="My Account" icon="account_circle" :content-inset-level="0.25" expand-separator>  
                <layout-item path="/account"   label="Account"   iconName="account_circle"/>
                <layout-item path="/favorites" label="Favorites" iconName="favorite" />    
                <layout-item path="/actions"   label="History"   iconName="history"/>           
                <layout-item path="/invoices"  label="Invoices"  iconName="shopping_cart"/>           
             </q-expansion-item>
-            <q-expansion-item v-if="userIsAdmin" label="Admin" 
-                  :content-inset-level="0.25" switch-toggle-side expand-separator>
+            <q-expansion-item v-if="userIsAdmin" label="Admin" icon="settings" :content-inset-level="0.25" expand-separator>
                <layout-item path="/admin/drops"    label="Drops"    iconName="get_app"/>
                <layout-item path="/admin/users"    label="Users"    iconName="group"/>
                <layout-item path="/admin/invoices" label="Invoices" iconName="shopping_cart"/>
@@ -57,11 +56,11 @@
          <router-view />
       </q-page-container>
 
-      <q-footer>
-         <q-tabs indicator-color="transparent" class="row">
-         <q-route-tab icon="home" to="/" class="col-1" />
-         <span class="col"/>
-         </q-tabs>
+      <q-footer class="footer q-px-xs q-py-none">
+         <q-tabs indicator-color="transparent" class="row q-my-none q-py-none q-px-none">
+            <q-route-tab icon="home" to="/" size="sm" class="q-pa-none q-ma-none" dense /> 
+            <span class="col"/>
+    		 </q-tabs>
       </q-footer>
 
       <q-dialog v-model="userHasAlert">
@@ -80,6 +79,7 @@
       data () {
          return {
             leftDrawerOpen: this.$q.platform.is.desktop,
+            miniState: true,
             boundUserId: null,
             cancelledAlertIds: []
          }
@@ -175,4 +175,44 @@
          this.bindUsers()
       },
   }
+
+
+// When the user scrolls down 50px from the top of the document, resize the header's font size
+// window.onscroll = function() {scrollFunction()};
+
+// function scrollFunction() {  
+//   if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
+//     document.getElementById("header").style.fontSize = "30px";
+//   } else {
+//     document.getElementById("header").style.fontSize = "90px";
+//   }
+  
+  
+//   var scrollBottom = document.documentElement.scrollHeight - window.innerHeight - document.documentElement.scrollTop
+//   console.log(scrollBottom + " - win: " + window.innerHeight + ", doc: " + document.documentElement.scrollHeight + ", scrollTop: " + document.documentElement.scrollTop)
+  
+//   if (scrollBottom > 100) {
+//     document.getElementById("footer").style.height = "10px";
+//   } else {
+//     document.getElementById("footer").style.height = "60px";
+//   }
+// }
+
 </script>
+
+<style>
+	/* .footer { 
+      background-color: rgba(0, 0, 0, 0.7);
+      height: 40px;
+      transition: height .25s; 
+   } 
+   */
+   .footer { 
+      background-color: rgba(0, 0, 0, 0.7);
+   } 
+   /* 
+   .footer:hover { background-color: black;
+      height: 60px;
+   } 
+   */ 
+</style>

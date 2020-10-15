@@ -1,5 +1,5 @@
 <template>
-	<q-card class="card">
+	<q-card class="card" :class="bgColor">
 		<router-link :to="{ name: dropPageRoute, params: { dropId: drop.id } }">
 			<q-img :src="drop.imageUrl ? drop.imageUrl : 'statics/image-placeholder.png'" basic contain>
             <drop-timer v-if="isCountdown" :drop="drop"/>
@@ -15,11 +15,8 @@
             <div v-else class="absolute-bottom text-h6">{{ drop.name }}</div>
          </q-parallax> -->
 		</router-link>
-		<q-card-section class="q-px-xs q-py-md" :class="purple">
-         <div v-if="isPreDrop">
-				<span class="text-bold">Drops: {{ startDateText }}</span>
-			</div>
-			<div v-else class="text-green text-bold">Drop is LIVE</div>
+		<q-card-section class="q-px-xs q-py-md" :class="bgColor">
+		   <span class="q-px-sm text-bold">{{ dropText }}</span>
 		</q-card-section>		
   	</q-card> 
 </template>
@@ -37,8 +34,10 @@
          ...mapGetters('color', Colors),
          isPreDrop() { return !DropMgr.isActive(this.drop) },
          isCountdown() { return DropMgr.isCountdown(this.drop) },
-			dropPageRoute() { return Route.DROP },
-         startDateText() { return this.drop.startDate ? formatTodayOr_ddd_MMM_D_h_mm(this.drop.startDate) : "Date not set" }
+			bgColor() { return this.isPreDrop ? "" : "bg-green" },
+         dropPageRoute() { return Route.DROP },
+         dropText() { return this.isPreDrop ? this.dropDateText : "Drop is LIVE" },
+         dropDateText() { return this.drop.startDate ? "Drops: " + formatTodayOr_ddd_MMM_D_h_mm(this.drop.startDate) : "Drop date TBD" }
       },
       components: {
          'drop-timer' : require('components/Drop/DropTimer.vue').default
