@@ -23,7 +23,8 @@ const routes = [
       { path: '/admin/images/:itemId', component: () => import('pages/Admin/ItemImagesPage.vue') },      
       { path: '/admin/users',          component: () => import('pages/Admin/UsersAdminPage.vue') },  
       { path: '/admin/invoices',       component: () => import('pages/Admin/InvoicesAdminPage.vue') },  
-      { path: '/admin/artists',        component: () => import('pages/Admin/ArtistsAdminPage.vue') },  
+      { path: '/admin/artists',        component: () => import('pages/Admin/Tag/ArtistAdminPage.vue') },  
+      { path: '/admin/categories',     component: () => import('pages/Admin/Tag/CategoryAdminPage.vue') },  
       { path: '/admin/settings',       component: () => import('pages/Admin/SettingsPage.vue') },  
       
    ]

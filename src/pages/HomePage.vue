@@ -40,7 +40,7 @@
             const segmentedDrops = { featured: featured, onDeck: onDeck }
             this.drops.forEach(drop => {
                if (DropMgr.isScheduled(drop) || DropMgr.isInCountdown(drop) || DropMgr.isActive(drop)) { featured.push(drop) }		
-               else { onDeck.push(drop) }	
+               else if (DropMgr.isSetup(drop)) { onDeck.push(drop) }	
             })
 
             // have at least one featured drop

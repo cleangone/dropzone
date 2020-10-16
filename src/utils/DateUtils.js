@@ -5,6 +5,12 @@ import { date } from 'quasar'
 // easier to handle both ways than to always be standarizing
 //
 
+export function withinMonth(inputDate) { 
+   if (!inputDate) { return false }
+   const aMonthAgo = new Date().getTime() - 1000*60*60*24*31 // subtract 31 days in millis
+   return toMillis(inputDate) > aMonthAgo
+}
+
 export function formatTodayOr_ddd_MMM_D_h_mm(inputDate) { 
    if (!inputDate) { return "" }
    const datetime = getDate(inputDate)

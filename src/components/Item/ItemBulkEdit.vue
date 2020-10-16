@@ -18,12 +18,14 @@
          <q-select v-model="artist" label="Artist" :options="artistOptions" filled class="col"/>
       </div>  
       <div class="q-mb-sm">
+         <q-select v-model="primaryCategory" label="Category" :options="primaryCategoryOptions" filled class="col"/>
+      </div>  
+      <div class="q-mb-sm">
          <q-select label="Sale Type" v-model="saleType" :options="saleTypeOptions" filled/>
       </div>
       <div class="q-mb-sm">
          <q-checkbox label="Delete Items" v-model="deleteItems" dense/>
 		</div>
-      
 	</q-card-section>
    <q-card-actions align="right">
       <q-btn @click="cancel" label="Cancel" color="grey" />
@@ -49,6 +51,7 @@
             trimLeadingZero: false,
             status: "",
             artist: "",
+            primaryCategory: "",
             saleType: "",
             deleteItems: false,
 				statusOptions: [ ItemStatus.PRIVATE, ItemStatus.SETUP, ItemStatus.AVAILABLE, ItemStatus.HOLD, ItemStatus.SOLD ],
@@ -57,23 +60,27 @@
       },
        computed: {
          ...mapGetters('tag', ['getTags']),
-         artistMap() { 
+         artistMap() { return this.getTagMap(TagCategory.ARTIST) },
+         primaryCategoryMap() { return this.getTagMap(TagCategory.PRIMARY) },
+         artistOptions() { return this.getTagOptions(this.artistMap) },
+         primaryCategoryOptions() { return this.getTagOptions(this.primaryCategoryMap) }
+      },
+      methods: {
+         ...mapActions('item', ['updateItems', 'deleteItem']),
+         getTagMap(category) { 
             let map = new Map()
-            for (var tag of this.getTags(TagCategory.ARTIST)) {
+            for (var tag of this.getTags(category)) {
                map.set(tag.name, tag)
             }
             return map
          },
-         artistOptions() {
+         getTagOptions(map) { 
             let options = [NONE]
-            for (var name of this.artistMap.keys() ) {
+            for (var name of map.keys() ) {
                options.push(name)
             }
             return options
-         }
-      },
-      methods: {
-			...mapActions('item', ['updateItems', 'deleteItem']),
+         },
 			save() {
             if (this.deleteItems) { 
                this.promptToDelete() 
@@ -114,13 +121,20 @@
 
                if (this.saleType.length) { update.saleType = this.saleType }
 
-               if (this.artist.length) { 
-                  const tag = this.artist == NONE ? { id:"", name: "", category: TagCategory.ARTIST } : this.artistMap.get(this.artist)
-                  TagMgr.setTag(update, tag) 
+               if (this.artist.length || this.primaryCategory.length) { 
+                  update.tagIds = Object.assign({}, item.tagIds) 
+                  update.tagNames = Object.assign({}, item.tagNames) 
+                  if (this.artist.length) { 
+                     const tag = this.artist == NONE ? { id:"", name: "", category: TagCategory.ARTIST } : this.artistMap.get(this.artist)
+                     TagMgr.setTag(update, tag) 
+                  }
+                  if (this.primaryCategory.length) { 
+                     const tag = this.primaryCategory == NONE ? { id:"", name: "", category: TagCategory.PRIMARY } : this.primaryCategoryMap.get(this.primaryCategory)
+                     TagMgr.setTag(update, tag) 
+                  }
                }
 
                if (Object.keys(update).length) { 
-                  // console.log("Bulk Update", update)
                   update.id = item.id 
                   itemUpdates.push(update)
                }

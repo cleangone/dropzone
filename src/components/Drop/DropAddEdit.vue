@@ -67,16 +67,15 @@
 				dropToSubmit: {
 					name: '',
 					startDate: null,
-					status: DropStatus.SETUP,
-					bidAdditionalTime: 60,
-					defaultSaleType: '',
+					status: DropStatus.PRIVATE,
+					defaultSaleType: SaleType.BUY,
 					imageUrl: ''
             },
             startDate: date.formatDate(Date.now(), 'YYYY/MM/DD'),
             startTime: '09:00',
             timezone: localTimezone(),
             uploaderDisplayed: false,
-            statusOptions: [ DropStatus.SETUP, DropStatus.LIVE, DropStatus.DROPPED ], // DropStatus.START_COUNTDOWN
+            statusOptions: [ DropStatus.PRIVATE, DropStatus.SETUP, DropStatus.LIVE, DropStatus.DROPPED ],
             saleTypeOptions: [ SaleType.BID, SaleType.BUY ]
 			}
 		},

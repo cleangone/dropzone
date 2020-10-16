@@ -1,13 +1,15 @@
 
 export const TagCategory = {
-   ARTIST: 'Artist',
+   ARTIST:  'Artist',
+   PRIMARY: 'Primary',
 }
 
 export class TagMgr {   
 
    static hasTag(container, tag) { return TagMgr.getId(container, tag.category) == tag.id }
 
-   static artist(container) { return TagMgr.getName(container, TagCategory.ARTIST) }	
+   static artist(container)  { return TagMgr.getName(container, TagCategory.ARTIST) }	
+   static primary(container) { return TagMgr.getName(container, TagCategory.PRIMARY) }	
 
    static tagsWithLinks(tags) { 
       const tagsWithLinks = []

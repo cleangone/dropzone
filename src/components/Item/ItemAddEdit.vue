@@ -13,11 +13,12 @@
                :rules="[ val => val.length < 51 || 'Please use maximum 50 characters']" />
          </div>
          <div class="row q-mb-sm q-gutter-sm">
-            <!-- install in quasar folder: > quasar ext add qdecimal -->
-            <!-- <q-decimal v-model="itemToSubmit.startPrice" mode="currency" currency="USD" 
-               label="Start Price" input-style="text-align: right" :prefix="true" filled class="col" ></q-decimal> -->
-            <q-select v-model="artist" label="Artist" :options="artistOptions" filled class="col"/>
+            <q-select v-model="artist"   label="Artist"   :options="artistOptions"   filled class="col"/>
+            <q-select v-model="category" label="Category" :options="categoryOptions" filled class="col"/>
+         </div>
+         <div class="row q-mb-sm q-gutter-sm">
             <q-input v-model.number="itemToSubmit.startPrice" label="Price" type=number prefix="$" filled class="col" />
+            <div class="col"/>
          </div>
          <div class="row q-mb-md items-center">
             <div v-if="uploaderDisplayed" class="col q-gutter-xs" :class="pink">
@@ -70,6 +71,7 @@
                primaryImage: { isHorizontal: false },
             },
             artist: "",
+            category: "",
             uploaderDisplayed: false,
 				statusOptions: [ ItemStatus.PRIVATE, ItemStatus.SETUP, ItemStatus.AVAILABLE, ItemStatus.DROPPING, ItemStatus.HOLD, ItemStatus.SOLD ],
             saleTypeOptions: [ SaleType.DEFAULT, SaleType.BID, SaleType.BUY ],
@@ -79,23 +81,27 @@
          ...mapGetters('tag', ['getTags']),
          ...mapGetters('color', Colors),
          isEdit() { return this.type == 'edit' },
-         artistMap() { 
+         artistMap() { return this.getTagMap(TagCategory.ARTIST) },
+         categoryMap() { return this.getTagMap(TagCategory.PRIMARY) },
+         artistOptions() { return this.getTagOptions(this.artistMap) },
+         categoryOptions() { return this.getTagOptions(this.categoryMap) }
+      },
+		methods: {
+         ...mapActions('item', ['setItem']),
+         getTagMap(category) { 
             let map = new Map()
-            for (var tag of this.getTags(TagCategory.ARTIST) ) {
+            for (var tag of this.getTags(category)) {
                map.set(tag.name, tag)
             }
             return map
          },
-         artistOptions() {
+         getTagOptions(map) { 
             let options = [NONE]
-            for (var name of this.artistMap.keys() ) {
+            for (var name of map.keys() ) {
                options.push(name)
             }
             return options
-         }
-      },
-		methods: {
-			...mapActions('item', ['setItem']),
+         },
 			persistItem() {
 				// console.log("persistItem")
 				this.$refs.name.validate()
@@ -116,6 +122,11 @@
 
             if (this.artist) {
                const tag = this.artist == NONE ? { id:"", name: "", category: TagCategory.ARTIST } : this.artistMap.get(this.artist)
+               TagMgr.setTag(this.itemToSubmit, tag) 
+            }
+            
+            if (this.category) {
+               const tag = this.category == NONE ? { id:"", name: "", category: TagCategory.PRIMARY } : this.categoryMap.get(this.category)
                TagMgr.setTag(this.itemToSubmit, tag) 
             }
             
@@ -169,6 +180,7 @@
                if (this.itemToSubmit.tagIds) { this.itemToSubmit.tagIds = {...this.item.tagIds} }
                if (this.itemToSubmit.tagNames) { this.itemToSubmit.tagNames = {...this.item.tagNames} }
                this.artist = TagMgr.artist(this.itemToSubmit)
+               this.category = TagMgr.primary(this.itemToSubmit)
             }
             else { this.itemToSubmit.dropId = this.dropId }
          }, 100)  

@@ -13,10 +13,10 @@
 		<div class="row q-mb-sm q-gutter-md">
 		   <q-input label="Sort Name" v-model="tagToSubmit.sortName" class="col" filled/>
 		</div>	
-      <div class="row q-mb-sm q-gutter-md">
+      <div v-if="showVideo" class="row q-mb-sm q-gutter-md">
 		   <q-input label="Video" v-model="tagToSubmit.video" class="col" filled/>
 		</div>	
-      <div class="row q-mb-sm q-gutter-md">
+      <div v-if="showLink" class="row q-mb-sm q-gutter-md">
 		   <q-checkbox label="Show Link" v-model="tagToSubmit.showLink"  class="col" dense />
 		</div>	
 	</q-card-section>
@@ -36,7 +36,7 @@
    const UPDATE_EDIT = "Edit"
 
 	export default {
-		props: ['tag', 'category'],
+		props: ['tag', 'category', 'showLink', 'showVideo'],
 		data() {
 			return {
             updateType: "",
@@ -83,9 +83,4 @@
 	.form-card { min-width: 400px; }
 	.form-card .heading { text-transform: capitalize; }
 	.form-card .q-card-section { width: 100%; }
-	.form-card .q-img {
-		height: 56px;
-		width: 56px;
-		border-radius: 10px;
-	}
 </style>

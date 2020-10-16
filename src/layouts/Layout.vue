@@ -25,8 +25,8 @@
          </q-toolbar>
       </q-header>
 
-      <q-drawer id="drawer" v-model="leftDrawerOpen" :breakpoint="767" :width="225" bordered
-         :mini="miniState" mini-to-overlay @mouseover="miniState = false" @mouseout="miniState = true">
+      <q-drawer id="drawer" v-model="leftDrawerOpen" :breakpoint="767" :width="225" bordered 
+         :mini="miniState" @mouseover="miniState = false" @mouseout="miniState = true">
          <q-list>
             <layout-item path="/" label="Home" iconName="home"/>
             <layout-item v-if="currentUserActionsExist" path="/current" :class="activeItemsClass" label="Current Activity" iconName="fas fa-gavel"/>          
@@ -40,11 +40,12 @@
                <layout-item path="/invoices"  label="Invoices"  iconName="shopping_cart"/>           
             </q-expansion-item>
             <q-expansion-item v-if="userIsAdmin" label="Admin" icon="settings" :content-inset-level="0.25" expand-separator>
-               <layout-item path="/admin/drops"    label="Drops"    iconName="get_app"/>
-               <layout-item path="/admin/users"    label="Users"    iconName="group"/>
-               <layout-item path="/admin/invoices" label="Invoices" iconName="shopping_cart"/>
-               <layout-item path="/admin/artists"  label="Artists"  iconName="brush"/>
-               <layout-item path="/admin/settings" label="Settings" iconName="settings"/>
+               <layout-item path="/admin/drops"      label="Drops"      iconName="get_app"/>
+               <layout-item path="/admin/users"      label="Users"      iconName="group"/>
+               <layout-item path="/admin/invoices"   label="Invoices"   iconName="shopping_cart"/>
+               <layout-item path="/admin/artists"    label="Artists"    iconName="brush"/>
+               <layout-item path="/admin/categories" label="Categories" iconName="topic"/>
+               <layout-item path="/admin/settings"   label="Settings"   iconName="settings"/>
             </q-expansion-item>
          </q-list>
          <q-list class="fixed-bottom">

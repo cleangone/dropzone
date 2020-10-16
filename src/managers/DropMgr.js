@@ -1,5 +1,6 @@
 
 export const DropStatus = {
+   PRIVATE:    'Private',
    SETUP:      'Setup',
    SCHEDULING: 'Scheduling',
    SCHEDULED:  'Scheduled',
@@ -14,6 +15,7 @@ export class DropMgr {
    static isInCountdown(drop)    { return DropMgr.isStartCountdown(drop) || DropMgr.isCountdown(drop) }
    
    static isStatus(drop, status) { return drop.status == status }
+   static isPrivate(drop)        { return drop.status == DropStatus.PRIVATE }
    static isSetup(drop)          { return drop.status == DropStatus.SETUP }
    static isScheduling(drop)     { return drop.status == DropStatus.SCHEDULING }		
    static isScheduled(drop)      { return drop.status == DropStatus.SCHEDULED }		

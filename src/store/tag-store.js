@@ -25,8 +25,6 @@ const actions = {
 }
 
 function collection() { return firestore.collection('tags') }
-function showPositiveNotify(msg) { Notify.create( {type: "positive", timeout: 1000, message: msg} )}
-function showNegativeNotify(msg) { Notify.create( {type: "negative", timeout: 5000, message: msg} )}
 
 const getters = {
    tagsExist: state => category => { 
@@ -43,6 +41,20 @@ const getters = {
 
       tags.sort((a, b) => (a.sortName > b.sortName) ? 1 : -1)
       return tags
+   },
+   getTagMap(category) { 
+      // todo - copied from above
+      let tags = []
+      state.tags.forEach(tag => {
+         if (tag.category == category) { tags.push(tag) }
+      })
+      tags.sort((a, b) => (a.sortName > b.sortName) ? 1 : -1)
+      
+      let map = new Map()
+      for (var tag of tags) {
+         map.set(tag.name, tag)
+      }
+      return map
    },
    getTag: state => id => { 
       for (var tag of state.tags) {

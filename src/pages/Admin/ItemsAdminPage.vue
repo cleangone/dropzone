@@ -17,10 +17,13 @@
 					</q-input>
 				</template> 
             <q-td slot="body-cell-artist" slot-scope="props" :props="props"> 
-              {{ artist(props.row) }}
+               {{ artist(props.row) }}
+            </q-td>
+            <q-td slot="body-cell-category" slot-scope="props" :props="props"> 
+               {{ primaryCategory(props.row) }}
             </q-td>
             <q-td slot="body-cell-price" slot-scope="props" :props="props"> 
-              {{ priceText(props.row) }}
+               {{ priceText(props.row) }}
             </q-td>
             <q-td slot="body-cell-bids" slot-scope="props" :props="props"> 
                <a v-if="props.row.numberOfBids > 0" :href="'#/bids/' + props.row.id">{{ props.row.numberOfBids }}</a>
@@ -89,15 +92,16 @@
 				itemIdToEdit: '',
             tableDataFilter: '',
             selectedRowItems: [],
-				visibleColumns: [ 'name', 'sort', 'artist', 'saleType', 'buyerId', 'price', 'bids', 'status', 'actions'],
+				visibleColumns: [ 'name', 'sort', 'artist', 'category', 'saleType', 'buyerId', 'price', 'bids', 'status', 'actions'],
  				columns: [
         			{ name: 'id', field: 'id' },
 				 	{ name: 'name',       label: 'Name',        align: 'left',   field: 'name',         sortable: true },
 				 	{ name: 'sort',       label: 'Sort',        align: 'left',   field: 'sortName',     sortable: true },
-				 	{ name: 'artist',     label: 'Artist',      align: 'left',   field: 'artist',       sortable: true },
+				 	{ name: 'artist',     label: 'Artist',      align: 'center',                        sortable: true },
+				 	{ name: 'category',   label: 'Category',    align: 'center',                        sortable: true },
 				 	{ name: 'saleType',   label: 'Sale Type',   align: 'center', field: 'saleType',     sortable: true },
 					{ name: 'buyerId',    label: 'Buyer',       align: 'left',   field: 'buyerId',      sortable: true, format: val => this.userName(val) },
-					{ name: 'price', label: 'Start/Final Price',align: 'right',  field: 'startPrice',   sortable: true },
+					{ name: 'price', label:'Start/Final Price', align: 'right',  field: 'startPrice',   sortable: true },
 					{ name: 'bids',       label: 'Bids',        align: 'center', field: 'numberOfBids', sortable: true },
 					{ name: 'status',     label: 'Status',      align: 'center', field: 'status',       sortable: true },
 					{ name: 'actions' }
@@ -169,6 +173,7 @@
             return text 
          },
          artist(row) { return TagMgr.artist(row) },
+         primaryCategory(row) { return TagMgr.primary(row) },
          userName(userId) { return this.userIdToName.get(userId) },
 			promptToDeleteItem(itemId, name) {
 				this.$q.dialog({title: 'Confirm', message: 'Delete ' + name + '?', persistent: true,			
