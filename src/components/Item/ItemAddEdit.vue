@@ -5,37 +5,36 @@
       </q-card-section>
 
       <q-card-section>
-         <div class="row q-mb-xs q-gutter-sm">
-            <q-input v-model="itemToSubmit.name" label="Name" ref="name" filled class="col"
-               :rules="[ val => !!val || '* Required',
-                  val => val.length < 51 || 'Please use maximum 50 characters']"/>
-            <q-input v-model="itemToSubmit.sortName" label="Sort Name" ref="sort" filled class="col"
-               :rules="[ val => val.length < 51 || 'Please use maximum 50 characters']" />
+         <div class="row q-mb-sm q-gutter-sm">
+            <q-input v-model="itemToSubmit.name"     label="Name"      filled class="col-6"/>
+            <q-input v-model="itemToSubmit.sortName" label="Sort Name" filled class="col"/>
          </div>
          <div class="row q-mb-sm q-gutter-sm">
-            <q-select v-model="artist"   label="Artist"   :options="artistOptions"   filled class="col"/>
+            <q-select v-model="artist"   label="Artist"   :options="artistOptions"   filled class="col-6"/>
             <q-select v-model="category" label="Category" :options="categoryOptions" filled class="col"/>
          </div>
          <div class="row q-mb-sm q-gutter-sm">
-            <q-input v-model.number="itemToSubmit.startPrice" label="Price" type=number prefix="$" filled class="col" />
+            <q-input v-model.number="itemToSubmit.startPrice" label="Price" type=number prefix="$" filled class="col-6" />
             <div class="col"/>
          </div>
-         <div class="row q-mb-md items-center">
+         <div class="row q-mb-sm">
             <div v-if="uploaderDisplayed" class="col q-gutter-xs" :class="pink">
-               <q-firebase-uploader path="drops/" @upload="uploadCompleted" style="width: 400px"/> 
+               <q-firebase-uploader path="drops/" @upload="uploadCompleted" style="width: 400px; min-height: 175px"/> 
                <q-btn @click="uploaderDisplayed=false" icon="clear" color="primary" size="sm" dense/>
             </div>
-            <div v-else class="col q-gutter-sm" :class="yellow">
+            <div v-else class="col-6 q-gutter-sm" :class="yellow">
                <q-btn @click="uploaderDisplayed=true" label="Upload Image" color="primary" />
                <q-checkbox v-model="itemToSubmit.primaryImage.isHorizontal" label="Horizontal Image" dense/>
                <q-select label="Status" v-model="itemToSubmit.status" :options="statusOptions" filled/>
                <q-select label="Sale Type" v-model="itemToSubmit.saleType" :options="saleTypeOptions" filled/>
             </div>
-            <div v-if="!uploaderDisplayed" class="col" style="height: 200px" :class="blue">
-               <q-img style="height: 200px; width: 200px" :src="itemToSubmit.primaryImage.url ? itemToSubmit.primaryImage.url : 'statics/image-placeholder.png'" class="q-ml-lg" contain />
+            <div v-if="!uploaderDisplayed" class="col" :class="blue">
+               <q-img v-if="!uploaderDisplayed" style="height: 200px; width: 200px;" class="q-ml-sm" :class="pink" contain
+               :src="itemToSubmit.primaryImage.url ? itemToSubmit.primaryImage.url : 'statics/image-placeholder.png'" />
             </div>
          </div>
-      </q-card-section>
+         <description-edit v-if="!uploaderDisplayed" :container="itemToSubmit" />
+	   </q-card-section>
 
       <q-card-actions align="right">
          <q-btn @click="cancel"      label="Cancel" color="grey"/>
@@ -104,10 +103,7 @@
          },
 			persistItem() {
 				// console.log("persistItem")
-				this.$refs.name.validate()
-            if (this.$refs.name.hasError) { return }
-            
-            if (ItemMgr.isSetup(this.itemToSubmit) || ItemMgr.isAvailable(this.itemToSubmit)) {
+				if (ItemMgr.isSetup(this.itemToSubmit) || ItemMgr.isAvailable(this.itemToSubmit)) {
                this.itemToSubmit.buyPrice = 0 
                this.itemToSubmit.buyDate = 0 
                this.itemToSubmit.bidderIds = []
@@ -167,7 +163,8 @@
          }
 		},
 		components: {
-    		QFirebaseUploader
+         QFirebaseUploader,
+         'description-edit' : require('components/Admin/DescriptionEdit.vue').default,
 		},
 		mounted() {
          // slight delay because param update propagating as modal being popped up

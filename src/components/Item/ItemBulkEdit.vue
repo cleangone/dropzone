@@ -58,7 +58,7 @@
 				saleTypeOptions: [ SaleType.DEFAULT, SaleType.BID, SaleType.BUY ]
 			}
       },
-       computed: {
+      computed: {
          ...mapGetters('tag', ['getTags']),
          artistMap() { return this.getTagMap(TagCategory.ARTIST) },
          primaryCategoryMap() { return this.getTagMap(TagCategory.PRIMARY) },
@@ -160,5 +160,4 @@
 	.form-card { min-width: 400px; }
 	.form-card .heading { text-transform: capitalize; }
 	.form-card .q-card-section { width: 100%; }
-	
 </style>

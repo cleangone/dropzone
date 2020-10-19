@@ -10,14 +10,14 @@
 					</q-input>
 				</template>
             <q-td slot="body-cell-name" slot-scope="props" :props="props"> 
-               <a :href="'#/admin/items/' + props.row.id">{{ props.row.name }}</a>
-	         </q-td>
+               <a :href="'#/drop/' + props.row.id">{{ props.row.name }}</a>
+            </q-td>
             <q-td slot="body-cell-status" slot-scope="props" :props="props"> 
                {{ props.row.status }}
                <q-btn v-if="canSchedule(props.row)" label="Schedule" @click="schedule(props.row)" @click.stop size="xs" color="primary" dense/>         
 	         </q-td>
             <q-td slot="body-cell-items" slot-scope="props" :props="props"> 
-               {{ itemText(props.row.id) }}
+                <a :href="'#/admin/items/' + props.row.id">{{ itemText(props.row.id) }}</a>
             </q-td>
             <q-td slot="body-cell-actions" slot-scope="props" :props="props">
 	            <q-btn icon="edit"   @click="editDrop(props.row.id)"           @click.stop size="sm" flat dense color="primary" />
@@ -40,7 +40,7 @@
 <script>
 	import { date } from 'quasar'
    import { mapGetters, mapActions } from 'vuex'
-   import { DropMgr, DropStatus } from 'src/managers/DropMgr.js';
+   import { DropMgr, DropStatus, DropVisibleOrder } from 'src/managers/DropMgr.js';
    import { ItemMgr } from 'src/managers/ItemMgr.js';
    import { formatDateTimeOptYear, isFutureDate, localTimezone } from 'src/utils/DateUtils'
 
@@ -51,16 +51,17 @@
 				showEditModal: false,
 				dropIdToEdit: '',
 				tableDataFilter: '',
-				visibleColumns: [ 'name', 'startDate', 'status', 'items', 'saleType', 'actions'],
+				visibleColumns: [ 'name', 'startDate', 'home', 'status', 'items', 'saleType', 'actions'],
  				columns: [
                //  todo - headerStyle doesn't seem to work - use it to center header
         			{ name: 'id', field: 'id' },
-				 	{ name: 'name',      label: 'Name',   align: 'left',   field: 'name',      sortable: true },
+				 	{ name: 'name',      label: 'Name',         align: 'left',   field: 'name',             sortable: true },
                { name: 'startDate', label: 'Start Date ' + localTimezone(), 
-                                                     align: 'center', field: 'startDate', sortable: true, format: val => formatDateTimeOptYear(val) },
-					{ name: 'status',    label: 'Status', align: 'center', field: 'status',    sortable: true },
-					{ name: 'items',     label: 'Items',  align: 'center' },
-					{ name: 'saleType',  label: 'Type',   align: 'center', field: 'defaultSaleType', sortable: true },
+                                                            align: 'center', field: 'startDate',       sortable: true, format: val => formatDateTimeOptYear(val) },
+					{ name: 'home', label: 'Home Page Position', align: 'center', field: 'homePosition',    sortable: true },
+               { name: 'status',    label: 'Status',        align: 'center', field: 'status',          sortable: true },
+					{ name: 'items',     label: 'Items',         align: 'center' },
+					{ name: 'saleType',  label: 'Type',          align: 'center', field: 'defaultSaleType', sortable: true },
 					{ name: 'actions' }
             ],
             pagination: { rowsPerPage: 30 },

@@ -2,20 +2,21 @@
 	<q-page class="q-pa-md b-pink">
 		<div v-if="drop">
 			<div class="row q-mt-sm text-h5">{{ drop.name }}</div>
-         <div v-if="adminViewingSetup" class="row q-mt-none">
-            <q-checkbox v-model="adminView" label="Admin View" class="text-grey-7" color="grey-7" dense />
+         <div v-if="adminViewingPreDrop" class="row q-mt-none">
+            <q-checkbox v-model="adminView" label="Admin Item View" class="text-grey-7" color="grey-7" dense />
          </div>
-			<div v-if="showItems" class="row q-mt-none">
+			<div v-else-if="showItems" class="row q-mt-none">
 				<q-checkbox v-model="showHoldSold" label="Show Hold/Sold" class="text-grey-10" color="grey-10" dense />
 			</div>
          <div v-if="showItems" class="row q-mt-sm q-gutter-sm">
 				<item v-for="(item, key) in displayItems" :key="key" :item="item" :displayType="displayTypeThumb"/>
 			</div>
-         <div v-else class="row q-mt-sm" >
-				<q-img :src="drop.imageUrl ? drop.imageUrl : 'statics/image-placeholder.png'" basic contain>
+         <div v-else class="q-mt-sm" style="max-width:500px">
+				<q-img :src="drop.imageUrl ? drop.imageUrl : 'statics/image-placeholder.png'"  basic contain>
                <drop-timer v-if="isCountdown" :drop="drop"/>
                <div v-else class="absolute-bottom text-h6">Drops: {{ startDateText }}</div>
 				</q-img>
+            <div v-html="drop.description" class="q-pa-sm" />
 			</div>
 		</div>
 		<div v-else>Loading</div>
@@ -46,7 +47,7 @@
          ...mapGetters('user', ['getUser']),
 			...mapGetters('drop', ['getDrop']),
 			...mapGetters('item', ['getItemsInDrop']),
-			adminViewingSetup() { return this.isAdmin && DropMgr.isSetup(this.drop) },
+			adminViewingPreDrop() { return this.isAdmin && DropMgr.isPreDrop(this.drop) },
          displayTypeThumb() { return ItemDisplayType.THUMB },
          drop() { return this.getDrop(this.dropId) },
          isCountdown() { return DropMgr.isCountdown(this.drop) },
@@ -69,7 +70,7 @@
 		      })
 				return availableItems
          },
-         showItems() { return DropMgr.isActive(this.drop) || (this.adminView && DropMgr.isSetup(this.drop)) },
+         showItems() { return DropMgr.isActive(this.drop) || (this.adminView && DropMgr.isPreDrop(this.drop)) },
          startDateText() { return this.drop.startDate ? formatTodayOr_ddd_MMM_D_h_mm(this.drop.startDate) : "Date not set" },
 		},
 		methods: {

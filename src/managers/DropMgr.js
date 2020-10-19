@@ -1,4 +1,3 @@
-
 export const DropStatus = {
    PRIVATE:    'Private',
    SETUP:      'Setup',
@@ -10,9 +9,18 @@ export const DropStatus = {
    DROPPED:    'Dropped'
 }
 
+export const HomePosition = {
+   PRIMARY_A: 'Primary A',
+   PRIMARY_B: 'Primary B',
+   SECOND_A:  'Secondary A',
+   SECOND_B:  'Secondary B',
+}
+
 export class DropMgr {
-   static isActive(drop)         { return DropMgr.isLive(drop) || DropMgr.isDropped(drop) }
+   static isPreDrop(drop)        { return DropMgr.isPrivate(drop) || DropMgr.isSetup(drop) || DropMgr.isInScheduling(drop) }
+   static isInScheduling(drop)   { return DropMgr.isScheduling(drop) || DropMgr.isScheduled(drop) }
    static isInCountdown(drop)    { return DropMgr.isStartCountdown(drop) || DropMgr.isCountdown(drop) }
+   static isActive(drop)         { return DropMgr.isLive(drop) || DropMgr.isDropped(drop) }
    
    static isStatus(drop, status) { return drop.status == status }
    static isPrivate(drop)        { return drop.status == DropStatus.PRIVATE }

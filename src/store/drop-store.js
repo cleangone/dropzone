@@ -1,15 +1,7 @@
 import { firestoreAction } from 'vuexfire'
 import { firestore } from 'boot/firebase'
-import { DropMgr } from 'src/managers/DropMgr.js';
+import { DropMgr } from 'src/managers/DropMgr'
 import { dateUid } from 'src/utils/Utils'
-   
-/*
-   drop:
-      id
-      name
-      startDate
-      bidAdditionalSeconds
-*/
 
 const state = {
 	drops: [],
@@ -40,11 +32,6 @@ const actions = {
 
 function collection() { return firestore.collection('drops') }
 
-// function getDropRef(dropId) { return getRef("drops/" + dropId) }
-// function getDropItemRef(dropId, dropItemId) { return getRef("drops/" + dropId + "/items/" + dropItemId) }
-// function getBidRef(dropId, dropItemId, bidId) { return getRef("drops/" + dropId + "/items/" + dropItemId + "/bids/" + bidId) }
-// function getActionRef(userId, actionId) { return getRef("users/" + userId + "/actions/" + actionId) }
-// function getRef(path) { return firebaseDB.ref(path) }
 
 function showPositiveNotify(msg) { Notify.create( {type: "positive", timeout: 1000, message: msg} )}
 function showNegativeNotify(msg) { Notify.create( {type: "negative", timeout: 5000, message: msg} )}
@@ -53,7 +40,12 @@ const getters = {
    dropsExist: state => { return state.drops && state.drops.length > 0 },
    activeDropsExist: state => { 
       if (!state.drops) { return false } 
-      for (var drop of state.drops) { if (DropMgr.isLive(drop) || DropMgr.isDropped(drop)) { return true } }
+      for (var drop of state.drops) { if (DropMgr.isActive(drop)) { return true } }
+      return false
+   },
+   visibleDropsExist: state => { 
+      if (!state.drops) { return false } 
+      for (var drop of state.drops) { if (DropMgr.isActive(drop) || DropMgr.isInCountdown(drop)  || DropMgr.isScheduled(drop)) { return true } }
       return false
    },
    getDrops: state => { 

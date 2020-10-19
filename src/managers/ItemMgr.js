@@ -84,7 +84,7 @@ export class ItemMgr {
       if (hold)      { text.push(hold + " Hold") }
       if (sold)      { text.push(sold + " Sold") }
 
-      return text.join(", ")
+      return text.length ? text.join(", ") : "None"
    }
 
    static isBuyerId(item, userId) { return item.buyerId == userId } 

@@ -1,43 +1,35 @@
 <template>
-	<q-card class="card" :class="bgColor">
-		<router-link :to="{ name: dropPageRoute, params: { dropId: drop.id } }">
-			<q-img :src="drop.imageUrl ? drop.imageUrl : 'statics/image-placeholder.png'" basic contain>
-            <drop-timer v-if="isCountdown" :drop="drop"/>
-            <div v-else class="absolute-bottom text-h6">{{ drop.name }}</div>
-			</q-img>
-         <!-- parallax only works when you have to scroll on a page  -->
-         <!-- <q-parallax :height="150" :speed="0.5">
-            <template v-slot:media>
-               <img :src="drop.imageUrl ? drop.imageUrl : 'statics/image-placeholder.png'">
-            </template>
-
-            <drop-timer v-if="isCountdown" :drop="drop"/>
-            <div v-else class="absolute-bottom text-h6">{{ drop.name }}</div>
-         </q-parallax> -->
-		</router-link>
-		<q-card-section class="q-px-xs q-py-md" :class="bgColor">
-		   <span class="q-px-sm text-bold">{{ dropText }}</span>
-		</q-card-section>		
+	<q-card class="card">
+      <q-img :src="drop.imageUrl ? drop.imageUrl : 'statics/image-placeholder.png'" v-on:click="navToDropPage" basic contain>
+         <drop-timer v-if="isCountdown" :drop="drop"/>
+         <div v-else class="absolute-bottom text-h6">{{ drop.name }}</div>
+      </q-img>
+		<div class="q-px-xs q-py-md text-bold" :class="dateClass">{{ dateText }}</div>	
+      <div class="q-pa-sm" v-html="drop.description" />
   	</q-card> 
 </template>
 
 <script>
-   import { date } from 'quasar'
-	import { mapGetters } from 'vuex'
-	import { Route, Colors } from 'src/utils/Constants.js'
-   import { DropMgr } from 'src/managers/DropMgr.js'
+   import { mapGetters } from 'vuex'
+	import { DropMgr } from 'src/managers/DropMgr'
+   import { Route, Colors } from 'src/utils/Constants'
    import { formatTodayOr_ddd_MMM_D_h_mm } from 'src/utils/DateUtils'
    
 	export default {
 		props: ['drop'],
 		computed: {
          ...mapGetters('color', Colors),
-         isPreDrop() { return !DropMgr.isActive(this.drop) },
          isCountdown() { return DropMgr.isCountdown(this.drop) },
-			bgColor() { return this.isPreDrop ? "" : "bg-green" },
-         dropPageRoute() { return Route.DROP },
-         dropText() { return this.isPreDrop ? this.dropDateText : "Drop is LIVE" },
-         dropDateText() { return this.drop.startDate ? "Drops: " + formatTodayOr_ddd_MMM_D_h_mm(this.drop.startDate) : "Drop date TBD" }
+			dateClass() { return DropMgr.isLive(this.drop) ? "bg-green" : "" },
+         dateText() { 
+            if (DropMgr.isLive(this.drop)) { return "Drop is LIVE" }
+            else if (DropMgr.isDropped(this.drop)) { return "Dropped " + formatTodayOr_ddd_MMM_D_h_mm(this.drop.startDate) }
+            else if (this.drop.startDate) { return "Drops " + formatTodayOr_ddd_MMM_D_h_mm(this.drop.startDate) }
+            else { return "Drops soon" }
+         }
+      },
+      methods: {
+         navToDropPage() { this.$router.push("/drop/" + this.drop.id) },
       },
       components: {
          'drop-timer' : require('components/Drop/DropTimer.vue').default

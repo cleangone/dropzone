@@ -26,6 +26,7 @@ export const UI = {
 }
 
 export const Versions = [
+   "v0.18.1 - 10/17/20", // QuickEdit, drop/item descriptions
    "v0.18.0 - 10/16/20", // group items by category in artist page, drop.status private, video link in artist admin list
    "v0.17.1 - 10/15/20", // mini-drawer, transparent footer
    "v0.17.0 - 10/14/20", // Add twitter, artist video,'Drops today'

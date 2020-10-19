@@ -1,9 +1,9 @@
 <template>
-   <q-layout view="hHh Lpr lFf">
+   <q-layout view="hHh lpr lFf">
       <q-header elevated>
          <q-toolbar class="row">
          
-         <q-btn @click="leftDrawerOpen = !leftDrawerOpen" icon-right="menu" flat dense />
+         <q-btn @click="drawerLockedOpen = !drawerLockedOpen" icon-right="menu" flat dense />
          <!-- using span because of problems with toolbar-title vertical alignment on ios -->
          <!-- <q-toolbar-title class="col absolute-center items-center">Dropzone</q-toolbar-title> -->
          <span class="col absolute-center text-h5">Dropzone</span>
@@ -25,8 +25,8 @@
          </q-toolbar>
       </q-header>
 
-      <q-drawer id="drawer" v-model="leftDrawerOpen" :breakpoint="767" :width="225" bordered 
-         :mini="miniState" @mouseover="miniState = false" @mouseout="miniState = true">
+      <q-drawer id="drawer" v-model="showDrawer" :breakpoint="767" :width="225" bordered 
+         :mini="!drawerOpen" @mouseover="drawerMouseover=true" @mouseout="drawerMouseover=false">
          <q-list>
             <layout-item path="/" label="Home" iconName="home"/>
             <layout-item v-if="currentUserActionsExist" path="/current" :class="activeItemsClass" label="Current Activity" iconName="fas fa-gavel"/>          
@@ -79,8 +79,9 @@
       name: 'MyLayout',
       data () {
          return {
-            leftDrawerOpen: this.$q.platform.is.desktop,
-            miniState: true,
+            showDrawer: true,
+            drawerLockedOpen: false,
+            drawerMouseover: false,
             boundUserId: null,
             cancelledAlertIds: []
          }
@@ -92,6 +93,7 @@
          ...mapGetters('invoice', ['invoicesExist']),
          ...mapGetters('tag', ['getTags']),
          ...mapGetters('user', ['getUser', 'isAdmin']),
+         drawerOpen() { return this.drawerLockedOpen || this.drawerMouseover},
          user() { return this.getUser(this.userId)},
          userIsLoggedIn() { 
             // console.log("userIsLoggedIn")

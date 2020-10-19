@@ -14,7 +14,6 @@
          ...mapGetters('auth', ['loggedIn', 'userId']),
          ...mapGetters('user', ['getUser']),
          user() { return this.getUser(this.userId)},
-			itemPageRoute() { return Route.ITEM },
 			// cellHeight() { return this.height ? "height: " + this.height : ""},			
          imageW() { return "width: " + (this.image.isHorizontal ? this.hImageWidth : this.vImageWidth) },	
          // imageH() { return "height: " + this.imageHeight },	

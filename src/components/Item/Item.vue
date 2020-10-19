@@ -64,8 +64,9 @@
                   <div v-if="userHasHigherMax" class="text-bold bg-green q-px-xs">Max bid {{ userMaxBid }}</div>
                   <div v-if="userIsOutbid"     class="text-bold bg-red-5 q-px-xs">You have been outbid</div> 
                </div> 
+               <div v-if="hasDescription" class="text-grey-8" v-html="item.description" />
             </q-card-section>	
-            <item-actions :item="item" :displayType="displayType"/>
+            <item-actions :item="item" :displayType="displayType" class="q-mt-md"/>
          </q-card-section>
 		</div>
   	</div>
@@ -95,6 +96,7 @@
 			drop() { return this.getDrop(this.item.dropId) },
 			image() { return this.item.primaryImage }, 
          hasImageUrl() { return (this.image.url ? true : false) },
+			hasDescription() { return this.item.description && this.item.description.length },
 			imageUrl() { return this.image.url ? this.image.url : 'statics/image-placeholder.png' },
 			imageWidth() { return ("width: " + (this.image.isHorizontal ? this.hImageWidth : this.vImageWidth)) },		
          imageFullWidth() { 

@@ -7,7 +7,7 @@
             <div class="text-grey-9 text-caption bg-grey-2 q-pa-sm">
                Email Body
                <div class="q-mt-xs bg-white">
-               <q-editor v-model="emailSetting.body" min-height="5rem" />
+                  <q-editor v-model="emailSetting.body" min-height="5rem" />
                </div>
             </div>
          </div>

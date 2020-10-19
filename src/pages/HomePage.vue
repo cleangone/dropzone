@@ -1,11 +1,11 @@
 <template>
 	<q-page class="q-pa-md justify-center q-gutter-md row" :class="pink">
 		<drop-board v-if="dropBoardExpanded" :expandContainer="dropBoardExpandContainer" class="col q-mt-none vertical-top" :class="indigo"/>
-		<div v-else-if="activeDropsExist" class="justify-center q-gutter-md row items-start">
+		<div v-else-if="visibleDropsExist" class="justify-center q-gutter-md row items-start">
 	      <div class="col-1 q-mt-none q-gutter-y-md" style="width: 400px" :class="blue"> 
-            <drop v-for="(drop, key) in featuredDrops" :key="key" :drop="drop" />
+            <drop v-for="(drop, key) in visibleDrops.primary" :key="'prime'+key" :drop="drop" />
             <twitter v-if="hasTwitterId" :twitterId="twitterId" style="width: 400px" />
-            <drop v-for="(drop, key) in onDeckDrops" :key="'other'+key" :drop="drop" />
+            <drop v-for="(drop, key) in visibleDrops.secondary" :key="'second'+key" :drop="drop" />
          </div>
          <drop-board :expandContainer="dropBoardExpandContainer" class="col q-mt-none vertical-top" :class="indigo"/>
       </div>
@@ -20,7 +20,7 @@
 
 <script>
    import { mapGetters, mapActions } from 'vuex'
-   import { DropMgr } from 'src/managers/DropMgr.js';
+   import { DropMgr, HomePosition } from 'src/managers/DropMgr.js';
    import { Colors } from 'src/utils/Constants.js' 
 
 	export default {
@@ -30,25 +30,26 @@
 			}
 		},
 		computed: {
-         ...mapGetters('drop', ['dropsExist', 'getDrops', 'activeDropsExist']),
+         ...mapGetters('drop', ['visibleDropsExist', 'getDrops']),
          ...mapGetters('setting', ['getSetting']),
          ...mapGetters('color', Colors),
          drops() { return this.getDrops },
-         segmentedDrops () {
-            const featured = []
-            const onDeck = []
-            const segmentedDrops = { featured: featured, onDeck: onDeck }
-            this.drops.forEach(drop => {
-               if (DropMgr.isScheduled(drop) || DropMgr.isInCountdown(drop) || DropMgr.isActive(drop)) { featured.push(drop) }		
-               else if (DropMgr.isSetup(drop)) { onDeck.push(drop) }	
-            })
+         visibleDrops () {
+            const positionedDrops = new Map([
+               [ HomePosition.PRIMARY_A, [] ],
+               [ HomePosition.PRIMARY_B, [] ],
+               [ HomePosition.SECOND_A,  [] ],
+               [ HomePosition.SECOND_B,  [] ],
+            ])
 
-            // have at least one featured drop
-            if (featured.length == 0  && onDeck.length > 0) { featured.push(onDeck.shift()) }
-            return segmentedDrops
+            // drops sorted by startDate ascending
+            this.drops.forEach(drop => {
+               if (drop.homePosition) { positionedDrops.get(drop.homePosition).push(drop) } 	
+            })
+            
+            return { primary: positionedDrops.get(HomePosition.PRIMARY_A).concat(positionedDrops.get(HomePosition.PRIMARY_B)), 
+                   secondary: positionedDrops.get(HomePosition.SECOND_A).concat(positionedDrops.get(HomePosition.SECOND_B)) }
          },
-         featuredDrops() { return this.segmentedDrops.featured },
-         onDeckDrops() { return this.segmentedDrops.onDeck },
          dropBoardExpanded() { return this.dropBoardExpandContainer.isExpanded },
          hasTwitterId() { return this.twitterId && this.twitterId.length > 0 },
          twitterId() { return this.getSetting.twitterId },

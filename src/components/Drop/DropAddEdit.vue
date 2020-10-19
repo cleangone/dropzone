@@ -1,26 +1,25 @@
 <template>
 	<q-card class="form-card">
-    <q-card-section>
+    <q-card-section :class="yellow">
       <div class="text-h6 heading">{{ type }} Drop</div>
     </q-card-section>
 
     <q-card-section>
-    	<div class="row q-mb-sm">
-	      <q-input v-model="dropToSubmit.name" label="Name" ref="name" filled class="col"
-	      	:rules="[ val => !!val || '* Required',
-	          	val => val.length < 21 || 'Please use maximum 20 characters' ]" />
+    	<div class="row q-mb-xs q-gutter-sm" :class="blue">
+	      <q-input v-model="dropToSubmit.name" label="Name"  filled class="col" />
+         <q-select label="Home Page Position" v-model="dropToSubmit.homePosition" :options="homePositionOptions" filled class="col"/>
     	</div>
-    	<div class="row q-mb-xs q-gutter-md">
-    		<q-input label="Start Date" v-model="startDate" mask="date" :rules="['date']" class="col" filled>
+    	<div class="row q-mb-xs q-gutter-sm" :class="red">
+    		<q-input label="Start Date" v-model="startDate" mask="date" :rules="['date']" class="col" :class="purple" filled>
             <template v-slot:append>
-            <q-icon name="event" class="cursor-pointer">
-                <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
-                  <q-date v-model="startDate" @input="() => $refs.qDateProxy.hide()" />
-                </q-popup-proxy>
-            </q-icon>
+               <q-icon name="event" class="cursor-pointer">
+                  <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                     <q-date v-model="startDate" @input="() => $refs.qDateProxy.hide()" />
+                  </q-popup-proxy>
+               </q-icon>
             </template>
         	</q-input>
-			<q-input :label="'Start Time ' + timezone" v-model="startTime" mask="time" :rules="['time']" class="col" filled>
+			<q-input :label="'Start Time ' + timezone" v-model="startTime" mask="time" :rules="['time']" class="col" :class="purple" filled >
             <template v-slot:append>
             <q-icon name="access_time" class="cursor-pointer">
                 <q-popup-proxy transition-show="scale" transition-hide="scale">
@@ -30,35 +29,40 @@
             </template>
         </q-input>
     	</div>
-		<div class="row q-mb-sm q-gutter-md">
-		   <q-select label="Status" v-model="dropToSubmit.status" :options="statusOptions" class="col" filled/>
-			<q-select label="Default Sale Type" v-model="dropToSubmit.defaultSaleType" :options="saleTypeOptions" class="col" filled/>  
-      </div>	
 		<div class="row q-mb-sm items-center">
 	      <div class="col">
-				<!-- <q-input v-model="dropToSubmit.imageUrl" label="Image URL" filled/> -->
-				<q-btn v-if="!uploaderDisplayed" @click="uploaderDisplayed=true" label="Upload Image" color="primary" />
-				<q-firebase-uploader v-else path="drops/" @upload="uploadCompleted"/> 
+            <div v-if="uploaderDisplayed" class="col q-gutter-xs">
+               <q-firebase-uploader path="drops/" @upload="uploadCompleted" style="width: 100%; min-height: 160px"/> 
+               <q-btn @click="uploaderDisplayed=false" icon="clear" color="primary" size="sm" dense/>
+            </div>
+            <div v-else class="col q-gutter-sm">
+              <div align="right">
+               <q-btn @click="uploaderDisplayed=true" label="Upload Image" color="primary" />
+               </div>
+               <q-select label="Status" v-model="dropToSubmit.status" :options="statusOptions" filled/>
+			      <q-select label="Default Sale Type" v-model="dropToSubmit.defaultSaleType" :options="saleTypeOptions" filled/>  
+	         </div>
 	      </div>
-	      <q-img :src="dropToSubmit.imageUrl ? dropToSubmit.imageUrl : 'statics/image-placeholder.png'"
-          	class="q-ml-sm" contain />
+         <q-img v-if="!uploaderDisplayed" :src="dropToSubmit.imageUrl ? dropToSubmit.imageUrl : 'statics/image-placeholder.png'"
+               style="height: 160px; width: 200px" class="q-ml-sm" contain />
     	</div>
+      <description-edit v-if="!uploaderDisplayed" :container="dropToSubmit" />
 	</q-card-section>
 
     <q-card-actions align="right">
       <q-btn label="Cancel" color="grey" v-close-popup />
-      <q-btn @click="submitForm" label="Save" color="primary" />
+      <q-btn @click="persistDrop" label="Save" color="primary" />
     </q-card-actions>
   </q-card>
 </template>
 
 <script>
-	import { date } from 'quasar'
-	import { mapState, mapActions } from 'vuex'
-	import QFirebaseUploader from 'components/QFirebaseUploader.js'
-   import { SaleType } from 'src/utils/Constants.js'
-   import { DropMgr, DropStatus } from 'src/managers/DropMgr.js';
-   import { localTimezone } from 'src/utils/DateUtils';
+   import { date } from 'quasar'
+   import { mapGetters, mapActions } from 'vuex'
+	import QFirebaseUploader from 'components/QFirebaseUploader'
+   import { DropMgr, DropStatus, HomePosition } from 'src/managers/DropMgr'
+   import { SaleType, Colors } from 'src/utils/Constants.js'
+   import { localTimezone } from 'src/utils/DateUtils'
 
 	export default {
 		props: ['type', 'drop'],
@@ -76,24 +80,18 @@
             timezone: localTimezone(),
             uploaderDisplayed: false,
             statusOptions: [ DropStatus.PRIVATE, DropStatus.SETUP, DropStatus.LIVE, DropStatus.DROPPED ],
+            homePositionOptions: [ HomePosition.PRIMARY_A, HomePosition.PRIMARY_B, HomePosition.SECOND_A, HomePosition.SECOND_B ],
             saleTypeOptions: [ SaleType.BID, SaleType.BUY ]
 			}
 		},
 		computed: {
+         ...mapGetters('color', Colors),
          isEdit() { return this.type == 'edit' },
     	},
 		methods: {
 			...mapActions('drop', ['createDrop', 'setDrop']),
-			submitForm() {
-				// console.log("submitForm")
-				this.$refs.name.validate()
-
-            if (!this.$refs.name.hasError) {
-               this.submitDrop()
-               this.$emit('close')
-				}
-			},
-			submitDrop() {
+			
+			persistDrop() {
             let timezoneOffset = date.formatDate(new Date(), 'Z')
             var isoDate = this.startDate.replace("/", "-").replace("/", "-")
             let formattedStartDate = isoDate + "T" + this.startTime + ":00.000" + timezoneOffset 
@@ -101,13 +99,14 @@
             
 				if (this.type == 'add') { this.createDrop(this.dropToSubmit) }
 				else { 
-               // todo - also have to figure out if drop was scheduled and date has changed
-               // does updating a scheduled drop auto reschedule it?
+               // todo - does updating a scheduled drop auto reschedule it?
                if (DropMgr.isSetup(this.dropToSubmit) || DropMgr.isStartCountdown(this.dropToSubmit) || DropMgr.isLive(this.dropToSubmit)) {
-                  // stop any existing queued task from starting countdown
-                  this.dropToSubmit.cloudTaskId = "0" 
+                  this.dropToSubmit.cloudTaskId = "0" // if there is an existing queued task, stop it from starting countdown
                }
-               this.setDrop(this.dropToSubmit) }
+               this.setDrop(this.dropToSubmit) 
+            }
+
+            this.$emit('close')
 			},
 			uploadCompleted(emit) {
 				console.log("uploadCompleted", emit)
@@ -116,8 +115,9 @@
 			}
 		},
 		components: {
-    		QFirebaseUploader
-  		},
+    		QFirebaseUploader,
+         'description-edit' : require('components/Admin/DescriptionEdit.vue').default,
+      },
 		mounted() {
 			if (this.isEdit) {
 				setTimeout(() => { 

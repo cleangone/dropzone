@@ -40,7 +40,7 @@
             <q-btn v-if="!rowsSelected"       @click="showBulkAddModal=true"   label="Bulk Add"       unelevated color="primary" class="q-ml-xs"/>
             <q-btn v-if="showInvoiceButton"   @click="showInvoiceModal=true"   label="Create Invoice" unelevated color="primary" class="q-mr-xs"/>
             <q-btn v-if="showBulkEditButton"  @click="showBulkEditModal=true"  label="Bulk Edit"      unelevated color="primary" class="q-mr-xs"/>
-            <q-btn v-if="showBulkPriceButton" @click="showBulkPriceModal=true" label="Quick Price"    unelevated color="primary"/>
+            <q-btn v-if="showQuickEditButton" @click="showQuickEditModal=true" label="Quick Edit"     unelevated color="primary"/>
          </div> 
          <div style="height: 75px"/>
 		</div>
@@ -60,8 +60,8 @@
       <q-dialog v-model="showBulkEditModal">	
 			<item-bulk-edit :items="selectedRowItems" @close="bulkEditDone" />
 		</q-dialog>
-      <q-dialog v-model="showBulkPriceModal">	
-			<item-bulk-price :items="selectedRowItems" @close="bulkPriceDone" />
+      <q-dialog v-model="showQuickEditModal">	
+			<item-quick-edit :items="selectedRowItems" @close="quickEditDone" />
 		</q-dialog>
       <q-dialog v-model="showInvoiceModal">	
 			<invoice-add-edit type="Create" :items="selectedRowItems" @close="showInvoiceModal=false" />
@@ -87,7 +87,7 @@
             showEditModal: false,
             showBulkAddModal: false,
             showBulkEditModal: false,
-            showBulkPriceModal: false,
+            showQuickEditModal: false,
             showInvoiceModal: false,
 				itemIdToEdit: '',
             tableDataFilter: '',
@@ -144,6 +144,7 @@
             return true
          },
          showBulkEditButton() { 
+            // valid for private, setup, available, hold items
             if (this.selectedRowItems.length < 2) { return false } 
             for (var rowItem of this.selectedRowItems) {
                if (!(ItemMgr.isPrivate(rowItem) || ItemMgr.isSetup(rowItem) || ItemMgr.isAvailable(rowItem) || ItemMgr.isHold(rowItem))) { 
@@ -152,10 +153,11 @@
             }
             return true
          },
-         showBulkPriceButton() { 
+         showQuickEditButton() { 
+            // valid for private, setup items
             if (this.selectedRowItems.length < 2) { return false } 
             for (var rowItem of this.selectedRowItems) {
-               if (!ItemMgr.isSetup(rowItem)) { return false }
+               if (!(ItemMgr.isPrivate(rowItem) || ItemMgr.isSetup(rowItem))) { return false }
             }
             return true
          },
@@ -184,9 +186,9 @@
             this.selectedRowItems = []
             this.showBulkEditModal = false
          },
-         bulkPriceDone() {
+         quickEditDone() {
             this.selectedRowItems = []
-            this.showBulkPriceModal = false
+            this.showQuickEditModal = false
          },
          editImages(itemId) { this.$router.push("/admin/images/" + itemId) },
 		},
@@ -195,8 +197,8 @@
          'item-add-edit'    : require('components/Item/ItemAddEdit.vue').default,
       	'item-bulk-add'    : require('components/Item/ItemBulkAdd.vue').default,
       	'item-bulk-edit'   : require('components/Item/ItemBulkEdit.vue').default,
+         'item-quick-edit'  : require('components/Item/ItemQuickEdit.vue').default,
          'invoice-add-edit' : require('components/Invoice/InvoiceAddEdit.vue').default,
-         'item-bulk-price'  : require('components/Item/ItemBulkPrice.vue').default,
       },
       created() {
 			this.dropId = this.$route.params.dropId
