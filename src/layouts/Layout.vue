@@ -2,7 +2,7 @@
    <q-layout view="hHh lpr lFf">
       <q-header elevated>
          <q-toolbar class="row">
-            <q-btn @click="drawerLockedOpen = !drawerLockedOpen" icon-right="menu" flat dense />
+            <q-btn @click="toggleDrawerLock()" icon-right="menu" flat dense />
             <router-link to="/" class="col">
                <span class="absolute-center text-h5 text-white">Dropzone</span>
             </router-link>                     
@@ -22,8 +22,13 @@
          </q-toolbar>
       </q-header>
 
+      <!-- 
+         desktop - mini is always shown, hamburger locks it open, mouseover also opens, drawer pushes content to right
+         mobile - drawer not shown, hamburger shows it, no mini mode, drawer overlays content 
+      -->
       <q-drawer id="drawer" v-model="showDrawer" :breakpoint="767" :width="225" bordered 
-         :mini="!drawerOpen" @mouseover="drawerMouseover=true" @mouseout="drawerMouseover=false">
+         :mini="drawerMini" :overlay="$q.platform.is.mobile ? true : false"
+         @mouseover="drawerMouseover=true" @mouseout="drawerMouseover=false">
          <q-list>
             <layout-item path="/" label="Home" iconName="home"/>
             <layout-item v-if="currentUserActionsExist" path="/current" :class="activeItemsClass" label="Current Activity" iconName="fas fa-gavel"/>          
@@ -90,7 +95,8 @@
          ...mapGetters('invoice', ['invoicesExist']),
          ...mapGetters('tag', ['getTags']),
          ...mapGetters('user', ['getUser', 'isAdmin']),
-         drawerOpen() { return this.drawerLockedOpen || this.drawerMouseover},
+         drawerMini() { return this.$q.platform.is.mobile ? false : (!this.drawerLockedOpen && !this.drawerMouseover) },
+         drawerOverlay() { return this.$q.platform.is.mobile ? true : false },
          user() { return this.getUser(this.userId)},
          userIsLoggedIn() { 
             // console.log("userIsLoggedIn")
@@ -157,6 +163,16 @@
          ...mapActions('setting', ['bindSettings']),
          ...mapActions('tag',     ['bindTags']),
          ...mapActions('user',    ['bindUsers']),
+         toggleDrawerLock() { 
+            if (this.$q.platform.is.mobile) {
+               this.showDrawer = !this.showDrawer
+               // console.log("mobile - showDrawer", this.showDrawer)
+            }
+            else {
+               this.drawerLockedOpen = !this.drawerLockedOpen
+               // console.log("desktop - drawerLockedOpen", this.drawerLockedOpen)
+            }
+         },
          logout() {        
             this.logoutUser()
             if (this.$route.path != "/") { this.$router.push("/") }
