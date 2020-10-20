@@ -2,26 +2,23 @@
    <q-layout view="hHh lpr lFf">
       <q-header elevated>
          <q-toolbar class="row">
-         
-         <q-btn @click="drawerLockedOpen = !drawerLockedOpen" icon-right="menu" flat dense />
-         <!-- using span because of problems with toolbar-title vertical alignment on ios -->
-         <!-- <q-toolbar-title class="col absolute-center items-center">Dropzone</q-toolbar-title> -->
-         <span class="col absolute-center text-h5">Dropzone</span>
-         <q-btn label="" dense flat class="col" />
-               
-         <q-btn v-if="userIsLoggedIn" icon-right="account_circle" :label="userDisplayName" flat dense >
-            <q-menu content-class="bg-white">
-               <q-list dense style="min-width: 100px">
-                  <list-item path="/account"   label="Account" />
-                  <list-item path="/favorites" label="Favorites" />    
-                  <list-item path="/actions"   label="History" />           
-                  <list-item path="/invoices"  label="Invoices" />
-                  <q-separator />
-                  <q-item clickable v-close-popup><q-item-section @click="logoutUser">Logout</q-item-section></q-item>
-               </q-list>
-            </q-menu>
-         </q-btn>        
-         <q-btn v-else icon-right="account_circle" to="/auth/login" label="Login" dense flat />
+            <q-btn @click="drawerLockedOpen = !drawerLockedOpen" icon-right="menu" flat dense />
+            <router-link to="/" class="col">
+               <span class="absolute-center text-h5 text-white">Dropzone</span>
+            </router-link>                     
+            <q-btn v-if="userIsLoggedIn" icon-right="account_circle" :label="userDisplayName" flat dense >
+               <q-menu content-class="bg-white">
+                  <q-list dense style="min-width: 100px">
+                     <list-item path="/account"   label="Account" />
+                     <list-item path="/favorites" label="Favorites" />    
+                     <list-item path="/actions"   label="History" />           
+                     <list-item path="/invoices"  label="Invoices" />
+                     <q-separator />
+                     <q-item clickable v-close-popup><q-item-section @click="logoutUser">Logout</q-item-section></q-item>
+                  </q-list>
+               </q-menu>
+            </q-btn>        
+            <q-btn v-else icon-right="account_circle" to="/auth/login" label="Login" dense flat />
          </q-toolbar>
       </q-header>
 

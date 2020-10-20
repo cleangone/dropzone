@@ -1,7 +1,7 @@
 <template>
-	<q-page class="q-pa-md justify-center q-gutter-md row" :class="pink">
-		<drop-board v-if="dropBoardExpanded" :expandContainer="dropBoardExpandContainer" class="col q-mt-none vertical-top" :class="indigo"/>
-		<div v-else-if="visibleDropsExist" class="justify-center q-gutter-md row items-start">
+	<q-page class="row justify-center" :class="pageClass">
+		<drop-board v-if="dropBoardExpanded" :expandContainer="dropBoardExpandContainer" class="col q-mt-none vertical-top" :class="indigo"/>      
+      <div v-else-if="visibleDropsExist" class="justify-center q-gutter-md row items-start">
 	      <div class="col-1 q-mt-none q-gutter-y-md" style="width: 400px" :class="blue"> 
             <drop v-for="(drop, key) in visibleDrops.primary" :key="'prime'+key" :drop="drop" />
             <twitter v-if="hasTwitterId" :twitterId="twitterId" style="width: 400px" />
@@ -33,6 +33,10 @@
          ...mapGetters('drop', ['visibleDropsExist', 'getDrops']),
          ...mapGetters('setting', ['getSetting']),
          ...mapGetters('color', Colors),
+         pageClass() { 
+            // this.$q.platform.is.mobile works, but this.$q.platform.is.desktop undefined
+            return (this.$q.platform.is.mobile ? "q-pa-sm q-gutter-xs " : "q-pa-md q-gutter-md ") + this.pink
+         },
          drops() { return this.getDrops },
          visibleDrops () {
             const positionedDrops = new Map([
