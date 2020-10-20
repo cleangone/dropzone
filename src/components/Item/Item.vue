@@ -41,7 +41,19 @@
 			</q-card>
 		</div>
 		<div v-else>
+         <!-- <div class="row">
+            <div class="col">prev</div> -->
 			<q-card-section :class="textFullBgColor">
+            <div v-if="$q.platform.is.mobile" class="row q-mb-sm text-caption"> 
+               <div v-if="prev" class="col" >
+                  <q-btn icon="arrow_back_ios"  @click="$router.push('/item/' + prev.id)" size="sm" flat dense color="primary" />
+                  {{ prev.name }} 
+               </div>
+               <div v-if="next" class="col" align="right">
+                  {{ next.name }}
+	               <q-btn icon="arrow_forward_ios" @click="$router.push('/item/' + next.id)" size="sm" flat dense color="primary" />
+  				   </div>
+            </div>
             <q-card-section class="bg-white column">					
                <item-image-full :src="image.url" :width="imageFullWidth"/>
                <item-liked :item="item" size="lg"/> 
@@ -68,6 +80,8 @@
             </q-card-section>	
             <item-actions :item="item" :displayType="displayType" class="q-mt-md"/>
          </q-card-section>
+          <!-- <div class="col">next</div>
+          </div> -->
 		</div>
   	</div>
 </template>
@@ -80,8 +94,8 @@
 	import { dollars } from 'src/utils/Utils'
    
 	export default {
-		props: ['item', 'displayType'], 
-		data() {
+      props: ['item', 'displayType', 'prev', 'next'], 
+      data() {
 			return {
 			}
 		},
@@ -152,6 +166,7 @@
          userHasHigherMax() { return this.userIsHighBidder && (this.item.currBid.amount > this.item.buyPrice) },
          userMaxBid() { return dollars(this.item.currBid.amount) },
          dropPageRoute() { return Route.DROP },
+         itemPageRoute() { return Route.ITEM },
       },
       methods: {
          buildPriceText(prefix) {
@@ -174,8 +189,5 @@
    }
    
 </script>
-
-<style>
-</style>
 
 

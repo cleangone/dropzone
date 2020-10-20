@@ -26,6 +26,7 @@ export const UI = {
 }
 
 export const Versions = [
+   "v0.19.0 - 10/20/20", // Added swipe, prev/next to Item Page 
    "v0.18.3 - 10/19/20", // Layout Drawer platform dependent show/mini
    "v0.18.2 - 10/19/20", // Site title clickable, home page mobile format
    "v0.18.1 - 10/18/20", // QuickEdit, drop/item descriptions, better control of drops on home page

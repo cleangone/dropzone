@@ -1,34 +1,40 @@
 <template>
-	<q-page class="q-pa-md" :class="pink"> 
-		<!-- <a style="cursor: pointer; text-decoration: underline" v-on:click="navBack()">Back</a> -->
-      <!-- will have to wait for items if user followed a link directly to this page -->
-      <!-- <div class="column" :class="blue"> -->
-         <div v-if="itemsExist" class="column" :class="yellow">
-
-            <!-- todo - need to figure out prev/next layout for mobile -->
-
-
-            <!-- <div class="col" :class="indigo" align="right">
-               <div style="height: 20px"/>
-               <router-link v-if="prevItem" :to="{ name: itemPageRoute, params: { itemId: prevItem.id } }" class="q-ma-lg">
-                  {{prevItem.name}}
-               </router-link>
-            </div> -->
-            <item :item="item" :displayType="displayType" class="self-center"/>	
-            <!-- <div class="col" :class="purple">
-               <div style="height: 20px"/>
-               <router-link v-if="nextItem" :to="{ name: itemPageRoute, params: { itemId: nextItem.id } }" class="q-ma-lg">
-                  {{nextItem.name}}
-               </router-link>
-            </div> -->
-         <!-- </div> -->
+	<q-page class="q-pa-sm" :class="pink"> 
+		<!-- have to wait for item if user followed an external link directly to this page -->
+      <div v-if="itemsExist && $q.platform.is.mobile" v-touch-swipe.mouse="handleSwipe" class="column" :class="yellow">
+         <item :item="item" :displayType="displayType" :prev="prevItem" :next="nextItem" class="self-center"/>
+      </div>
+      <div v-else-if="itemsExist " class="row" :class="blue">
+         <div class="col" :class="indigo" align="right">
+           <div style="height: 40px"/>
+            <div v-if="prevItem" class="text-bold">
+               <router-link :to="{ name: itemPageRoute, params: { itemId: prevItem.id } }" class="q-mr-sm">
+                  <q-btn icon="arrow_back_ios" size="md" flat dense color="primary"/>{{prevItem.name}}
+               </router-link> 
+            </div>
+         </div>
+         <div class=".col-12 .col-md-auto">
+            <div v-touch-swipe.mouse="handleSwipe" class="column" :class="yellow">
+               <item :item="item" :displayType="displayType" :prev="prevItem" :next="nextItem" class="self-center"/>
+            </div>    
+         </div>
+         <div class="col" :class="purple">
+            <div style="height: 40px"/>
+            <div v-if="nextItem" class="text-bold">
+               <router-link :to="{ name: itemPageRoute, params: { itemId: nextItem.id } }" class="q-ml-sm">
+                   {{ nextItem.name }}<q-btn icon="arrow_forward_ios" size="md" flat dense color="primary"/>
+    	         </router-link>
+            </div>
+         </div>
       </div>
 	</q-page>
 </template>
 
 <script>
-	import { mapGetters, mapActions } from 'vuex'
+	import { TouchSwipe } from 'quasar'
+   import { mapGetters, mapActions } from 'vuex'
 	import { ItemDisplayType, Route, Colors } from 'src/utils/Constants.js'
+	import { isSwipeLeft, isSwipeRight } from 'src/utils/Utils.js'
 	
 	export default {
 		data() {
@@ -59,12 +65,18 @@
             return null
          },
          itemPageRoute() { return Route.ITEM },
-      
 		},
 		methods: {
+         handleSwipe({ evt, ...info }) {
+            if (isSwipeLeft(info) && this.nextItem)       { this.$router.push("/item/" + this.nextItem.id) }
+            else if (isSwipeRight(info) && this.prevItem) { this.$router.push("/item/" + this.prevItem.id) }
+         }
       },
 		components: {
 	  		'item' : require('components/Item/Item.vue').default,
+      },
+      directives: {
+         TouchSwipe
       },
       created() {
          this.itemId = this.$route.params.itemId
@@ -77,5 +89,7 @@
 </script>
 
 <style>
-	
+   a {
+      text-decoration: none;
+   }
 </style>

@@ -1,7 +1,7 @@
 <template>
 	<div :style="'width: ' + width + 'px'">
       <q-zoom background-color="black" >
-         <img :src="src" class="zoom-image"/>
+         <img :src="src" draggable="false" class="zoom-image"/>
       </q-zoom>
    </div>
 </template>

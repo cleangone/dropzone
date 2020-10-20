@@ -1,6 +1,6 @@
 <template>
    <q-layout view="hHh lpr lFf">
-      <q-header elevated>
+      <q-header class="header" elevated>
          <q-toolbar class="row">
             <q-btn @click="toggleDrawerLock()" icon-right="menu" flat dense />
             <router-link to="/" class="col">
@@ -26,7 +26,7 @@
          desktop - mini is always shown, hamburger locks it open, mouseover also opens, drawer pushes content to right
          mobile - drawer not shown, hamburger shows it, no mini mode, drawer overlays content 
       -->
-      <q-drawer id="drawer" v-model="showDrawer" :breakpoint="767" :width="225" bordered 
+      <q-drawer id="drawer" v-model="showDrawer" :breakpoint="767" :width="225" bordered
          :mini="drawerMini" :overlay="$q.platform.is.mobile ? true : false"
          @mouseover="drawerMouseover=true" @mouseout="drawerMouseover=false">
          <q-list>
@@ -223,6 +223,7 @@
       transition: height .25s; 
    } 
    */
+   
    .footer { 
       background-color: rgba(0, 0, 0, 0.7);
    } 
