@@ -184,6 +184,7 @@
          'user-alert'  : require('components/User/UserAlert.vue').default,
       },
       created() {
+         if (this.$q.platform.is.mobile) { this.showDrawer = false }
          this.bindDrops()
          this.bindItems()
          this.bindSettings()
