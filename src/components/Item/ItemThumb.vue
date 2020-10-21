@@ -9,7 +9,7 @@
 	import { Route } from 'src/utils/Constants.js';
 	
 	export default {
-		props: ['item', 'image', 'hImageWidth', 'vImageWidth', 'imageMaxHeight'], 
+		props: ['item', 'image', 'hImageWidth', 'vImageWidth', 'imageMaxHeight', 'itemCollectionType'], 
 		computed: {
          ...mapGetters('auth', ['loggedIn', 'userId']),
          ...mapGetters('user', ['getUser']),
@@ -21,7 +21,7 @@
          thumbUrl() { return this.image.thumbUrl },	
       },
       methods: {
-         navToItemPage() { this.$router.push("/item/" + this.item.id) },
+         navToItemPage() { this.$router.push("/item/" + this.item.id + "/" + this.itemCollectionType) },
       },
       components: {
 			'item-liked' : require('components/Item/ItemLiked.vue').default,

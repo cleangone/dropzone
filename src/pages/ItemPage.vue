@@ -4,42 +4,21 @@
       <div v-if="itemsExist" v-touch-swipe.mouse="handleSwipe" class="column" :class="orange">
          <item :item="item" :displayType="displayType" :prev="prevItem" :next="nextItem" class="self-center"/>
       </div>
-      <!-- <div v-else-if="itemsExist" class="row" :class="blue">
-         <div class="col" :class="indigo" align="right">
-           <div style="height: 40px"/>
-            <div v-if="prevItem" class="text-bold">
-               <router-link :to="{ name: itemPageRoute, params: { itemId: prevItem.id } }" class="q-mr-sm">
-                  <q-btn icon="arrow_back_ios" size="md" flat dense color="primary"/>{{prevItem.name}}
-               </router-link> 
-            </div>
-         </div>
-         <div class=".col-12 .col-md-auto">
-            <div v-touch-swipe.mouse="handleSwipe" class="column" :class="yellow">
-               <item :item="item" :displayType="displayType" :prev="prevItem" :next="nextItem" class="self-center"/>
-            </div>    
-         </div>
-         <div class="col" :class="purple">
-            <div style="height: 40px"/>
-            <div v-if="nextItem" class="text-bold">
-               <router-link :to="{ name: itemPageRoute, params: { itemId: nextItem.id } }" class="q-ml-sm">
-                   {{ nextItem.name }}<q-btn icon="arrow_forward_ios" size="md" flat dense color="primary"/>
-    	         </router-link>
-            </div>
-         </div>
-      </div> -->
 	</q-page>
 </template>
 
 <script>
 	import { TouchSwipe } from 'quasar'
    import { mapGetters, mapActions } from 'vuex'
-	import { ItemDisplayType, Route, Colors } from 'src/utils/Constants.js'
+   import { ItemMgr } from 'src/managers/ItemMgr.js'
+	import { ItemDisplayType, ItemCollectionType, Route, Colors } from 'src/utils/Constants.js'
 	import { isSwipeLeft, isSwipeRight } from 'src/utils/Utils.js'
 	
 	export default {
 		data() {
 			return {				
-				itemId: "",
+            itemId: "",
+            itemCollectionType: "",
         }
 		},
 	  	computed: {
@@ -52,15 +31,19 @@
             let prev = null
             for (var item of this.otherItems) { 
                if (item.id == this.item.id) { return prev } 
-               prev = item
+               else if ((this.itemCollectionType == ItemCollectionType.DROP) || !ItemMgr.isGone(item)) {
+                  prev = item
+               }
             }
             return null
          },
          nextItem() { 
             let itemIsNext = false
-               for (var item of this.otherItems) { 
-               if (itemIsNext) { return item }
-               if (item.id == this.item.id) { itemIsNext = true }  
+            for (var item of this.otherItems) { 
+               if (item.id == this.item.id) { itemIsNext = true } 
+               else if (itemIsNext && ((this.itemCollectionType == ItemCollectionType.DROP) || !ItemMgr.isGone(item))) {
+                  return item 
+               }
             }
             return null
          },
@@ -80,6 +63,7 @@
       },
       created() {
          this.itemId = this.$route.params.itemId
+         this.itemCollectionType = this.$route.params.itemColType
       },
       watch: {
          $route() { this.itemId = this.$route.params.itemId }

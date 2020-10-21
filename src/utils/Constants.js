@@ -25,7 +25,13 @@ export const UI = {
    CLOSE: 'close',
 }
 
+export const ItemCollectionType = {
+   DROP: 'drop',
+   DROP_ACTIVE: 'dropactive',
+}
+
 export const Versions = [
+   "v0.19.2 - 10/20/20", // Do not show hold/sold in item prev/next if they are not shown on drop page
    "v0.19.1 - 10/20/20", // Move drop link to above item
    "v0.19.0 - 10/20/20", // Added swipe, prev/next to Item Page 
    "v0.18.3 - 10/19/20", // Layout Drawer platform dependent show/mini

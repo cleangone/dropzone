@@ -9,7 +9,8 @@
 				<q-checkbox v-model="showHoldSold" label="Show Hold/Sold" class="text-grey-10" color="grey-10" dense />
 			</div>
          <div v-if="showItems" class="row q-mt-sm q-gutter-sm">
-				<item v-for="(item, key) in displayItems" :key="key" :item="item" :displayType="displayTypeThumb"/>
+				<item v-for="(item, key) in displayItems" :key="key" :item="item" 
+               :displayType="displayTypeThumb" :itemCollectionType="itemCollectionType"/>
 			</div>
          <div v-else class="q-mt-sm" style="max-width:500px">
 				<q-img :src="drop.imageUrl ? drop.imageUrl : 'statics/image-placeholder.png'"  basic contain>
@@ -26,9 +27,9 @@
 <script>
    import { date } from 'quasar'
 	import { mapState, mapGetters, mapActions } from 'vuex'
-   import { DropMgr } from 'src/managers/DropMgr.js';
-	import { ItemMgr } from 'src/managers/ItemMgr.js'
-   import { ItemDisplayType } from 'src/utils/Constants.js'
+   import { DropMgr } from 'src/managers/DropMgr'
+	import { ItemMgr } from 'src/managers/ItemMgr'
+   import { ItemDisplayType, ItemCollectionType } from 'src/utils/Constants'
    import { formatTodayOr_ddd_MMM_D_h_mm } from 'src/utils/DateUtils'
    
 	export default {
@@ -49,6 +50,7 @@
 			...mapGetters('item', ['getItemsInDrop']),
 			adminViewingPreDrop() { return this.isAdmin && DropMgr.isPreDrop(this.drop) },
          displayTypeThumb() { return ItemDisplayType.THUMB },
+         itemCollectionType() { return this.showHoldSold ? ItemCollectionType.DROP :  ItemCollectionType.DROP_ACTIVE },
          drop() { return this.getDrop(this.dropId) },
          isCountdown() { return DropMgr.isCountdown(this.drop) },
          user() { return this.getUser(this.userId) },
@@ -86,5 +88,4 @@
 
 <style>
 	.q-img { max-height: 400px; max-width: 500px; }
-
 </style>

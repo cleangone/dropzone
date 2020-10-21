@@ -2,7 +2,7 @@
 	<div>
 		<div v-if="displayMini">
 			<q-card v-if="hasImageUrl" class="q-pt-xs q-px-xs" style="min-height: 250px;" :class="textBgColor">				
-				<item-thumb :item="item" :image="image" vImageWidth="125px" hImageWidth="250px" imageMaxHeight="200px"/>
+				<item-thumb :item="item" :image="image" vImageWidth="125px" hImageWidth="250px" imageMaxHeight="200px" :itemCollectionType="itemCollectionType"/>
 				<q-card-section class="text-caption q-pa-xs" :class="purple">
 					<div style="line-height: 1.25em" :class="orange">
                   <span>{{ item.name }}</span>
@@ -17,7 +17,7 @@
 		</div>
 		<div v-else-if="displayThumb || displayBidThumb">
 			<q-card v-if="hasImageUrl" class="q-pt-xs q-px-xs" style="min-height: 300px;" :class="textBgColor">
-				<item-thumb :item="item" :image="image" vImageWidth="150px" hImageWidth="300px" imageMaxHeight="250px"/>
+				<item-thumb :item="item" :image="image" vImageWidth="150px" hImageWidth="300px" imageMaxHeight="250px" :itemCollectionType="itemCollectionType"/>
 				<q-card-section class="text-caption q-px-xs q-pt-xs q-pb-none" :class="purple">
 					<div style="line-height: 1.25em" :class="orange">
                   <span class="text-weight-bold">{{ item.name }}</span>
@@ -92,7 +92,7 @@
 	import { dollars } from 'src/utils/Utils'
    
 	export default {
-      props: ['item', 'displayType', 'prev', 'next'], 
+      props: ['item', 'displayType', 'itemCollectionType', 'prev', 'next'], 
       data() {
 			return {
 			}
