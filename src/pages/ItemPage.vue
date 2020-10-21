@@ -51,8 +51,8 @@
 		},
 		methods: {
          handleSwipe({ evt, ...info }) {
-            if (isSwipeLeft(info) && this.nextItem)       { this.$router.push("/item/" + this.nextItem.id) }
-            else if (isSwipeRight(info) && this.prevItem) { this.$router.push("/item/" + this.prevItem.id) }
+            if (isSwipeLeft(info) && this.nextItem)       { this.$router.push("/item/" + this.nextItem.id + "/" + this.itemCollectionType) }
+            else if (isSwipeRight(info) && this.prevItem) { this.$router.push("/item/" + this.prevItem.id + "/" + this.itemCollectionType) }
          }
       },
 		components: {
