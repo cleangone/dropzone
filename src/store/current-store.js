@@ -1,5 +1,5 @@
 const state = {
-   activity: false, 
+   activity: false, // true if there is current activity
 }
 
 const mutations = {

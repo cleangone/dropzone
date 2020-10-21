@@ -5,12 +5,12 @@ export const TagCategory = {
 }
 
 export class TagMgr {   
-
    static hasTag(container, tag) { return TagMgr.getId(container, tag.category) == tag.id }
 
-   static artist(container)  { return TagMgr.getName(container, TagCategory.ARTIST) }	
-   static primary(container) { return TagMgr.getName(container, TagCategory.PRIMARY) }	
-
+   static artist(container)      { return TagMgr.getName(container, TagCategory.ARTIST) }	
+   static primaryId(container)   { return TagMgr.getId(container,   TagCategory.PRIMARY) }	
+   static primaryName(container) { return TagMgr.getName(container, TagCategory.PRIMARY) }	
+   
    static tagsWithLinks(tags) { 
       const tagsWithLinks = []
       tags.forEach(tag => { if (tag.showLink) { tagsWithLinks.push(tag) } })

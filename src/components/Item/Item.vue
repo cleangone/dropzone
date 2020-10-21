@@ -2,7 +2,7 @@
 	<div>
 		<div v-if="displayMini">
 			<q-card v-if="hasImageUrl" class="q-pt-xs q-px-xs" style="min-height: 250px;" :class="textBgColor">				
-				<item-thumb :item="item" :image="image" vImageWidth="125px" hImageWidth="250px" imageMaxHeight="200px" :itemCollectionType="itemCollectionType"/>
+				<item-thumb :item="item" :image="image" vImageWidth="125px" hImageWidth="250px" imageMaxHeight="200px" :artistCategoryId="artistCategoryId"/>
 				<q-card-section class="text-caption q-pa-xs" :class="purple">
 					<div style="line-height: 1.25em" :class="orange">
                   <span>{{ item.name }}</span>
@@ -17,7 +17,7 @@
 		</div>
 		<div v-else-if="displayThumb || displayBidThumb">
 			<q-card v-if="hasImageUrl" class="q-pt-xs q-px-xs" style="min-height: 300px;" :class="textBgColor">
-				<item-thumb :item="item" :image="image" vImageWidth="150px" hImageWidth="300px" imageMaxHeight="250px" :itemCollectionType="itemCollectionType"/>
+				<item-thumb :item="item" :image="image" vImageWidth="150px" hImageWidth="300px" imageMaxHeight="250px" :artistCategoryId="artistCategoryId"/>
 				<q-card-section class="text-caption q-px-xs q-pt-xs q-pb-none" :class="purple">
 					<div style="line-height: 1.25em" :class="orange">
                   <span class="text-weight-bold">{{ item.name }}</span>
@@ -49,7 +49,7 @@
                   </router-link> 
                </div>
                <div class="col" align="center" :class="yellow">
-                  <router-link :to="{ name: dropPageRoute, params: { dropId: item.dropId } }" :class="red">Drop</router-link>                  
+                  <router-link :to="itemsCollectionRouterLink" :class="red">{{ itemsCollectionName }}</router-link>                  
                </div>
                <div class="col-5" align="right" :class="red">
                   <router-link v-if="next" :to="{ name: itemPageRoute, params: { itemId: next.id } }" :class="yellow">
@@ -72,7 +72,7 @@
                <div v-if="userIsWinningBidder" class="text-bold">You are the winning bidder</div> 
                <div v-if="isDropping">
                   <item-timer :item="item"/>
-                  <div v-if="userIsHighBidder" class="text-bold bg-green  q-px-xs">You are High Bidder</div>
+                  <div v-if="userIsHighBidder" class="text-bold bg-green q-px-xs">You are High Bidder</div>
                   <div v-if="userHasHigherMax" class="text-bold bg-green q-px-xs">Max bid {{ userMaxBid }}</div>
                   <div v-if="userIsOutbid"     class="text-bold bg-red-5 q-px-xs">You have been outbid</div> 
                </div> 
@@ -87,12 +87,15 @@
 <script>
    import { mapGetters } from 'vuex'
    import { ItemDisplayType, SaleType, Route, Colors } from 'src/utils/Constants.js'
-   import { ItemMgr, ItemStatus } from 'src/managers/ItemMgr.js'
-	import { TagMgr } from 'src/managers/TagMgr.js'
+   import { ItemMgr, ItemStatus } from 'src/managers/ItemMgr'
+	import { TagMgr } from 'src/managers/TagMgr'
+	import { SessionMgr } from 'src/managers/SessionMgr'
 	import { dollars } from 'src/utils/Utils'
    
 	export default {
-      props: ['item', 'displayType', 'itemCollectionType', 'prev', 'next'], 
+      props: ['item', 'displayType', 
+         'prev', 'next', // used when displaying full image
+         'artistCategoryId'], // used when displaying full image from an artist item list
       data() {
 			return {
 			}
@@ -104,7 +107,18 @@
          ...mapGetters('color', Colors),
 			displayMini() { return ItemDisplayType.MINI  == this.displayType },
 			displayThumb() { return ItemDisplayType.THUMB == this.displayType },
-			displayBidThumb() { return ItemDisplayType.BID_THUMB == this.displayType },
+         displayBidThumb() { return ItemDisplayType.BID_THUMB == this.displayType },
+         itemsCollection() { return SessionMgr.getDisplayItemsDesc() },
+         itemsCollectionName() { return this.itemsCollection.name },
+         itemsCollectionRouterLink() { 
+            if (SessionMgr.isHome(this.itemsCollection)) { return { name: Route.HOME } }
+            else if (SessionMgr.isDrop(this.itemsCollection)) { return { name: Route.DROP, params: { id: this.itemsCollection.id } } }
+            else if (SessionMgr.isArtist(this.itemsCollection)) { 
+               const artistCategoryId = SessionMgr.getArtistCategory()
+               return { name: Route.ARTIST, params: { id: this.itemsCollection.id, catId: artistCategoryId } }
+            }
+            else { return null } 
+         },
 			drop() { return this.getDrop(this.item.dropId) },
 			image() { return this.item.primaryImage }, 
          hasImageUrl() { return (this.image.url ? true : false) },
@@ -163,7 +177,6 @@
 			userIsOutbid() { return this.loggedIn && !this.userIsHighBidder && this.item.bidderIds && this.item.bidderIds.includes(this.userId) },
          userHasHigherMax() { return this.userIsHighBidder && (this.item.currBid.amount > this.item.buyPrice) },
          userMaxBid() { return dollars(this.item.currBid.amount) },
-         dropPageRoute() { return Route.DROP },
          itemPageRoute() { return Route.ITEM },
       },
       methods: {

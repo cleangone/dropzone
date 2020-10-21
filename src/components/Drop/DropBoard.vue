@@ -12,12 +12,12 @@
 </template>
 
 <script>
-   import { mapState, mapGetters, mapActions } from 'vuex'
+   import { mapGetters, mapActions } from 'vuex'
    import { DropStatus } from 'src/managers/DropMgr'
    import { ItemMgr } from 'src/managers/ItemMgr'
-   import { ItemDisplayType } from 'src/utils/Constants'
-   import { Colors } from 'src/utils/Constants' 
-	
+   import { SessionMgr } from 'src/managers/SessionMgr'
+   import { ItemDisplayType, Colors } from 'src/utils/Constants'
+   
 	export default {
       props: ['expandContainer'],
 		computed: {
@@ -30,6 +30,7 @@
          liveDropsExist() { return this.liveDropIds.length > 0 },
          droppedDropIds() { return this.getDropIds(DropStatus.DROPPED) },
          items() {
+            SessionMgr.setHomeItemsDesc("Drops") 
             const dropIds = this.liveDropsExist ? this.liveDropIds : this.droppedDropIds
             const items = this.getItemsInDrops(dropIds)
 
@@ -46,7 +47,7 @@
             userActivityItems.sort((a, b) => (a.lastUserActivityDate > b.lastUserActivityDate) ? -1 : 1)
             noActivityItems.sort((a, b)  => (a.sortName > b.sortName) ? 1 : -1)
    
-            return userActivityItems.concat(noActivityItems)
+            return SessionMgr.setDisplayItems(userActivityItems.concat(noActivityItems))
          }
        },
        methods: {

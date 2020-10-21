@@ -7,11 +7,12 @@ export const ItemDisplayType = {
 }
 
 export const Route = {
-   ARTIST: 'Artist',
-   DROP: 'Drop',
-   ITEM: 'Item',
-   FORGOT: 'ForgotPassword',
-   LOGIN: 'Login',
+   HOME:     'Home',
+   DROP:     'Drop',
+   ITEM:     'Item',
+   ARTIST:   'Artist',
+   FORGOT:   'ForgotPassword',
+   LOGIN:    'Login',
    REGISTER: 'Register',
 }
 
@@ -25,12 +26,8 @@ export const UI = {
    CLOSE: 'close',
 }
 
-export const ItemCollectionType = {
-   DROP: 'drop',
-   DROP_ACTIVE: 'dropactive',
-}
-
 export const Versions = [
+   "v0.19.3 - 10/21/20", // SessionMgr, Item Page prev/next inside of an artist category
    "v0.19.2 - 10/20/20", // Do not show hold/sold in item prev/next if they are not shown on drop page
    "v0.19.1 - 10/20/20", // Move drop link to above item
    "v0.19.0 - 10/20/20", // Added swipe, prev/next to Item Page 

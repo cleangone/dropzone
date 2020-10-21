@@ -6,10 +6,10 @@
 
 <script>
    import { mapGetters, mapActions } from 'vuex'
-	import { Route } from 'src/utils/Constants.js';
+   import { SessionMgr } from 'src/managers/SessionMgr'	
 	
 	export default {
-		props: ['item', 'image', 'hImageWidth', 'vImageWidth', 'imageMaxHeight', 'itemCollectionType'], 
+		props: ['item', 'image', 'hImageWidth', 'vImageWidth', 'imageMaxHeight', 'artistCategoryId'], 
 		computed: {
          ...mapGetters('auth', ['loggedIn', 'userId']),
          ...mapGetters('user', ['getUser']),
@@ -21,7 +21,10 @@
          thumbUrl() { return this.image.thumbUrl },	
       },
       methods: {
-         navToItemPage() { this.$router.push("/item/" + this.item.id + "/" + this.itemCollectionType) },
+         navToItemPage() { 
+            if (SessionMgr.isArtist(SessionMgr.getDisplayItemsDesc())) { SessionMgr.setArtistCategory(this.artistCategoryId) }
+            this.$router.push("/item/" + this.item.id) 
+         },
       },
       components: {
 			'item-liked' : require('components/Item/ItemLiked.vue').default,

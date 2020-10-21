@@ -9,8 +9,7 @@
 				<q-checkbox v-model="showHoldSold" label="Show Hold/Sold" class="text-grey-10" color="grey-10" dense />
 			</div>
          <div v-if="showItems" class="row q-mt-sm q-gutter-sm">
-				<item v-for="(item, key) in displayItems" :key="key" :item="item" 
-               :displayType="displayTypeThumb" :itemCollectionType="itemCollectionType"/>
+				<item v-for="(item, key) in displayItems" :key="key" :item="item" :displayType="displayTypeThumb"/>
 			</div>
          <div v-else class="q-mt-sm" style="max-width:500px">
 				<q-img :src="drop.imageUrl ? drop.imageUrl : 'statics/image-placeholder.png'"  basic contain>
@@ -29,7 +28,8 @@
 	import { mapState, mapGetters, mapActions } from 'vuex'
    import { DropMgr } from 'src/managers/DropMgr'
 	import { ItemMgr } from 'src/managers/ItemMgr'
-   import { ItemDisplayType, ItemCollectionType } from 'src/utils/Constants'
+   import { SessionMgr } from 'src/managers/SessionMgr'
+   import { ItemDisplayType } from 'src/utils/Constants'
    import { formatTodayOr_ddd_MMM_D_h_mm } from 'src/utils/DateUtils'
    
 	export default {
@@ -40,9 +40,6 @@
             adminView: false
         }
 		},
-		created() {
-			this.dropId = this.$route.params.dropId
-      },
 	  	computed: {
 			...mapGetters('auth', ['loggedIn', 'userId']),
          ...mapGetters('user', ['getUser']),
@@ -50,12 +47,11 @@
 			...mapGetters('item', ['getItemsInDrop']),
 			adminViewingPreDrop() { return this.isAdmin && DropMgr.isPreDrop(this.drop) },
          displayTypeThumb() { return ItemDisplayType.THUMB },
-         itemCollectionType() { return this.showHoldSold ? ItemCollectionType.DROP :  ItemCollectionType.DROP_ACTIVE },
          drop() { return this.getDrop(this.dropId) },
          isCountdown() { return DropMgr.isCountdown(this.drop) },
          user() { return this.getUser(this.userId) },
          isAdmin() { return this.user && this.user.isAdmin },
-         visibleItems () { 
+         visibleItems() { 
             const visibleItems = []
             const items = this.getItemsInDrop(this.dropId) 
             items.forEach(item => { 
@@ -63,21 +59,26 @@
 		      })
             return visibleItems
          },
-         displayItems () { 
-            if (this.showHoldSold) { return this.visibleItems }
-            
-            let availableItems = []
+         displayItems() { 
+            SessionMgr.setDropItemsDesc("Drop", this.dropId) 
+            if (this.showHoldSold) {
+               return SessionMgr.setDisplayItems(this.visibleItems)
+            }
+
+            const displayItems = []
             this.visibleItems.forEach(item => { 
-               if (ItemMgr.isAvailable(item) || ItemMgr.isDropping(item)) { availableItems.push(item) }
-		      })
-				return availableItems
-         },
+               if (ItemMgr.isAvailable(item) || ItemMgr.isDropping(item)) { displayItems.push(item) }
+            })
+            return SessionMgr.setDisplayItems(displayItems)
+			},
          showItems() { return DropMgr.isActive(this.drop) || (this.adminView && DropMgr.isPreDrop(this.drop)) },
          startDateText() { return this.drop.startDate ? formatTodayOr_ddd_MMM_D_h_mm(this.drop.startDate) : "Date not set" },
 		},
 		methods: {
-			navBack() { this.$router.go(-1) },
 		},
+      created() {
+			this.dropId = this.$route.params.id
+      },
 		components: {
 	  	   'drop-timer' : require('components/Drop/DropTimer.vue').default,
          'item' : require('components/Item/Item.vue').default,

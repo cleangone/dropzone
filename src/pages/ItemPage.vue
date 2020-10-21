@@ -2,7 +2,7 @@
 	<q-page class="q-pa-sm" :class="pink"> 
 		<!-- have to wait for item if user followed an external link directly to this page -->
       <div v-if="itemsExist" v-touch-swipe.mouse="handleSwipe" class="column" :class="orange">
-         <item :item="item" :displayType="displayType" :prev="prevItem" :next="nextItem" class="self-center"/>
+         <item :item="item" :displayType="displayTypeFull" :prev="prevItem" :next="nextItem" class="self-center"/>
       </div>
 	</q-page>
 </template>
@@ -10,40 +10,43 @@
 <script>
 	import { TouchSwipe } from 'quasar'
    import { mapGetters, mapActions } from 'vuex'
-   import { ItemMgr } from 'src/managers/ItemMgr.js'
-	import { ItemDisplayType, ItemCollectionType, Route, Colors } from 'src/utils/Constants.js'
-	import { isSwipeLeft, isSwipeRight } from 'src/utils/Utils.js'
+   import { ItemMgr } from 'src/managers/ItemMgr'
+	import { SessionMgr } from 'src/managers/SessionMgr'
+	import { ItemDisplayType, Route, Colors } from 'src/utils/Constants'
+	import { isSwipeLeft, isSwipeRight } from 'src/utils/Utils'
 	
 	export default {
 		data() {
 			return {				
             itemId: "",
-            itemCollectionType: "",
-        }
+         }
 		},
 	  	computed: {
-         ...mapGetters('item', ['itemsExist', 'getItem', 'getItemsInDrop']),			
+         ...mapGetters('item', ['itemsExist', 'getItem']),			
 			...mapGetters('color', Colors),
-			displayType() { return ItemDisplayType.FULL },
+			displayTypeFull() { return ItemDisplayType.FULL },
          item() { return this.getItem(this.itemId) },
-         otherItems() { return this.getItemsInDrop(this.item.dropId) },
+         displayedItems() { 
+            const itemsCollection = SessionMgr.getDisplayItemsDesc()
+            if (SessionMgr.isArtist(itemsCollection)) {
+               const artistCategoryId = SessionMgr.getArtistCategory()
+               return SessionMgr.getCategoryDisplayItems(artistCategoryId)
+            }
+            else { return SessionMgr.getDisplayItems() }
+         },
          prevItem() { 
             let prev = null
-            for (var item of this.otherItems) { 
+            for (var item of this.displayedItems) { 
                if (item.id == this.item.id) { return prev } 
-               else if ((this.itemCollectionType == ItemCollectionType.DROP) || !ItemMgr.isGone(item)) {
-                  prev = item
-               }
+               else { prev = item }
             }
             return null
          },
          nextItem() { 
             let itemIsNext = false
-            for (var item of this.otherItems) { 
+            for (var item of this.displayedItems) { 
                if (item.id == this.item.id) { itemIsNext = true } 
-               else if (itemIsNext && ((this.itemCollectionType == ItemCollectionType.DROP) || !ItemMgr.isGone(item))) {
-                  return item 
-               }
+               else if (itemIsNext) { return item }
             }
             return null
          },
@@ -51,8 +54,8 @@
 		},
 		methods: {
          handleSwipe({ evt, ...info }) {
-            if (isSwipeLeft(info) && this.nextItem)       { this.$router.push("/item/" + this.nextItem.id + "/" + this.itemCollectionType) }
-            else if (isSwipeRight(info) && this.prevItem) { this.$router.push("/item/" + this.prevItem.id + "/" + this.itemCollectionType) }
+            if (isSwipeLeft(info) && this.nextItem)       { this.$router.push("/item/" + this.nextItem.id) }
+            else if (isSwipeRight(info) && this.prevItem) { this.$router.push("/item/" + this.prevItem.id) }
          }
       },
 		components: {
@@ -63,7 +66,6 @@
       },
       created() {
          this.itemId = this.$route.params.itemId
-         this.itemCollectionType = this.$route.params.itemColType
       },
       watch: {
          $route() { this.itemId = this.$route.params.itemId }
