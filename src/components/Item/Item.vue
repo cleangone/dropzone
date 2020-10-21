@@ -41,28 +41,28 @@
 			</q-card>
 		</div>
 		<div v-else>
-         <!-- <div class="row">
-            <div class="col">prev</div> -->
 			<q-card-section :class="textFullBgColor">
-            <div v-if="$q.platform.is.mobile" class="row q-mb-sm text-caption"> 
-               <div v-if="prev" class="col" >
-                  <q-btn icon="arrow_back_ios"  @click="$router.push('/item/' + prev.id)" size="sm" flat dense color="primary" />
-                  {{ prev.name }} 
+            <div class="row q-mb-sm text-caption text-bold"> 
+               <div class="col-5" :class="green">
+                  <router-link v-if="prev" :to="{ name: itemPageRoute, params: { itemId: prev.id } }" class="col-5" :class="red">
+                     <q-btn icon="arrow_back_ios" size="sm" flat dense color="primary"/>{{prev.name}}
+                  </router-link> 
                </div>
-               <div v-if="next" class="col" align="right">
-                  {{ next.name }}
-	               <q-btn icon="arrow_forward_ios" @click="$router.push('/item/' + next.id)" size="sm" flat dense color="primary" />
-  				   </div>
+               <div class="col" align="center" :class="yellow">
+                  <router-link :to="{ name: dropPageRoute, params: { dropId: item.dropId } }" :class="red">Drop</router-link>                  
+               </div>
+               <div class="col-5" align="right" :class="red">
+                  <router-link v-if="next" :to="{ name: itemPageRoute, params: { itemId: next.id } }" :class="yellow">
+                     {{next.name}}<q-btn icon="arrow_forward_ios" size="sm" flat dense color="primary"/>
+                  </router-link> 
+               </div>
             </div>
             <q-card-section class="bg-white column">					
                <item-image-full :src="image.url" :width="imageFullWidth"/>
                <item-liked :item="item" size="lg"/> 
             </q-card-section>	
             <q-card-section class="text-subtitle2 q-pa-xs q-mt-sm">
-               <div :class="orange">
-                  <strong>{{ item.name }}</strong>
-                  <router-link :to="{ name: dropPageRoute, params: { dropId: item.dropId } }" class="float-right">{{drop.name}}</router-link>                  
-               </div>
+               <div class="text-bold" :class="orange">{{ item.name }}</div>
                <div v-if="hasArtist"> {{artist}} </div>
                <div>
                   {{ priceText }}    
@@ -80,8 +80,6 @@
             </q-card-section>	
             <item-actions :item="item" :displayType="displayType" class="q-mt-md"/>
          </q-card-section>
-          <!-- <div class="col">next</div>
-          </div> -->
 		</div>
   	</div>
 </template>

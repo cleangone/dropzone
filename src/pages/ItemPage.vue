@@ -1,10 +1,10 @@
 <template>
 	<q-page class="q-pa-sm" :class="pink"> 
 		<!-- have to wait for item if user followed an external link directly to this page -->
-      <div v-if="itemsExist && $q.platform.is.mobile" v-touch-swipe.mouse="handleSwipe" class="column" :class="yellow">
+      <div v-if="itemsExist" v-touch-swipe.mouse="handleSwipe" class="column" :class="orange">
          <item :item="item" :displayType="displayType" :prev="prevItem" :next="nextItem" class="self-center"/>
       </div>
-      <div v-else-if="itemsExist " class="row" :class="blue">
+      <!-- <div v-else-if="itemsExist" class="row" :class="blue">
          <div class="col" :class="indigo" align="right">
            <div style="height: 40px"/>
             <div v-if="prevItem" class="text-bold">
@@ -26,7 +26,7 @@
     	         </router-link>
             </div>
          </div>
-      </div>
+      </div> -->
 	</q-page>
 </template>
 
