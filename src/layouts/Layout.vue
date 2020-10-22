@@ -61,9 +61,10 @@
 
       <q-footer class="footer q-px-xs q-py-none">
          <q-tabs indicator-color="transparent" class="row q-my-none q-py-none q-px-none">
-            <q-route-tab icon="home" to="/" size="sm" class="q-pa-none q-ma-none" dense /> 
+            <q-route-tab icon="home" to="/" size="sm" class="q-pa-none q-ma-none" dense />    
             <span class="col"/>
-    		 </q-tabs>
+            <q-route-tab v-if="currentUserActionsExist" icon="fas fa-gavel" to="/current" size="sm" class="q-pa-none q-ma-none" dense />    
+         </q-tabs>
       </q-footer>
 
       <q-dialog v-model="userHasAlert">
@@ -225,8 +226,11 @@
    } 
    */
    
+   .header { 
+      background-color: rgba(0, 0, 0, 0.8);
+   } 
    .footer { 
-      background-color: rgba(0, 0, 0, 0.7);
+      background-color: rgba(0, 0, 0, 0.65);
    } 
    /* 
    .footer:hover { background-color: black;

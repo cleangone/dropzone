@@ -177,7 +177,7 @@
                if (this.itemToSubmit.tagIds) { this.itemToSubmit.tagIds = {...this.item.tagIds} }
                if (this.itemToSubmit.tagNames) { this.itemToSubmit.tagNames = {...this.item.tagNames} }
                this.artist = TagMgr.artist(this.itemToSubmit)
-               this.category = TagMgr.primary(this.itemToSubmit)
+               this.category = TagMgr.primaryName(this.itemToSubmit)
             }
             else { this.itemToSubmit.dropId = this.dropId }
          }, 100)  

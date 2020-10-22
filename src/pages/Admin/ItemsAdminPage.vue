@@ -175,7 +175,7 @@
             return text 
          },
          artist(row) { return TagMgr.artist(row) },
-         primaryCategory(row) { return TagMgr.primary(row) },
+         primaryCategory(row) { return TagMgr.primaryName(row) },
          userName(userId) { return this.userIdToName.get(userId) },
 			promptToDeleteItem(itemId, name) {
 				this.$q.dialog({title: 'Confirm', message: 'Delete ' + name + '?', persistent: true,			

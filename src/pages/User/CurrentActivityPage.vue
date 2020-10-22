@@ -14,7 +14,8 @@
 
 <script>
 	import { mapGetters } from 'vuex'
-	import { ItemMgr } from 'src/managers/ItemMgr'
+   import { ItemMgr } from 'src/managers/ItemMgr'
+   import { SessionMgr } from 'src/managers/SessionMgr'
 	import { ItemDisplayType } from 'src/utils/Constants'
 	
 	export default {
@@ -41,6 +42,8 @@
             return this.getItems(currItemIds)
          }, 
          displayItems() { 
+            SessionMgr.setCurrentItemsDesc()
+
             const displayItems = []
             const buyItems = []
             const outbidItems = []
@@ -50,7 +53,7 @@
                else if (this.showOutbid && ItemMgr.isGone(item) && !ItemMgr.isBuyerId(item, this.userId)) { outbidItems.push(item) }
             })
             
-            return displayItems.concat(buyItems).concat(outbidItems)
+            return SessionMgr.setDisplayItems(displayItems.concat(buyItems).concat(outbidItems))
          }
       },
 		components: {

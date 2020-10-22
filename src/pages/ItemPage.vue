@@ -12,7 +12,7 @@
    import { mapGetters, mapActions } from 'vuex'
    import { ItemMgr } from 'src/managers/ItemMgr'
 	import { SessionMgr } from 'src/managers/SessionMgr'
-	import { ItemDisplayType, Route, Colors } from 'src/utils/Constants'
+	import { ItemDisplayType, Colors } from 'src/utils/Constants'
 	import { isSwipeLeft, isSwipeRight } from 'src/utils/Utils'
 	
 	export default {
@@ -50,8 +50,7 @@
             }
             return null
          },
-         itemPageRoute() { return Route.ITEM },
-		},
+      },
 		methods: {
          handleSwipe({ evt, ...info }) {
             if (isSwipeLeft(info) && this.nextItem)       { this.$router.push("/item/" + this.nextItem.id) }

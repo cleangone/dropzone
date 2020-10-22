@@ -111,8 +111,10 @@
          itemsCollection() { return SessionMgr.getDisplayItemsDesc() },
          itemsCollectionName() { return this.itemsCollection.name },
          itemsCollectionRouterLink() { 
-            if (SessionMgr.isHome(this.itemsCollection)) { return { name: Route.HOME } }
-            else if (SessionMgr.isDrop(this.itemsCollection)) { return { name: Route.DROP, params: { id: this.itemsCollection.id } } }
+            if (SessionMgr.isHome(this.itemsCollection))          { return { name: Route.HOME } }
+            else if (SessionMgr.isCurrent(this.itemsCollection))  { return { name: Route.CURRENT } }
+            else if (SessionMgr.isFavorite(this.itemsCollection)) { return { name: Route.FAVORITE } }
+            else if (SessionMgr.isDrop(this.itemsCollection))     { return { name: Route.DROP, params: { id: this.itemsCollection.id } } }
             else if (SessionMgr.isArtist(this.itemsCollection)) { 
                const artistCategoryId = SessionMgr.getArtistCategory()
                return { name: Route.ARTIST, params: { id: this.itemsCollection.id, catId: artistCategoryId } }

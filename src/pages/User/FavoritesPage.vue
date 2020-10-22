@@ -9,8 +9,9 @@
 </template>
 
 <script>
-	import { mapGetters, mapActions } from 'vuex'
-	import { ItemDisplayType } from 'src/utils/Constants.js'
+   import { mapGetters, mapActions } from 'vuex'
+   import { SessionMgr } from 'src/managers/SessionMgr'
+	import { ItemDisplayType } from 'src/utils/Constants'
 	
 	export default {
 		data() {
@@ -23,7 +24,11 @@
 			...mapGetters('item', ['getItems']),
 			thumb() { return ItemDisplayType.THUMB },
 			user() { return this.getUser(this.userId) },
-         items () { return (this.user.likedItemIds ? this.getItems(this.user.likedItemIds) : []) },
+         items () { 
+            SessionMgr.setFavoriteItemsDesc()             
+            const items = this.user.likedItemIds ? this.getItems(this.user.likedItemIds) : []
+            return SessionMgr.setDisplayItems(items)
+         },
 		},
 		methods: {
          navBack() { this.$router.go(-1) }

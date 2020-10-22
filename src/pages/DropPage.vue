@@ -61,9 +61,7 @@
          },
          displayItems() { 
             SessionMgr.setDropItemsDesc("Drop", this.dropId) 
-            if (this.showHoldSold) {
-               return SessionMgr.setDisplayItems(this.visibleItems)
-            }
+            if (this.showHoldSold) { return SessionMgr.setDisplayItems(this.visibleItems) }
 
             const displayItems = []
             this.visibleItems.forEach(item => { 

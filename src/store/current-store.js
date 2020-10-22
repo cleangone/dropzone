@@ -1,3 +1,5 @@
+// todo - move to session
+
 const state = {
    activity: false, // true if there is current activity
 }
