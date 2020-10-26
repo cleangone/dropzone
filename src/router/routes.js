@@ -14,6 +14,7 @@ const routes = [
       { path: '/artist/:id/',          component: () => import('pages/ArtistPage.vue') },      
       { path: '/artist/:id/:catId',    component: () => import('pages/ArtistPage.vue'),               name: Route.ARTIST },      
       { path: '/bids/:itemId',         component: () => import('pages/BidsPage.vue') },      
+      { path: '/recent',               component: () => import('pages/RecentItemsPage.vue'),          name: Route.RECENT },
       { path: '/current',              component: () => import('pages/User/CurrentActivityPage.vue'), name: Route.CURRENT },
       { path: '/account',              component: () => import('pages/User/AccountPage.vue') },
       { path: '/favorites',            component: () => import('pages/User/FavoritesPage.vue'),       name: Route.FAVORITE },

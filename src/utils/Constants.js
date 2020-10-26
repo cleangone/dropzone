@@ -11,11 +11,12 @@ export const Route = {
    DROP:     'Drop',
    ITEM:     'Item',
    ARTIST:   'Artist',
+   RECENT:   'Recent Updates',
    CURRENT:  'Current Activity',
    FAVORITE: 'Favorite',
    LOGIN:    'Login',
    REGISTER: 'Register',
-   FORGOT:   'ForgotPassword',
+   FORGOT:   'Forgot Password',
 }
 
 export const SaleType = {
@@ -29,6 +30,8 @@ export const UI = {
 }
 
 export const Versions = [
+   // future "v0.21.0 - 10/xx/20", // Categories
+   "v0.20.0 - 10/26/20", // RecentItemsPage, refactor item/drop add/edit layout, item.dropId editable
    "v0.19.4 - 10/22/20", // fix TagMgr.primary bug, prev/next through favorites, curr acitivity
    "v0.19.3 - 10/21/20", // SessionMgr, Item Page prev/next inside of an artist category
    "v0.19.2 - 10/20/20", // Do not show hold/sold in item prev/next if they are not shown on drop page

@@ -1,39 +1,38 @@
 <template>
    <q-card class="form-card">
-      <q-card-section>
-         <div class="text-h6 heading">{{ type }} Item</div>
+      <q-card-section class="q-pb-none" :class="red">
+         <div class="text-h6 heading" :class="indigo">{{ type }} Item</div>
       </q-card-section>
-
-      <q-card-section>
-         <div class="row q-mb-sm q-gutter-sm">
-            <q-input v-model="itemToSubmit.name"     label="Name"      filled class="col-6"/>
-            <q-input v-model="itemToSubmit.sortName" label="Sort Name" filled class="col"/>
-         </div>
-         <div class="row q-mb-sm q-gutter-sm">
-            <q-select v-model="artist"   label="Artist"   :options="artistOptions"   filled class="col-6"/>
-            <q-select v-model="category" label="Category" :options="categoryOptions" filled class="col"/>
-         </div>
-         <div class="row q-mb-sm q-gutter-sm">
-            <q-input v-model.number="itemToSubmit.startPrice" label="Price" type=number prefix="$" filled class="col-6" />
-            <div class="col"/>
-         </div>
-         <div class="row q-mb-sm">
-            <div v-if="uploaderDisplayed" class="col q-gutter-xs" :class="pink">
-               <q-firebase-uploader path="drops/" @upload="uploadCompleted" style="width: 400px; min-height: 175px"/> 
-               <q-btn @click="uploaderDisplayed=false" icon="clear" color="primary" size="sm" dense/>
+      <q-card-section :class="pink">
+         <div class="row q-mb-sm" :class="orange">
+            <div class="col q-mb-sm q-gutter-sm q-pr-sm" :class="blue">
+               <q-input v-model="itemToSubmit.name" label="Name" filled />
+               <q-select v-model="artist" label="Artist" :options="artistOptions" filled />
+               <q-input  v-if="!uploaderDisplayed" v-model.number="itemToSubmit.startPrice" label="Price" type=number prefix="$" filled />
+               <q-select v-if="!uploaderDisplayed" label="Status" v-model="itemToSubmit.status" :options="statusOptions" filled/>
+               <q-select v-if="!uploaderDisplayed" label="Sale Type" v-model="itemToSubmit.saleType" :options="saleTypeOptions" filled/>
+               <q-select v-if="!uploaderDisplayed" label="Drop" v-model="itemToSubmit.dropId" 
+                  :options="dropOptions" option-value="id" option-label="name" emit-value map-options filled/>
             </div>
-            <div v-else class="col-6 q-gutter-sm" :class="yellow">
-               <q-btn @click="uploaderDisplayed=true" label="Upload Image" color="primary" />
-               <q-checkbox v-model="itemToSubmit.primaryImage.isHorizontal" label="Horizontal Image" dense/>
-               <q-select label="Status" v-model="itemToSubmit.status" :options="statusOptions" filled/>
-               <q-select label="Sale Type" v-model="itemToSubmit.saleType" :options="saleTypeOptions" filled/>
-            </div>
-            <div v-if="!uploaderDisplayed" class="col" :class="blue">
+            <div class="col q-mb-sm q-gutter-sm" :class="green">
+               <q-input v-model="itemToSubmit.sortName" label="Sort Name" filled />
+               <q-select v-model="category" label="Category" :options="categoryOptions" filled />
                <q-img v-if="!uploaderDisplayed" style="height: 200px; width: 200px;" class="q-ml-sm" :class="pink" contain
-               :src="itemToSubmit.primaryImage.url ? itemToSubmit.primaryImage.url : 'statics/image-placeholder.png'" />
+                  :src="itemToSubmit.primaryImage.url ? itemToSubmit.primaryImage.url : 'statics/image-placeholder.png'" />
+               <div v-if="!uploaderDisplayed">
+                  <q-checkbox v-model="itemToSubmit.primaryImage.isHorizontal" label="Horizontal"  dense/>
+                  <q-btn @click="uploaderDisplayed=true" label="Upload Image" class="float-right" color="primary" />
+               </div>
             </div>
          </div>
-         <description-edit v-if="!uploaderDisplayed" :container="itemToSubmit" />
+         <div v-if="uploaderDisplayed" class="col q-gutter-xs q-pr-xs" :class="yellow" >
+            <q-firebase-uploader path="drops/" @upload="uploadCompleted" style="width: 100%; min-height: 225px"/> 
+            <q-btn @click="uploaderDisplayed=false" class="float-right" icon="clear" color="primary" size="sm" dense/>
+         </div>
+         <div class="col q-gutter-xs" :class="purple" >
+            <div v-if="uploaderDisplayed" style="height: 30px" :class="green" />
+            <description-edit :container="itemToSubmit" />
+         </div>
 	   </q-card-section>
 
       <q-card-actions align="right">
@@ -77,13 +76,15 @@
          }
       },
       computed: {
+         ...mapGetters('drop', ['getDrops']),
          ...mapGetters('tag', ['getTags']),
          ...mapGetters('color', Colors),
          isEdit() { return this.type == 'edit' },
          artistMap() { return this.getTagMap(TagCategory.ARTIST) },
          categoryMap() { return this.getTagMap(TagCategory.PRIMARY) },
          artistOptions() { return this.getTagOptions(this.artistMap) },
-         categoryOptions() { return this.getTagOptions(this.categoryMap) }
+         categoryOptions() { return this.getTagOptions(this.categoryMap) },
+         dropOptions() { return this.getDrops }
       },
 		methods: {
          ...mapActions('item', ['setItem']),
@@ -113,7 +114,7 @@
                this.itemToSubmit.buyerId = ''
                this.itemToSubmit.buyerName = ''
                this.itemToSubmit.dropDoneDate = 0 
-               this.itemToSubmit.lastUserActivityDate = 0 
+               this.itemToSubmit.userUpdatedDate = this.itemToSubmit.sortedCreateDate  
             }
 
             if (this.artist) {

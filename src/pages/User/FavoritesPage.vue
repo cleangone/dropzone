@@ -3,7 +3,7 @@
 		<a style="cursor: pointer; text-decoration: underline" v-on:click="navBack()">Back</a>
       <div class="row q-mt-sm text-h6">Favorites</div>
       <div class="row q-mt-sm q-gutter-sm">
-         <item v-for="(item, key) in items" :key="key" :item="item" :displayType="thumb"/>
+         <item v-for="(item, key) in items" :key="key" :item="item" />
       </div>
 	</q-page>
 </template>
@@ -11,7 +11,6 @@
 <script>
    import { mapGetters, mapActions } from 'vuex'
    import { SessionMgr } from 'src/managers/SessionMgr'
-	import { ItemDisplayType } from 'src/utils/Constants'
 	
 	export default {
 		data() {
@@ -22,7 +21,6 @@
 			...mapGetters('auth', ['userId']),
 			...mapGetters('user', ['getUser']),
 			...mapGetters('item', ['getItems']),
-			thumb() { return ItemDisplayType.THUMB },
 			user() { return this.getUser(this.userId) },
          items () { 
             SessionMgr.setFavoriteItemsDesc()             

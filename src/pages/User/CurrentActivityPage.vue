@@ -7,7 +7,7 @@
          <q-checkbox v-model="showOutbid"   label="Show Outbid"     class="q-ml-lg text-grey-10" color="grey-10" dense/>
       </div>
       <div class="row q-mt-sm q-gutter-sm">
-         <item v-for="(item, key) in displayItems" :key="key" :item="item" :displayType="thumb"/>
+         <item v-for="(item, key) in displayItems" :key="key" :item="item" />
       </div>
 	</q-page>
 </template>
@@ -16,7 +16,6 @@
 	import { mapGetters } from 'vuex'
    import { ItemMgr } from 'src/managers/ItemMgr'
    import { SessionMgr } from 'src/managers/SessionMgr'
-	import { ItemDisplayType } from 'src/utils/Constants'
 	
 	export default {
       data() {
@@ -30,8 +29,7 @@
          ...mapGetters('auth', ['userId']),
          ...mapGetters('action', ['getUserActions']),
 			...mapGetters('item', ['getItems']),
-			thumb() { return ItemDisplayType.THUMB },
-         currentItems() { 
+			currentItems() { 
             const currItemIds = []
             const yesterday = new Date().getTime() - 1000*60*60*24 // 24 hours ago in millis
             for (var action of this.getUserActions(this.userId)) {

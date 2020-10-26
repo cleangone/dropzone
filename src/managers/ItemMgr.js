@@ -16,7 +16,8 @@ import { Config } from 'boot/Config'
       currBid { actionId, userId, userNickname, amount, date }
       prevBids [ currBid obj ]
       createdDate
-      lastUserActivityDate
+      sortedCreateDate
+      userUpdatedDate
       dropDoneDate
       primaryImage { baseName, isHorizontal, url, filePath, thumbUrl, thumbFilePath }
       images [ Image Obj ]

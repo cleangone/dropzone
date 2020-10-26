@@ -9,7 +9,7 @@
 				<q-checkbox v-model="showHoldSold" label="Show Hold/Sold" class="text-grey-10" color="grey-10" dense />
 			</div>
          <div v-if="showItems" class="row q-mt-sm q-gutter-sm">
-				<item v-for="(item, key) in displayItems" :key="key" :item="item" :displayType="displayTypeThumb"/>
+				<item v-for="(item, key) in displayItems" :key="key" :item="item" />
 			</div>
          <div v-else class="q-mt-sm" style="max-width:500px">
 				<q-img :src="drop.imageUrl ? drop.imageUrl : 'statics/image-placeholder.png'"  basic contain>
@@ -29,7 +29,6 @@
    import { DropMgr } from 'src/managers/DropMgr'
 	import { ItemMgr } from 'src/managers/ItemMgr'
    import { SessionMgr } from 'src/managers/SessionMgr'
-   import { ItemDisplayType } from 'src/utils/Constants'
    import { formatTodayOr_ddd_MMM_D_h_mm } from 'src/utils/DateUtils'
    
 	export default {
@@ -46,7 +45,6 @@
 			...mapGetters('drop', ['getDrop']),
 			...mapGetters('item', ['getItemsInDrop']),
 			adminViewingPreDrop() { return this.isAdmin && DropMgr.isPreDrop(this.drop) },
-         displayTypeThumb() { return ItemDisplayType.THUMB },
          drop() { return this.getDrop(this.dropId) },
          isCountdown() { return DropMgr.isCountdown(this.drop) },
          user() { return this.getUser(this.userId) },

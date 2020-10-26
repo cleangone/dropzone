@@ -12,6 +12,9 @@
             <q-td slot="body-cell-name" slot-scope="props" :props="props"> 
                <a :href="'#/drop/' + props.row.id">{{ props.row.name }}</a>
             </q-td>
+            <q-td slot="body-cell-home" slot-scope="props" :props="props"> 
+               {{ homePagePosition(props.row) }}
+            </q-td>
             <q-td slot="body-cell-status" slot-scope="props" :props="props"> 
                {{ props.row.status }}
                <q-btn v-if="canSchedule(props.row)" label="Schedule" @click="schedule(props.row)" @click.stop size="xs" color="primary" dense/>         
@@ -27,7 +30,6 @@
 		 	<q-btn @click="showAddModal=true" icon="add" unelevated color="primary"/>
 		 </div>
 
-		 <!-- 2 modals - don't want a race condition updating type   -->
 		<q-dialog v-model="showAddModal">	
 			<drop-add-edit type="add" @close="showAddModal=false" />
 		</q-dialog>
@@ -55,13 +57,13 @@
  				columns: [
                //  todo - headerStyle doesn't seem to work - use it to center header
         			{ name: 'id', field: 'id' },
-				 	{ name: 'name',      label: 'Name',         align: 'left',   field: 'name',             sortable: true },
+				 	{ name: 'name',      label: 'Name',       align: 'left',   field: 'name',             sortable: true },
                { name: 'startDate', label: 'Start Date ' + localTimezone(), 
-                                                            align: 'center', field: 'startDate',       sortable: true, format: val => formatDateTimeOptYear(val) },
-					{ name: 'home', label: 'Home Page Position', align: 'center', field: 'homePosition',    sortable: true },
-               { name: 'status',    label: 'Status',        align: 'center', field: 'status',          sortable: true },
-					{ name: 'items',     label: 'Items',         align: 'center' },
-					{ name: 'saleType',  label: 'Type',          align: 'center', field: 'defaultSaleType', sortable: true },
+                                                         align: 'center', field: 'startDate',       sortable: true, format: val => formatDateTimeOptYear(val) },
+					{ name: 'home',      label: 'Home Page',  align: 'center', field: 'homeGroup',       sortable: true },
+               { name: 'status',    label: 'Status',     align: 'center', field: 'status',          sortable: true },
+					{ name: 'items',     label: 'Items',      align: 'center' },
+					{ name: 'saleType',  label: 'Type',       align: 'center', field: 'defaultSaleType', sortable: true },
 					{ name: 'actions' }
             ],
             pagination: { rowsPerPage: 30 },
@@ -78,6 +80,7 @@
          schedule(drop) { return this.updateDrop({ id: drop.id, status: DropStatus.SCHEDULING }) },
          onRowClick(evt, row) { this.$router.push("/admin/items/" + row.id) },
          itemText(dropId) { return ItemMgr.itemText(this.getItemsInDrop(dropId)) },
+         homePagePosition(drop) { return DropMgr.hasHomeGroup(drop) ? drop.homeGroup + " " + drop.homePosition : "" },
          editDrop(dropId) {
 				// console.log("editDrop", dropId)
 				this.dropIdToEdit = dropId

@@ -16,12 +16,6 @@
 						<template v-slot:append><q-icon name="search"/></template>
 					</q-input>
 				</template> 
-            <q-td slot="body-cell-artist" slot-scope="props" :props="props"> 
-               {{ artist(props.row) }}
-            </q-td>
-            <q-td slot="body-cell-category" slot-scope="props" :props="props"> 
-               {{ primaryCategory(props.row) }}
-            </q-td>
             <q-td slot="body-cell-price" slot-scope="props" :props="props"> 
                {{ priceText(props.row) }}
             </q-td>
@@ -36,15 +30,19 @@
 			</q-table>
 
          <div class="q-mt-md"> 
-			   <q-btn v-if="!rowsSelected"       @click="showAddModal=true"       icon="add"             unelevated color="primary"/>
-            <q-btn v-if="!rowsSelected"       @click="showBulkAddModal=true"   label="Bulk Add"       unelevated color="primary" class="q-ml-xs"/>
-            <q-btn v-if="showInvoiceButton"   @click="showInvoiceModal=true"   label="Create Invoice" unelevated color="primary" class="q-mr-xs"/>
-            <q-btn v-if="showBulkEditButton"  @click="showBulkEditModal=true"  label="Bulk Edit"      unelevated color="primary" class="q-mr-xs"/>
-            <q-btn v-if="showQuickEditButton" @click="showQuickEditModal=true" label="Quick Edit"     unelevated color="primary"/>
+			   <q-btn v-if="!rowsSelected"       @click="showAddModal=true"       icon="add"                unelevated color="primary"/>
+            <q-btn v-if="!rowsSelected"       @click="showBulkAddModal=true"   label="Bulk Add"          unelevated color="primary" class="q-ml-xs"/>
+            <q-btn v-if="showSortDatesButton" @click="showSortDatesModal=true" label="Sort Create Dates" unelevated color="primary" class="q-mr-xs"/>
+            <q-btn v-if="showInvoiceButton"   @click="showInvoiceModal=true"   label="Create Invoice"    unelevated color="primary" class="q-mr-xs"/>
+            <q-btn v-if="showBulkEditButton"  @click="showBulkEditModal=true"  label="Bulk Edit"         unelevated color="primary" class="q-mr-xs"/>
+            <q-btn v-if="showQuickEditButton" @click="showQuickEditModal=true" label="Quick Edit"        unelevated color="primary"/>
          </div> 
          <div style="height: 75px"/>
 		</div>
  
+      <q-dialog v-model="showSortDatesModal">	
+			<item-sort-dates :items="selectedRowItems" @close="showSortDatesModal=false" />
+		</q-dialog>
 		<q-dialog v-model="showEditDropModal">
          <drop-add-edit type="edit" :drop="drop" @close="showEditDropModal=false" />
 		</q-dialog>
@@ -82,7 +80,8 @@
 		data() {
 	  		return {
             dropId: '',
-            showEditDropModal: false,
+            showSortDatesModal: false,
+				showEditDropModal: false,
 				showAddModal: false,
             showEditModal: false,
             showBulkAddModal: false,
@@ -92,13 +91,14 @@
 				itemIdToEdit: '',
             tableDataFilter: '',
             selectedRowItems: [],
-				visibleColumns: [ 'name', 'sort', 'artist', 'category', 'saleType', 'buyerId', 'price', 'bids', 'status', 'actions'],
+				visibleColumns: [ 'name', 'sort', 'sortDate', 'artist', 'category', 'saleType', 'buyerId', 'price', 'bids', 'status', 'actions'],
  				columns: [
         			{ name: 'id', field: 'id' },
 				 	{ name: 'name',       label: 'Name',        align: 'left',   field: 'name',         sortable: true },
 				 	{ name: 'sort',       label: 'Sort',        align: 'left',   field: 'sortName',     sortable: true },
-				 	{ name: 'artist',     label: 'Artist',      align: 'center',                        sortable: true },
-				 	{ name: 'category',   label: 'Category',    align: 'center',                        sortable: true },
+				 	{ name: 'sortDate',   label: 'Created',     align: 'center', field: 'sortedCreateDate', sortable: true },
+				 	{ name: 'artist',     label: 'Artist',      align: 'center', field: 'tempArtist',   sortable: true },
+				 	{ name: 'category',   label: 'Category',    align: 'center', field: 'tempCategory', sortable: true },
 				 	{ name: 'saleType',   label: 'Sale Type',   align: 'center', field: 'saleType',     sortable: true },
 					{ name: 'buyerId',    label: 'Buyer',       align: 'left',   field: 'buyerId',      sortable: true, format: val => this.userName(val) },
 					{ name: 'price', label:'Start/Final Price', align: 'right',  field: 'startPrice',   sortable: true },
@@ -121,10 +121,14 @@
          itemToEdit() { return this.itemIdToEdit ? getItem(this.items, this.itemIdToEdit) : null },
          itemsExist() { return this.items.length > 0 },
          items() { 
-            // make copies - table adds an index to objs
             let items = this.getItemsInDrop(this.dropId) 
             let copies = []
-            items.forEach(item => { copies.push(Object.assign({}, item)) })
+            items.forEach(item => { 
+               const copy = Object.assign({}, item)
+               copy.tempCategory = TagMgr.primaryName(copy) // add temp fields so they are searchable
+               copy.tempArtist = TagMgr.artist(copy)
+               copies.push(copy) 
+            })
             return copies
          },
          rowsSelected() { return this.selectedRowItems.length > 0 },
@@ -143,24 +147,15 @@
 
             return true
          },
-         showBulkEditButton() { 
-            // valid for private, setup, available, hold items
+         showSortDatesButton() { 
             if (this.selectedRowItems.length < 2) { return false } 
             for (var rowItem of this.selectedRowItems) {
-               if (!(ItemMgr.isPrivate(rowItem) || ItemMgr.isSetup(rowItem) || ItemMgr.isAvailable(rowItem) || ItemMgr.isHold(rowItem))) { 
-                  return false 
-               }
+               if (!ItemMgr.isPrivate(rowItem)) { return false }
             }
             return true
          },
-         showQuickEditButton() { 
-            // valid for private, setup items
-            if (this.selectedRowItems.length < 2) { return false } 
-            for (var rowItem of this.selectedRowItems) {
-               if (!(ItemMgr.isPrivate(rowItem) || ItemMgr.isSetup(rowItem))) { return false }
-            }
-            return true
-         },
+         showBulkEditButton() { return (this.selectedRowItems.length > 1) },
+         showQuickEditButton() { return (this.selectedRowItems.length > 1) },
 		},
 		methods: {
 			...mapActions('item', ['bindItems', 'deleteItem']),
@@ -174,8 +169,6 @@
             if (row.buyPrice && (row.buyPrice != row.startPrice)) { text += ("/" + dollars(row.buyPrice))}
             return text 
          },
-         artist(row) { return TagMgr.artist(row) },
-         primaryCategory(row) { return TagMgr.primaryName(row) },
          userName(userId) { return this.userIdToName.get(userId) },
 			promptToDeleteItem(itemId, name) {
 				this.$q.dialog({title: 'Confirm', message: 'Delete ' + name + '?', persistent: true,			
@@ -198,6 +191,7 @@
       	'item-bulk-add'    : require('components/Item/ItemBulkAdd.vue').default,
       	'item-bulk-edit'   : require('components/Item/ItemBulkEdit.vue').default,
          'item-quick-edit'  : require('components/Item/ItemQuickEdit.vue').default,
+         'item-sort-dates'  : require('components/Item/ItemSortDates.vue').default,
          'invoice-add-edit' : require('components/Invoice/InvoiceAddEdit.vue').default,
       },
       created() {

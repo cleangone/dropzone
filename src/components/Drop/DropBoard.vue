@@ -35,19 +35,13 @@
             const items = this.getItemsInDrops(dropIds)
 
             // show items with user activity at top 
-            const userActivityItems = []
-            const noActivityItems = []
+            const activeItems = []
             for (var item of items) {
-               if (ItemMgr.isActive(item)) {
-                  if (item.lastUserActivityDate == 0) { noActivityItems.push(item) }
-                  else { userActivityItems.push(item) }
-               }
+               if (ItemMgr.isActive(item)) { activeItems.push(item) }
             }
 
-            userActivityItems.sort((a, b) => (a.lastUserActivityDate > b.lastUserActivityDate) ? -1 : 1)
-            noActivityItems.sort((a, b)  => (a.sortName > b.sortName) ? 1 : -1)
-   
-            return SessionMgr.setDisplayItems(userActivityItems.concat(noActivityItems))
+            activeItems.sort((a, b) => (a.userUpdatedDate > b.userUpdatedDate) ? -1 : 1)            
+            return SessionMgr.setDisplayItems(activeItems)
          }
        },
        methods: {
@@ -61,17 +55,4 @@
 </script>
 
 <style>
-	.card {
-		min-height: 250px;
-		max-width: 500px;
-		min-width: 400px;
-		transition: background 0.3s;
-	}
-	.card-clickable { cursor: pointer; }
-	.card-clickable:hover {
-		background: #bdbdbd!important;
-	}
-	.card .q-img { max-height: 180px; }
-	.card .q-img__image { background-size: cover !important; }
-	
 </style>

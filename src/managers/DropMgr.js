@@ -9,11 +9,10 @@ export const DropStatus = {
    DROPPED:    'Dropped'
 }
 
-export const HomePosition = {
-   PRIMARY_A: 'Primary A',
-   PRIMARY_B: 'Primary B',
-   SECOND_A:  'Secondary A',
-   SECOND_B:  'Secondary B',
+export const HomeGroup = {
+   PRIMARY:   'Primary',
+   SECONDARY: 'Secondary',
+   NONE:      'None',
 }
 
 export class DropMgr {
@@ -31,4 +30,9 @@ export class DropMgr {
    static isCountdown(drop)      { return drop.status == DropStatus.COUNTDOWN }		
    static isLive(drop)           { return drop.status == DropStatus.LIVE }		
    static isDropped(drop)        { return drop.status == DropStatus.DROPPED }	
+
+   static hasHomeGroup(drop)     { return DropMgr.isPrimaryGroup(drop) || DropMgr.isSecondaryGroup(drop) }
+   static isPrimaryGroup(drop)   { return drop.homeGroup == HomeGroup.PRIMARY }
+   static isSecondaryGroup(drop) { return drop.homeGroup == HomeGroup.SECONDARY }
+   static homePosition(drop)     { return drop.homePosition ?  drop.homePosition : "zzz" } 
 }

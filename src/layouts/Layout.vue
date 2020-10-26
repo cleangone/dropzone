@@ -30,9 +30,9 @@
          :mini="drawerMini" :overlay="$q.platform.is.mobile ? true : false"
          @mouseover="drawerMouseover=true" @mouseout="drawerMouseover=false">
          <q-list>
-            <layout-item path="/" label="Home" iconName="home"/>
-            <layout-item v-if="currentUserActionsExist" path="/current" :class="activeItemsClass" label="Current Activity" iconName="fas fa-gavel"/>          
-            <q-expansion-item label="Artists" icon="brush" :content-inset-level="0.25" expand-separator>
+            <layout-item v-if="currentUserActionsExist" path="/current" :class="activeItemsClass" 
+            label="Current Activity" iconName="fas fa-gavel"/>          
+            <q-expansion-item label="Artists" icon="brush" expand-separator>
                <layout-item v-for="(tag, key) in artistLinks" :key="key" :path="'/artist/' + tag.id" :label="tag.name" :tag="tag" />
             </q-expansion-item>                
             <q-expansion-item v-if="loggedIn" label="My Account" icon="account_circle" :content-inset-level="0.25" expand-separator>  
@@ -160,7 +160,7 @@
          ...mapActions('current', ['setCurrentActivity']),
          ...mapActions('drop',    ['bindDrops']),
          ...mapActions('invoice', ['bindInvoices', 'bindUserInvoices', 'unbindUserInvoices']),
-         ...mapActions('item',    ['bindItems']),
+         ...mapActions('item',    ['bindItems', 'bindRecentItems']),
          ...mapActions('setting', ['bindSettings']),
          ...mapActions('tag',     ['bindTags']),
          ...mapActions('user',    ['bindUsers']),
@@ -188,6 +188,7 @@
          if (this.$q.platform.is.mobile) { this.showDrawer = false }
          this.bindDrops()
          this.bindItems()
+         this.bindRecentItems()
          this.bindSettings()
          this.bindTags()
          this.bindUsers()

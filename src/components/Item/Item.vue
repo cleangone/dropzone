@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div v-if="displayMini">
+		<div v-if="displayIsMini">
 			<q-card v-if="hasImageUrl" class="q-pt-xs q-px-xs" style="min-height: 250px;" :class="textBgColor">				
 				<item-thumb :item="item" :image="image" vImageWidth="125px" hImageWidth="250px" imageMaxHeight="200px" :artistCategoryId="artistCategoryId"/>
 				<q-card-section class="text-caption q-pa-xs" :class="purple">
@@ -15,7 +15,7 @@
 				</q-card-section>	
 			</q-card>
 		</div>
-		<div v-else-if="displayThumb || displayBidThumb">
+		<div v-else-if="displayIsThumb || displayIsBidThumb">
 			<q-card v-if="hasImageUrl" class="q-pt-xs q-px-xs" style="min-height: 300px;" :class="textBgColor">
 				<item-thumb :item="item" :image="image" vImageWidth="150px" hImageWidth="300px" imageMaxHeight="250px" :artistCategoryId="artistCategoryId"/>
 				<q-card-section class="text-caption q-px-xs q-pt-xs q-pb-none" :class="purple">
@@ -37,7 +37,7 @@
                   <div v-if="userIsOutbid"     class="text-bold bg-red-5 q-px-xs">You have been outbid</div> 
                </div> 
 				</q-card-section>	
-				<item-actions :item="item" :displayType="displayType"/>
+				<item-actions :item="item" :displayType="itemDisplayType"/>
 			</q-card>
 		</div>
 		<div v-else>
@@ -78,7 +78,7 @@
                </div> 
                <div v-if="hasDescription" class="text-grey-8" v-html="item.description" />
             </q-card-section>	
-            <item-actions :item="item" :displayType="displayType" class="q-mt-md"/>
+            <item-actions :item="item" :displayType="itemDisplayType" class="q-mt-md"/>
          </q-card-section>
 		</div>
   	</div>
@@ -86,11 +86,11 @@
 
 <script>
    import { mapGetters } from 'vuex'
-   import { ItemDisplayType, SaleType, Route, Colors } from 'src/utils/Constants.js'
    import { ItemMgr, ItemStatus } from 'src/managers/ItemMgr'
 	import { TagMgr } from 'src/managers/TagMgr'
 	import { SessionMgr } from 'src/managers/SessionMgr'
-	import { dollars } from 'src/utils/Utils'
+	import { ItemDisplayType, SaleType, Route, Colors } from 'src/utils/Constants'
+   import { dollars } from 'src/utils/Utils'
    
 	export default {
       props: ['item', 'displayType', 
@@ -105,13 +105,15 @@
 			...mapGetters('user', ['isAdmin']),
          ...mapGetters('drop', ['getDrop']),
          ...mapGetters('color', Colors),
-			displayMini() { return ItemDisplayType.MINI  == this.displayType },
-			displayThumb() { return ItemDisplayType.THUMB == this.displayType },
-         displayBidThumb() { return ItemDisplayType.BID_THUMB == this.displayType },
+			itemDisplayType() { return this.displayType  ? this.displayType : ItemDisplayType.THUMB },
+			displayIsMini() { return this.itemDisplayType == ItemDisplayType.MINI },
+			displayIsThumb() { return this.itemDisplayType ==  ItemDisplayType.THUMB },
+         displayIsBidThumb() { return this.itemDisplayType ==  ItemDisplayType.BID_THUMB },
          itemsCollection() { return SessionMgr.getDisplayItemsDesc() },
          itemsCollectionName() { return this.itemsCollection.name },
          itemsCollectionRouterLink() { 
             if (SessionMgr.isHome(this.itemsCollection))          { return { name: Route.HOME } }
+            else if (SessionMgr.isRecent(this.itemsCollection))   { return { name: Route.RECENT } }
             else if (SessionMgr.isCurrent(this.itemsCollection))  { return { name: Route.CURRENT } }
             else if (SessionMgr.isFavorite(this.itemsCollection)) { return { name: Route.FAVORITE } }
             else if (SessionMgr.isDrop(this.itemsCollection))     { return { name: Route.DROP, params: { id: this.itemsCollection.id } } }

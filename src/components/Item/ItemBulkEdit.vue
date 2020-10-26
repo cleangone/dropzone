@@ -115,7 +115,7 @@
                      update.buyerId = ''
                      update.buyerName = ''
                      update.dropDoneDate = 0 
-                     update.lastUserActivityDate = 0 
+                     update.userUpdatedDate = item.sortedCreateDate
                   }
                }
 

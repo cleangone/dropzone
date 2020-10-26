@@ -4,19 +4,29 @@ import { ItemMgr } from 'src/managers/ItemMgr.js'
 import { TagMgr } from 'src/managers/TagMgr.js'  
 import { dateUid } from 'src/utils/Utils'
 
+const MAX_DAYS_AGO = 31
+const MILLIS_PER_DAY = 1000*60*60*24
+
 const state = { 
-   items: [] 
+   items: [], 
+   recentItems: [],
 }
 
 const actions = {
-   bindItems: firestoreAction(({ bindFirestoreRef }) => { return bindFirestoreRef('items', collection()) }),
+   bindItems: firestoreAction(({ bindFirestoreRef }) => { 
+      return bindFirestoreRef('items', collection()) 
+   }),
+   bindRecentItems: firestoreAction(({ bindFirestoreRef }) => {
+      const daysAgo = Date.now() - MILLIS_PER_DAY * MAX_DAYS_AGO
+      console.log("bindRecentItems: sortedCreateDate > " + daysAgo )
+      bindFirestoreRef('recentItems', collection().where('sortedCreateDate', '>', daysAgo))
+   }),
    setItem: firestoreAction((context, item) => { 
-      // console.log("setItem", item)
       if (!item.id) {
          item.id = dateUid()
          item.createdDate = Date.now()
+         item.sortedCreateDate = item.createdDate
       }
-
       collection().doc(item.id).set(item) 
       setThumbUrls(item)
    }),
@@ -84,12 +94,22 @@ function setThumbUrl(item, retry) {
 
 const getters = {
    itemsExist: state => { return state.items && state.items.length > 0 },
+   recentItemsExist: state => { return state.recentItems && state.recentItems.length > 0 },
    getItems: state => itemIds => {   
       // console.log("getItems", itemIds)
       let items = []
       state.items.forEach(item => {
          if (itemIds.includes(item.id) ) { items.push(item) }
       })
+      return items
+   },
+   getRecentItems: state => {   
+      let items = []
+      state.recentItems.forEach(item => {
+         if (ItemMgr.isActive(item)) { items.push(item) }
+      })
+      
+      items.sort((a, b) => (a.sortedCreateDate > b.sortedCreateDate) ? -1 : 1)
       return items
    },
    getItemsInDrop: state => dropId => { 
