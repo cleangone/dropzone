@@ -9,7 +9,7 @@
    import { SessionMgr } from 'src/managers/SessionMgr'	
 	
 	export default {
-		props: ['item', 'image', 'hImageWidth', 'vImageWidth', 'imageMaxHeight', 'artistCategoryId'], 
+		props: ['item', 'image', 'hImageWidth', 'vImageWidth', 'imageMaxHeight', 'tagId'], 
 		computed: {
          ...mapGetters('auth', ['loggedIn', 'userId']),
          ...mapGetters('user', ['getUser']),
@@ -22,7 +22,7 @@
       },
       methods: {
          navToItemPage() { 
-            if (SessionMgr.isArtist(SessionMgr.getDisplayItemsDesc())) { SessionMgr.setArtistCategory(this.artistCategoryId) }
+            if (SessionMgr.isCategory(SessionMgr.getDisplayItemsDesc())) { SessionMgr.setCategoryTag(this.tagId) }
             this.$router.push("/item/" + this.item.id) 
          },
       },

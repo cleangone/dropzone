@@ -33,7 +33,7 @@
             <layout-item v-if="currentUserActionsExist" path="/current" :class="activeItemsClass" 
             label="Current Activity" iconName="fas fa-gavel"/>          
             <q-expansion-item label="Artists" icon="brush" expand-separator>
-               <layout-item v-for="(tag, key) in artistLinks" :key="key" :path="'/artist/' + tag.id" :label="tag.name" :tag="tag" />
+               <layout-item v-for="(category, key) in getPublicCategories" :key="key" :path="'/category/' + category.id" :label="category.name" />
             </q-expansion-item>                
             <q-expansion-item v-if="loggedIn" label="My Account" icon="account_circle" :content-inset-level="0.25" expand-separator>  
                <layout-item path="/account"   label="Account"   iconName="account_circle"/>
@@ -43,10 +43,10 @@
             </q-expansion-item>
             <q-expansion-item v-if="userIsAdmin" label="Admin" icon="settings" :content-inset-level="0.25" expand-separator>
                <layout-item path="/admin/drops"      label="Drops"      iconName="get_app"/>
+               <layout-item path="/admin/categories" label="Artists"    iconName="brush"/>
                <layout-item path="/admin/users"      label="Users"      iconName="group"/>
                <layout-item path="/admin/invoices"   label="Invoices"   iconName="shopping_cart"/>
-               <layout-item path="/admin/artists"    label="Artists"    iconName="brush"/>
-               <layout-item path="/admin/categories" label="Categories" iconName="topic"/>
+               <layout-item path="/admin/tags"       label="Tags"       iconName="topic"/>
                <layout-item path="/admin/settings"   label="Settings"   iconName="settings"/>
             </q-expansion-item>
          </q-list>
@@ -75,7 +75,6 @@
 
 <script>
    import { mapGetters, mapActions } from 'vuex'
-   import { TagMgr, TagCategory } from 'src/managers/TagMgr.js'
    import { Versions } from 'src/utils/Constants'
 
    export default {
@@ -92,9 +91,9 @@
       computed: {
          ...mapGetters('auth', ['userId', 'loggedIn']),
          ...mapGetters('action', ['actionsExist', 'getUserActions']),
+         ...mapGetters('category', ['getPublicCategories']),
          ...mapGetters('current', ['currentActivityExists']),
          ...mapGetters('invoice', ['invoicesExist']),
-         ...mapGetters('tag', ['getTags']),
          ...mapGetters('user', ['getUser', 'isAdmin']),
          drawerMini() { return this.$q.platform.is.mobile ? false : (!this.drawerLockedOpen && !this.drawerMouseover) },
          drawerOverlay() { return this.$q.platform.is.mobile ? true : false },
@@ -150,8 +149,6 @@
             setTimeout(() => { this.setCurrentActivity(false) }, 3000)              
             return "text-bold bg-yellow-4"
          },
-         artists() { return this.getTags(TagCategory.ARTIST) },
-         artistLinks() { return TagMgr.tagsWithLinks(this.artists) },
          version() { return Versions[0] },
       },
       methods: {
@@ -159,6 +156,7 @@
          ...mapActions('auth',    ['logoutUser']),
          ...mapActions('current', ['setCurrentActivity']),
          ...mapActions('drop',    ['bindDrops']),
+         ...mapActions('category',['bindCategories']),         
          ...mapActions('invoice', ['bindInvoices', 'bindUserInvoices', 'unbindUserInvoices']),
          ...mapActions('item',    ['bindItems', 'bindRecentItems']),
          ...mapActions('setting', ['bindSettings']),
@@ -187,6 +185,7 @@
       created() {
          if (this.$q.platform.is.mobile) { this.showDrawer = false }
          this.bindDrops()
+         this.bindCategories()
          this.bindItems()
          this.bindRecentItems()
          this.bindSettings()

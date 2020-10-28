@@ -25,7 +25,6 @@
 	  	computed: {
 			...mapGetters('item', ['recentItemsExist', 'getRecentItems']),
 			displayItems() { 
-            console.log("displayItems", this.getRecentItems)
             SessionMgr.setRecentItemsDesc() 
             if (this.showHoldSold) { return SessionMgr.setDisplayItems(this.getRecentItems) }
 

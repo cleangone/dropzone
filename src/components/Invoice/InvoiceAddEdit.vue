@@ -60,8 +60,9 @@
 <script>
 	import { date } from 'quasar'
    import { mapGetters, mapActions } from 'vuex'
-   import { ItemMgr, ItemStatus } from 'src/managers/ItemMgr.js'
-   import { InvoiceMgr, InvoiceStatus } from 'src/managers/InvoiceMgr.js'
+   import { ItemMgr, ItemStatus } from 'src/managers/ItemMgr'
+   import { InvoiceMgr, InvoiceStatus } from 'src/managers/InvoiceMgr'
+   import { UI } from 'src/utils/Constants'
    import { dollars } from 'src/utils/Utils'
    
 	export default {
@@ -93,7 +94,7 @@
 		computed: {	
          ...mapGetters('setting', ['getSetting']),
          ...mapGetters('user', ['getUser']),
-         isEdit() { return this.type == "Update" },	
+         isEdit() { return this.type == UI.EDIT },	
          isCreatedOrRevised() {
             return InvoiceMgr.isCreated(this.invoiceToSubmit) || InvoiceMgr.isRevised(this.invoiceToSubmit) },	
          isShipped() { return InvoiceMgr.isShipped(this.invoiceToSubmit) },	

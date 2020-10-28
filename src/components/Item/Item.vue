@@ -2,7 +2,7 @@
 	<div>
 		<div v-if="displayIsMini">
 			<q-card v-if="hasImageUrl" class="q-pt-xs q-px-xs" style="min-height: 250px;" :class="textBgColor">				
-				<item-thumb :item="item" :image="image" vImageWidth="125px" hImageWidth="250px" imageMaxHeight="200px" :artistCategoryId="artistCategoryId"/>
+				<item-thumb :item="item" :image="image" vImageWidth="125px" hImageWidth="250px" imageMaxHeight="200px" :tagId="tagId"/>
 				<q-card-section class="text-caption q-pa-xs" :class="purple">
 					<div style="line-height: 1.25em" :class="orange">
                   <span>{{ item.name }}</span>
@@ -17,7 +17,7 @@
 		</div>
 		<div v-else-if="displayIsThumb || displayIsBidThumb">
 			<q-card v-if="hasImageUrl" class="q-pt-xs q-px-xs" style="min-height: 300px;" :class="textBgColor">
-				<item-thumb :item="item" :image="image" vImageWidth="150px" hImageWidth="300px" imageMaxHeight="250px" :artistCategoryId="artistCategoryId"/>
+				<item-thumb :item="item" :image="image" vImageWidth="150px" hImageWidth="300px" imageMaxHeight="250px" :tagId="tagId"/>
 				<q-card-section class="text-caption q-px-xs q-pt-xs q-pb-none" :class="purple">
 					<div style="line-height: 1.25em" :class="orange">
                   <span class="text-weight-bold">{{ item.name }}</span>
@@ -86,6 +86,7 @@
 
 <script>
    import { mapGetters } from 'vuex'
+   import { CategoryMgr } from 'src/managers/CategoryMgr'
    import { ItemMgr, ItemStatus } from 'src/managers/ItemMgr'
 	import { TagMgr } from 'src/managers/TagMgr'
 	import { SessionMgr } from 'src/managers/SessionMgr'
@@ -95,7 +96,7 @@
 	export default {
       props: ['item', 'displayType', 
          'prev', 'next', // used when displaying full image
-         'artistCategoryId'], // used when displaying full image from an artist item list
+         'tagId'], // used when displaying full image from a page with tagged sections
       data() {
 			return {
 			}
@@ -117,9 +118,9 @@
             else if (SessionMgr.isCurrent(this.itemsCollection))  { return { name: Route.CURRENT } }
             else if (SessionMgr.isFavorite(this.itemsCollection)) { return { name: Route.FAVORITE } }
             else if (SessionMgr.isDrop(this.itemsCollection))     { return { name: Route.DROP, params: { id: this.itemsCollection.id } } }
-            else if (SessionMgr.isArtist(this.itemsCollection)) { 
-               const artistCategoryId = SessionMgr.getArtistCategory()
-               return { name: Route.ARTIST, params: { id: this.itemsCollection.id, catId: artistCategoryId } }
+            else if (SessionMgr.isCategory(this.itemsCollection)) { 
+               const tagId = SessionMgr.getCategoryTag()
+               return { name: Route.CATEGORY, params: { id: this.itemsCollection.id, tagId: tagId } }
             }
             else { return null } 
          },
@@ -146,7 +147,7 @@
             return color == "" ? "bg-grey-3" : color
          },
          hasArtist() { return this.artist.length > 0 },
-         artist() { return TagMgr.artist(this.item) },
+         artist() { return CategoryMgr.categoryName(this.item) },
          itemSaleType() { return (this.item.saleType == SaleType.DEFAULT ? this.drop.defaultSaleType : this.item.saleType) },
 			style() { return (this.image.isHorizontal ? "width: 300px" : "width: 200px") },			
          userIsAdmin() { return this.isAdmin(this.userId) },
@@ -193,7 +194,7 @@
       },
 		filters: {
 			formatPrice(priceObj) { return "$" + priceObj + (String(priceObj).includes(".") ? "" : ".00") }
-		},	
+      },	
 		components: {
 			'item-actions'    : require('components/Item/ItemActions.vue').default,
 			'item-image-full' : require('components/Item/ItemImageFull.vue').default,

@@ -7,7 +7,7 @@
          <div class="row q-mb-sm" :class="orange">
             <div class="col q-mb-sm q-gutter-sm q-pr-sm" :class="blue">
                <q-input v-model="itemToSubmit.name" label="Name" filled />
-               <q-select v-model="artist" label="Artist" :options="artistOptions" filled />
+               <q-select v-model="itemToSubmit.category" label="Artist" :options="artistOptions" option-value="id" option-label="name" filled />
                <q-input  v-if="!uploaderDisplayed" v-model.number="itemToSubmit.startPrice" label="Price" type=number prefix="$" filled />
                <q-select v-if="!uploaderDisplayed" label="Status" v-model="itemToSubmit.status" :options="statusOptions" filled/>
                <q-select v-if="!uploaderDisplayed" label="Sale Type" v-model="itemToSubmit.saleType" :options="saleTypeOptions" filled/>
@@ -16,7 +16,7 @@
             </div>
             <div class="col q-mb-sm q-gutter-sm" :class="green">
                <q-input v-model="itemToSubmit.sortName" label="Sort Name" filled />
-               <q-select v-model="category" label="Category" :options="categoryOptions" filled />
+               <q-select v-model="primaryTagName" label="Category" :options="tagOptions" filled />
                <q-img v-if="!uploaderDisplayed" style="height: 200px; width: 200px;" class="q-ml-sm" :class="pink" contain
                   :src="itemToSubmit.primaryImage.url ? itemToSubmit.primaryImage.url : 'statics/image-placeholder.png'" />
                <div v-if="!uploaderDisplayed">
@@ -36,27 +36,25 @@
 	   </q-card-section>
 
       <q-card-actions align="right">
-         <q-btn @click="cancel"      label="Cancel" color="grey"/>
-         <q-btn @click="persistItem" label="Save"   color="primary" />
+         <q-btn @click="cancel" label="Cancel" color="grey"/>
+         <q-btn @click="save"   label="Save"   color="primary" />
       </q-card-actions>
    </q-card>
 </template>
 
 <script>
    import { mapGetters, mapActions } from 'vuex'
-   import QFirebaseUploader from 'components/QFirebaseUploader.js'
-   import { ItemMgr, ItemStatus } from 'src/managers/ItemMgr.js'
-   import { TagMgr, TagCategory } from 'src/managers/TagMgr.js'
-   import { StorageMgr } from 'src/managers/StorageMgr.js'
-   import { SaleType, Colors } from 'src/utils/Constants.js'
+   import QFirebaseUploader from 'components/QFirebaseUploader'
+   import { CategoryMgr, CATEGORY_NONE } from 'src/managers/CategoryMgr'
+   import { ItemMgr, ItemStatus } from 'src/managers/ItemMgr'
+   import { TagMgr, TagCategory } from 'src/managers/TagMgr'
+   import { StorageMgr } from 'src/managers/StorageMgr'
+   import { SaleType, UI, Colors } from 'src/utils/Constants'
    
    const NONE = "(none)"
 
 	export default {
-      props: [
-         'type', 
-         'dropId', // only needed for add 
-         'item'],
+      props: ['type', 'item', 'dropId', 'categoryId'], // one of dropId/categoryId will be specified for add
 		data() {
 			return {
             itemToSubmit: {
@@ -68,8 +66,7 @@
 					saleType: SaleType.DEFAULT,
                primaryImage: { isHorizontal: false },
             },
-            artist: "",
-            category: "",
+            primaryTagName: "",
             uploaderDisplayed: false,
 				statusOptions: [ ItemStatus.PRIVATE, ItemStatus.SETUP, ItemStatus.AVAILABLE, ItemStatus.DROPPING, ItemStatus.HOLD, ItemStatus.SOLD ],
             saleTypeOptions: [ SaleType.DEFAULT, SaleType.BID, SaleType.BUY ],
@@ -77,33 +74,18 @@
       },
       computed: {
          ...mapGetters('drop', ['getDrops']),
+         ...mapGetters('category', ['getPublicCategories', 'getCategory']),
          ...mapGetters('tag', ['getTags']),
          ...mapGetters('color', Colors),
-         isEdit() { return this.type == 'edit' },
-         artistMap() { return this.getTagMap(TagCategory.ARTIST) },
-         categoryMap() { return this.getTagMap(TagCategory.PRIMARY) },
-         artistOptions() { return this.getTagOptions(this.artistMap) },
-         categoryOptions() { return this.getTagOptions(this.categoryMap) },
-         dropOptions() { return this.getDrops }
+         isEdit() { return this.type == UI.EDIT },
+         artistOptions() { return CategoryMgr.categoryOptions(this.getPublicCategories) },
+         tagMap() { return TagMgr.getNameToTagMap(this.getTags(TagCategory.PRIMARY)) },
+         tagOptions() { return TagMgr.getNames(this.tagMap.values()).concat([UI.NONE])  }, 
+         dropOptions() { return this.getDrops },
       },
 		methods: {
          ...mapActions('item', ['setItem']),
-         getTagMap(category) { 
-            let map = new Map()
-            for (var tag of this.getTags(category)) {
-               map.set(tag.name, tag)
-            }
-            return map
-         },
-         getTagOptions(map) { 
-            let options = [NONE]
-            for (var name of map.keys() ) {
-               options.push(name)
-            }
-            return options
-         },
-			persistItem() {
-				// console.log("persistItem")
+         save() {
 				if (ItemMgr.isSetup(this.itemToSubmit) || ItemMgr.isAvailable(this.itemToSubmit)) {
                this.itemToSubmit.buyPrice = 0 
                this.itemToSubmit.buyDate = 0 
@@ -117,13 +99,11 @@
                this.itemToSubmit.userUpdatedDate = this.itemToSubmit.sortedCreateDate  
             }
 
-            if (this.artist) {
-               const tag = this.artist == NONE ? { id:"", name: "", category: TagCategory.ARTIST } : this.artistMap.get(this.artist)
-               TagMgr.setTag(this.itemToSubmit, tag) 
-            }
+            if (this.itemToSubmit.category && CategoryMgr.isNone(this.itemToSubmit.category)) { this.itemToSubmit.category = null }
             
-            if (this.category) {
-               const tag = this.category == NONE ? { id:"", name: "", category: TagCategory.PRIMARY } : this.categoryMap.get(this.category)
+            if (this.primaryTagName) {
+               const tag = this.primaryTagName == NONE ? 
+                  { id:"", name: "", category: TagCategory.PRIMARY } : this.tagMap.get(this.primaryTagName)
                TagMgr.setTag(this.itemToSubmit, tag) 
             }
             
@@ -134,8 +114,8 @@
                if (currFilePath != prevFilePath) { StorageMgr.deleteImageFiles(this.item.primaryImage) }
             }
               
-            this.setItem(this.itemToSubmit)             
-            this.$emit('close')
+            this.setItem(this.itemToSubmit)
+            this.$emit(UI.CLOSE)
 			},
 			uploadCompleted(emit) {
             const itemName = emit.name.includes(".") ? emit.name.substring(0, emit.name.indexOf(".")) : emit.name
@@ -160,7 +140,7 @@
             }
             else { StorageMgr.deleteImageFiles(this.itemToSubmit.primaryImage) }
 
-            this.$emit('close')
+            this.$emit(UI.CLOSE)
          }
 		},
 		components: {
@@ -172,15 +152,18 @@
          setTimeout(() => {    
             if (this.isEdit) { 
                this.itemToSubmit = Object.assign({}, this.item) 
-               this.itemToSubmit.primaryImage = Object.assign({}, this.item.primaryImage) // item copy not deep
+               this.itemToSubmit.primaryImage = Object.assign({}, this.item.primaryImage) // item copy not deep               
+               this.itemToSubmit.category = this.item.category ? Object.assign({}, this.item.category) : CATEGORY_NONE
 
                // copy maps to make vuex happy 
                if (this.itemToSubmit.tagIds) { this.itemToSubmit.tagIds = {...this.item.tagIds} }
                if (this.itemToSubmit.tagNames) { this.itemToSubmit.tagNames = {...this.item.tagNames} }
-               this.artist = TagMgr.artist(this.itemToSubmit)
-               this.category = TagMgr.primaryName(this.itemToSubmit)
+               this.primaryTagName = TagMgr.primaryName(this.itemToSubmit)
             }
-            else { this.itemToSubmit.dropId = this.dropId }
+            else { 
+               if (this.dropId) { this.itemToSubmit.dropId = this.dropId }
+               if (this.categoryId) { this.itemToSubmit.category = CategoryMgr.slim(this.getCategory(this.categoryId)) }      
+            }
          }, 100)  
 		}
 	}

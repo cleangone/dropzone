@@ -140,6 +140,24 @@ const getters = {
       items.sort((a, b) => (a.sortName > b.sortName) ? 1 : -1)
       return items
    },
+   getItemsWithCategory: state => categoryId => { 
+      let items = []
+      state.items.forEach(item => {
+         if (item.category && item.category.id == categoryId) { items.push(item) }
+      })
+
+      items.sort((a, b) => (a.sortName > b.sortName) ? 1 : -1)
+      return items
+   },
+   getActiveItemsWithCategory: state => categoryId => { 
+      let items = []
+      state.items.forEach(item => {
+         if (ItemMgr.isActive(item) && item.category && item.category.id == categoryId) { items.push(item) }
+      })
+
+      items.sort((a, b) => (a.sortName > b.sortName) ? 1 : -1)
+      return items
+   },
    getItem: state => itemId => { 
       for (var item of state.items) {
          if (item.id == itemId) { return item }

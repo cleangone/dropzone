@@ -20,7 +20,7 @@
                <q-btn v-if="canSchedule(props.row)" label="Schedule" @click="schedule(props.row)" @click.stop size="xs" color="primary" dense/>         
 	         </q-td>
             <q-td slot="body-cell-items" slot-scope="props" :props="props"> 
-                <a :href="'#/admin/items/' + props.row.id">{{ itemText(props.row.id) }}</a>
+                <a :href="'#/admin/dropitems/' + props.row.id">{{ itemText(props.row.id) }}</a>
             </q-td>
             <q-td slot="body-cell-actions" slot-scope="props" :props="props">
 	            <q-btn icon="edit"   @click="editDrop(props.row.id)"           @click.stop size="sm" flat dense color="primary" />
@@ -78,7 +78,7 @@
          ...mapActions('drop', ['bindDrops', 'updateDrop', 'deleteDrop']),
          canSchedule(drop) { return DropMgr.isSetup(drop) && isFutureDate(drop.startDate) },
          schedule(drop) { return this.updateDrop({ id: drop.id, status: DropStatus.SCHEDULING }) },
-         onRowClick(evt, row) { this.$router.push("/admin/items/" + row.id) },
+         onRowClick(evt, row) { this.$router.push("/admin/dropitems/" + row.id) },
          itemText(dropId) { return ItemMgr.itemText(this.getItemsInDrop(dropId)) },
          homePagePosition(drop) { return DropMgr.hasHomeGroup(drop) ? drop.homeGroup + " " + drop.homePosition : "" },
          editDrop(dropId) {

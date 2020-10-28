@@ -9,22 +9,19 @@
          <q-input v-model="nameReplace" label="Name: Replace Text With" filled class="col" />
       </div>
       <div class="q-mb-sm">
-         <q-checkbox label="Name: Trim leading 0 from numbers" v-model="trimLeadingZero" dense/>
-		</div>
-      <div class="q-mb-sm">
-         <q-select label="Status" v-model="status" :options="statusOptions" filled/>
+         <q-select v-model="status" label="Status" :options="statusOptions" filled/>
       </div>
       <div class="q-mb-sm">
-         <q-select v-model="artist" label="Artist" :options="artistOptions" filled class="col"/>
+         <q-select v-model="artist" label="Artist" :options="artistOptions" option-value="id" option-label="name" filled />
       </div>  
       <div class="q-mb-sm">
-         <q-select v-model="primaryCategory" label="Category" :options="primaryCategoryOptions" filled class="col"/>
+         <q-select v-model="primaryTagName" label="Category" :options="tagOptions" filled class="col"/>
       </div>  
       <div class="q-mb-sm">
-         <q-select label="Sale Type" v-model="saleType" :options="saleTypeOptions" filled/>
+         <q-select v-model="saleType" label="Sale Type" :options="saleTypeOptions" filled/>
       </div>
       <div class="q-mb-sm">
-         <q-checkbox label="Delete Items" v-model="deleteItems" dense/>
+         <q-checkbox v-model="deleteItems" label="Delete Items" dense/>
 		</div>
 	</q-card-section>
    <q-card-actions align="right">
@@ -36,9 +33,10 @@
 
 <script>
 	import { mapGetters, mapActions } from 'vuex'
-	import { ItemMgr, ItemStatus } from 'src/managers/ItemMgr.js';
-   import { TagMgr, TagCategory } from 'src/managers/TagMgr.js'
-   import { SaleType } from 'src/utils/Constants.js';
+	import { CategoryMgr, CATEGORY_NONE } from 'src/managers/CategoryMgr'
+   import { ItemMgr, ItemStatus } from 'src/managers/ItemMgr'
+   import { TagMgr, TagCategory } from 'src/managers/TagMgr'
+   import { SaleType, UI } from 'src/utils/Constants'
    
    const NONE = "(none)"
 
@@ -51,7 +49,7 @@
             trimLeadingZero: false,
             status: "",
             artist: "",
-            primaryCategory: "",
+            primaryTagName: "",
             saleType: "",
             deleteItems: false,
 				statusOptions: [ ItemStatus.PRIVATE, ItemStatus.SETUP, ItemStatus.AVAILABLE, ItemStatus.HOLD, ItemStatus.SOLD ],
@@ -59,28 +57,15 @@
 			}
       },
       computed: {
+         ...mapGetters('category', ['getPublicCategories']),
          ...mapGetters('tag', ['getTags']),
-         artistMap() { return this.getTagMap(TagCategory.ARTIST) },
-         primaryCategoryMap() { return this.getTagMap(TagCategory.PRIMARY) },
-         artistOptions() { return this.getTagOptions(this.artistMap) },
-         primaryCategoryOptions() { return this.getTagOptions(this.primaryCategoryMap) }
+         // artistMap() { return this.getTagMap(TagCategory.ARTIST) },
+         artistOptions() { return CategoryMgr.categoryOptions(this.getPublicCategories) },
+         tagMap() { return TagMgr.getNameToTagMap(this.getTags(TagCategory.PRIMARY)) },
+         tagOptions() { return TagMgr.getNames(this.tagMap.values()).concat([UI.NONE]) }, 
       },
       methods: {
          ...mapActions('item', ['updateItems', 'deleteItem']),
-         getTagMap(category) { 
-            let map = new Map()
-            for (var tag of this.getTags(category)) {
-               map.set(tag.name, tag)
-            }
-            return map
-         },
-         getTagOptions(map) { 
-            let options = [NONE]
-            for (var name of map.keys() ) {
-               options.push(name)
-            }
-            return options
-         },
 			save() {
             if (this.deleteItems) { 
                this.promptToDelete() 
@@ -93,14 +78,6 @@
                if (this.nameFind.length && this.nameReplace.length && item.name.includes(this.nameFind)) { 
                   console.log("replace '" + this.nameFind + "' with '" + this.nameReplace + "'")
                   update.name = item.name.replace(this.nameFind, this.nameReplace)
-               }
-
-               if (this.trimLeadingZero) { 
-                  // " 0[0-9]" matches " 0n"
-                  const name = update.name ? update.name : item.name
-                  const regex = / 0([0-9])/g
-                  const replace = " \$1" 
-                  update.name = name.replace(regex, replace)
                }
 
                if (this.status.length) { 
@@ -120,18 +97,14 @@
                }
 
                if (this.saleType.length) { update.saleType = this.saleType }
+               if (this.artist) { update.category = CategoryMgr.isNone(this.artist) ? null : this.artist }
 
-               if (this.artist.length || this.primaryCategory.length) { 
+               if (this.primaryTagName.length) { 
                   update.tagIds = Object.assign({}, item.tagIds) 
                   update.tagNames = Object.assign({}, item.tagNames) 
-                  if (this.artist.length) { 
-                     const tag = this.artist == NONE ? { id:"", name: "", category: TagCategory.ARTIST } : this.artistMap.get(this.artist)
-                     TagMgr.setTag(update, tag) 
-                  }
-                  if (this.primaryCategory.length) { 
-                     const tag = this.primaryCategory == NONE ? { id:"", name: "", category: TagCategory.PRIMARY } : this.primaryCategoryMap.get(this.primaryCategory)
-                     TagMgr.setTag(update, tag) 
-                  }
+      
+                  const tag = this.primaryTagName == NONE ? { id:"", name: "", category: TagCategory.PRIMARY } : this.tagMap.get(this.primaryTagName)
+                  TagMgr.setTag(update, tag)          
                }
 
                if (Object.keys(update).length) { 

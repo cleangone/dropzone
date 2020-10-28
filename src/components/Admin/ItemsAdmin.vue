@@ -1,15 +1,16 @@
 <template>
-  <q-page>
-      <div class="q-pt-sm q-px-sm text-h6 heading">
-         Drop: {{ drop.name }}  
-         <q-btn icon="edit" @click="showEditDropModal=true" size="sm" flat dense color="primary" />
-      </div>
-      <div class="q-px-sm text-subtitle1 heading">
-         {{ dropStatus }}, Default Sale Type: {{ drop.defaultSaleType }}
-      </div>
-		<div class="q-pa-sm absolute full-width full-height">
-         <q-table v-if="itemsExist" title="Items" :data="items" 
-            :columns="columns" :visible-columns="visibleColumns" row-key="name" :filter="tableDataFilter"
+  <div>     
+      <div class="row q-px-xs" :class="purple">
+         <span class="col text-subtitle1 heading" :class="yellow" >{{ heading }}</span>
+         <span class="col text-grey-10 text-right" color="grey-10" :class="red">
+			   <q-checkbox v-model="showSaleType" label="SaleType" dense />
+            <q-checkbox v-model="showBuyer"    label="Buyer"    dense class="q-ml-sm"/>
+            <q-checkbox v-model="showBids"     label="Bids"     dense class="q-ml-sm"/>
+         </span>
+		</div>
+		<div class="q-pa-xs absolute full-width full-height" :class="green">
+         <q-table title="Items" :data="tableItems" 
+            :columns="columns" :visible-columns="visibleColumns" row-key="name" :filter="tableDataFilter" no-data-label="No Items"
             selection="multiple" :selected.sync="selectedRowItems" :pagination.sync="pagination" :dense="$q.screen.lt.md" class="q-mb-sm">
 				<template v-slot:top-right>
 					<q-input borderless dense debounce="300" v-model="tableDataFilter" placeholder="Search">
@@ -43,17 +44,15 @@
       <q-dialog v-model="showSortDatesModal">	
 			<item-sort-dates :items="selectedRowItems" @close="showSortDatesModal=false" />
 		</q-dialog>
-		<q-dialog v-model="showEditDropModal">
-         <drop-add-edit type="edit" :drop="drop" @close="showEditDropModal=false" />
-		</q-dialog>
+		
       <q-dialog v-model="showAddModal">	
-			<item-add-edit type="add" :dropId="dropId" @close="showAddModal=false" />
+			<item-add-edit :dropId="dropId" :categoryId="categoryId" @close="showAddModal=false" />
 		</q-dialog>
 		<q-dialog v-model="showEditModal">
-			<item-add-edit type="edit" :dropId="dropId" :item="itemToEdit" @close="showEditModal=false" />
+			<item-add-edit :type="edit" :item="itemToEdit" @close="showEditModal=false" />
 		</q-dialog>
       <q-dialog v-model="showBulkAddModal">	
-			<item-bulk-add :dropId="dropId" @close="showBulkAddModal=false"/>
+			<item-bulk-add :dropId="dropId" :categoryId="categoryId" @close="showBulkAddModal=false" />
 		</q-dialog>
       <q-dialog v-model="showBulkEditModal">	
 			<item-bulk-edit :items="selectedRowItems" @close="bulkEditDone" />
@@ -62,26 +61,28 @@
 			<item-quick-edit :items="selectedRowItems" @close="quickEditDone" />
 		</q-dialog>
       <q-dialog v-model="showInvoiceModal">	
-			<invoice-add-edit type="Create" :items="selectedRowItems" @close="showInvoiceModal=false" />
+			<invoice-add-edit :items="selectedRowItems" @close="showInvoiceModal=false" />
 		</q-dialog>
-  	</q-page>
+  	</div>
 </template>
 
 <script>
-	import { date } from 'quasar'
-   import { mapGetters, mapActions } from 'vuex'
+	import { mapGetters, mapActions } from 'vuex'
    import { DropMgr } from 'src/managers/DropMgr'
 	import { ItemMgr } from 'src/managers/ItemMgr'
-	import { TagMgr } from 'src/managers/TagMgr'
+   import { TagMgr } from 'src/managers/TagMgr'
+   import { UI, Colors } from 'src/utils/Constants'
    import { dollars } from 'src/utils/Utils'
    import { formatDateTimeOptYear } from 'src/utils/DateUtils'
 
 	export default {
+      props: ['heading', 'items', 'dropId', 'categoryId'], // one of dropId/categoryId will be set
 		data() {
 	  		return {
-            dropId: '',
-            showSortDatesModal: false,
-				showEditDropModal: false,
+            showSaleType: true,
+            showBuyer: true,
+				showBids: true,
+				showSortDatesModal: false,
 				showAddModal: false,
             showEditModal: false,
             showBulkAddModal: false,
@@ -91,14 +92,13 @@
 				itemIdToEdit: '',
             tableDataFilter: '',
             selectedRowItems: [],
-				visibleColumns: [ 'name', 'sort', 'sortDate', 'artist', 'category', 'saleType', 'buyerId', 'price', 'bids', 'status', 'actions'],
+				displayColumns: [ 'name', 'sort', 'tag', 'artist', 'price', 'status', 'actions'],
  				columns: [
         			{ name: 'id', field: 'id' },
 				 	{ name: 'name',       label: 'Name',        align: 'left',   field: 'name',         sortable: true },
 				 	{ name: 'sort',       label: 'Sort',        align: 'left',   field: 'sortName',     sortable: true },
-				 	{ name: 'sortDate',   label: 'Created',     align: 'center', field: 'sortedCreateDate', sortable: true },
-				 	{ name: 'artist',     label: 'Artist',      align: 'center', field: 'tempArtist',   sortable: true },
-				 	{ name: 'category',   label: 'Category',    align: 'center', field: 'tempCategory', sortable: true },
+				 	{ name: 'category',   label: 'Artist',      align: 'center', field: 'category',     sortable: true, format: val => val ? val.name : "" },
+				 	{ name: 'tag',        label: 'Category',    align: 'center', field: 'tempTag',      sortable: true },
 				 	{ name: 'saleType',   label: 'Sale Type',   align: 'center', field: 'saleType',     sortable: true },
 					{ name: 'buyerId',    label: 'Buyer',       align: 'left',   field: 'buyerId',      sortable: true, format: val => this.userName(val) },
 					{ name: 'price', label:'Start/Final Price', align: 'right',  field: 'startPrice',   sortable: true },
@@ -110,27 +110,30 @@
 			}
 		},
 		computed: {
-         ...mapGetters('drop', ['getDrop']),
-         ...mapGetters('item', ['itemsExist', 'getItemsInDrop']),
-			...mapGetters('user', ['getUserIdToName']),
-			drop() { return this.getDrop(this.dropId) },
-         dropStatus() { 
-            return this.drop.status + 
-               (DropMgr.isSetup(this.drop) || DropMgr.isScheduled(this.drop) ? ", " + formatDateTimeOptYear(this.drop.startDate) : "")
+         ...mapGetters('category', ['getCategory']),
+         ...mapGetters('item', ['itemsExist', 'getItemsWithCategory']),
+         ...mapGetters('user', ['getUserIdToName']),
+         ...mapGetters('color', Colors),
+			visibleColumns() { 
+            const columns = [...this.displayColumns]
+            if (this.dropId)       { columns.push('category') }  // in a drop view - categroy col not redundant
+            if (this.showSaleType) { columns.push('saleType') }
+            if (this.showBuyer)    { columns.push('buyerId') }
+            if (this.showBids)     { columns.push('bids') }
+            return columns 
          },
-         itemToEdit() { return this.itemIdToEdit ? getItem(this.items, this.itemIdToEdit) : null },
-         itemsExist() { return this.items.length > 0 },
-         items() { 
-            let items = this.getItemsInDrop(this.dropId) 
+ 			tableItems() { 
             let copies = []
-            items.forEach(item => { 
+            this.items.forEach(item => { 
                const copy = Object.assign({}, item)
-               copy.tempCategory = TagMgr.primaryName(copy) // add temp fields so they are searchable
-               copy.tempArtist = TagMgr.artist(copy)
+               copy.tempTag = TagMgr.primaryName(copy) // add temp fields so they are searchable
                copies.push(copy) 
             })
             return copies
          },
+         itemToEdit() { return this.itemIdToEdit ? getItem(this.items, this.itemIdToEdit) : null },
+         itemsExist() { return this.items.length > 0 },
+         
          rowsSelected() { return this.selectedRowItems.length > 0 },
          userIdToName() { return this.getUserIdToName },
 			showInvoiceButton() { 
@@ -156,6 +159,7 @@
          },
          showBulkEditButton() { return (this.selectedRowItems.length > 1) },
          showQuickEditButton() { return (this.selectedRowItems.length > 1) },
+		   edit() { return UI.EDIT },
 		},
 		methods: {
 			...mapActions('item', ['bindItems', 'deleteItem']),
@@ -193,9 +197,6 @@
          'item-quick-edit'  : require('components/Item/ItemQuickEdit.vue').default,
          'item-sort-dates'  : require('components/Item/ItemSortDates.vue').default,
          'invoice-add-edit' : require('components/Invoice/InvoiceAddEdit.vue').default,
-      },
-      created() {
-			this.dropId = this.$route.params.dropId
       },
    }
 

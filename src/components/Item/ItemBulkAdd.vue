@@ -16,26 +16,30 @@
 
 <script>
 	import { mapGetters, mapActions } from 'vuex'
-	import QFirebaseUploader from 'components/QFirebaseUploader.js'
-   import { ItemMgr, ItemStatus } from 'src/managers/ItemMgr.js'
-   import { StorageMgr } from 'src/managers/StorageMgr.js'
-	import { SaleType } from 'src/utils/Constants.js'
+   import QFirebaseUploader from 'components/QFirebaseUploader'
+   import { CategoryMgr } from 'src/managers/CategoryMgr'
+   import { ItemMgr, ItemStatus } from 'src/managers/ItemMgr'
+   import { StorageMgr } from 'src/managers/StorageMgr'
+	import { SaleType, UI } from 'src/utils/Constants'
    
 	export default {
-      props: ['dropId'],
+      props: ['dropId', 'categoryId'],  // one of the two will be set
       data() {
          return {
 			   itemsToAdd: []
          }
       },
-		methods: {
+      computed: {
+         ...mapGetters('category', ['getCategory']),
+         category() { return this.categoryId ? CategoryMgr.slim(this.getCategory(this.categoryId)) : null }      
+      },
+      methods: {
 			...mapActions('item', ['setItem']),
 			uploadCompleted(emit) {
             const itemName = emit.name.includes(".") ? emit.name.substring(0, emit.name.indexOf(".")) : emit.name
             const item = {
                name: itemName,
                sortName: itemName,
-               dropId: this.dropId,
                status: ItemStatus.SETUP,
                saleType: SaleType.DEFAULT,
                primaryImage: { 
@@ -44,6 +48,9 @@
                   url: emit.url 
                }
             }
+
+            if (this.dropId) {item.dropId = this.dropId}
+            if (this.category) {item.category = this.category}
             ItemMgr.setFilePaths(item.primaryImage)
 
             this.itemsToAdd.push(item)
@@ -51,11 +58,11 @@
          },
          save() {
             for (var item of this.itemsToAdd) { this.setItem(item) }
-            this.$emit('close')
+            this.$emit(UI.CLOSE)
          },
          cancel() {
             StorageMgr.deleteItemsFiles(this.itemsToAdd) 
-            this.$emit('close')
+            this.$emit(UI.CLOSE)
          }
       },
 		components: {

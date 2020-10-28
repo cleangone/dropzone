@@ -1,13 +1,9 @@
-
 export const TagCategory = {
-   ARTIST:  'Artist',
    PRIMARY: 'Primary',
 }
 
 export class TagMgr {   
    static hasTag(container, tag) { return TagMgr.getId(container, tag.category) == tag.id }
-
-   static artist(container)      { return TagMgr.getName(container, TagCategory.ARTIST) }	
    static primaryId(container)   { return TagMgr.getId(container,   TagCategory.PRIMARY) }	
    static primaryName(container) { return TagMgr.getName(container, TagCategory.PRIMARY) }	
    
@@ -33,5 +29,24 @@ export class TagMgr {
       
       if (!container.tagNames) { container.tagNames = {} }
       container.tagNames[tag.category] = tag.name
+   }
+
+   static getNameToTagMap(tags) { 
+      let tagMap = new Map()
+      for (var tag of tags) {
+         tagMap.set(tag.name, tag)
+      }
+      return tagMap
+   }
+
+   static getNames(tags) { 
+      const sortedTags = Array.from(tags)
+      sortedTags.sort((a, b) => (a.sortName < b.sortName) ? -1 : 1)
+   
+      let names = []
+      for (var tag of sortedTags ) {
+         names.push(tag.name)
+      }
+      return names
    }
 }

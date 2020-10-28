@@ -28,9 +28,9 @@
          item() { return this.getItem(this.itemId) },
          displayedItems() { 
             const itemsCollection = SessionMgr.getDisplayItemsDesc()
-            if (SessionMgr.isArtist(itemsCollection)) {
-               const artistCategoryId = SessionMgr.getArtistCategory()
-               return SessionMgr.getCategoryDisplayItems(artistCategoryId)
+            if (SessionMgr.isCategory(itemsCollection)) {
+               const tagId = SessionMgr.getCategoryTag()
+               return SessionMgr.getTagDisplayItems(tagId)
             }
             else { return SessionMgr.getDisplayItems() }
          },

@@ -47,14 +47,15 @@
 		</div>
 
 		<q-dialog v-model="showEditModal">
-			<invoice-add-edit type="Update" :invoice="invoiceToEdit" @close="showEditModal=false" />
+			<invoice-add-edit :type="edit" :invoice="invoiceToEdit" @close="showEditModal=false" />
 		</q-dialog>
   	</q-page>
 </template>
 
 <script>
 	import { mapGetters, mapActions } from 'vuex'
-   import { InvoiceMgr, InvoiceSendStatus } from 'src/managers/InvoiceMgr.js'
+   import { InvoiceMgr, InvoiceSendStatus } from 'src/managers/InvoiceMgr'
+   import { UI } from 'src/utils/Constants'
    import { dollars } from 'src/utils/Utils'
    
 	export default {
@@ -77,7 +78,8 @@
 		computed: {
          ...mapGetters('invoice', ['getInvoices', 'getInvoice']),
          invoiceToEdit() { return this.getInvoice(this.invoiceIdToEdit) },
-         invoices() {return this.getInvoices },
+         invoices() { return this.getInvoices },
+         edit() { return UI.EDIT },
       },
 		methods: {
          ...mapActions('invoice', ['deleteInvoice']),

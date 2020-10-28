@@ -14,7 +14,7 @@
 
 <script>
 	export default {
-		props: ['tag'],
+		props: ['container'],
 		data() {
          return {
 			   name: "",
@@ -23,8 +23,8 @@
 		},
       mounted() {
          setTimeout(() => { 
-            this.name = this.tag.name
-            this.video = this.tag.video 
+            this.name = this.container.name
+            this.video = this.container.video 
          }, 100)  
 		}
    }

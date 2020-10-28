@@ -8,27 +8,27 @@ export class SessionMgr {
       return value 
    }
    
-   static categoryKey(categoryId) { return 'CategoryDisplayItems' + categoryId }
-   static getCategoryDisplayItems(categoryId) { return SessionStorage.getItem(SessionMgr.categoryKey(categoryId)) }
-   static setCategoryDisplayItems(categoryId, items) { SessionStorage.set(SessionMgr.categoryKey(categoryId), items) }
+   static tagDisplayItemsKey(tagId) { return 'TagDisplayItems' + tagId }
+   static getTagDisplayItems(tagId) { return SessionStorage.getItem(SessionMgr.tagDisplayItemsKey(tagId)) }
+   static setTagDisplayItems(tagId, items) { SessionStorage.set(SessionMgr.tagDisplayItemsKey(tagId), items) }
    
-   // can target category within an artist listing
-   static getArtistCategory() { return SessionStorage.getItem('ArtistCategory')}
-   static setArtistCategory(id) { SessionStorage.set('ArtistCategory', id) }
+   // specify target tag within a category
+   static getCategoryTag() { return SessionStorage.getItem('CategoryTag')}
+   static setCategoryTag(id) { SessionStorage.set('CategoryTag', id) }
    
-   static setHomeItemsDesc()           { SessionMgr.setDisplayItemsDesc({ route: Route.HOME,     name: "Home" }) }
-   static setDropItemsDesc(name, id)   { SessionMgr.setDisplayItemsDesc({ route: Route.DROP,     name: name, id: id }) }
-   static setArtistItemsDesc(name, id) { SessionMgr.setDisplayItemsDesc({ route: Route.ARTIST,   name: name, id: id }) }
-   static setRecentItemsDesc()         { SessionMgr.setDisplayItemsDesc({ route: Route.RECENT,   name: "Recent Updates" }) }
-   static setCurrentItemsDesc()        { SessionMgr.setDisplayItemsDesc({ route: Route.CURRENT,  name: "Current Activity" }) }
-   static setFavoriteItemsDesc()       { SessionMgr.setDisplayItemsDesc({ route: Route.FAVORITE, name: "Favorites" }) }
+   static setHomeItemsDesc()             { SessionMgr.setDisplayItemsDesc({ route: Route.HOME,     name: "Home" }) }
+   static setDropItemsDesc(name, id)     { SessionMgr.setDisplayItemsDesc({ route: Route.DROP,     name: name, id: id }) }
+   static setCategoryItemsDesc(name, id) { SessionMgr.setDisplayItemsDesc({ route: Route.CATEGORY, name: name, id: id }) }
+   static setRecentItemsDesc()           { SessionMgr.setDisplayItemsDesc({ route: Route.RECENT,   name: "Recent Updates" }) }
+   static setCurrentItemsDesc()          { SessionMgr.setDisplayItemsDesc({ route: Route.CURRENT,  name: "Current Activity" }) }
+   static setFavoriteItemsDesc()         { SessionMgr.setDisplayItemsDesc({ route: Route.FAVORITE, name: "Favorites" }) }
    
    static getDisplayItemsDesc() { return SessionStorage.getItem('DisplayItemsDesc')}
    static setDisplayItemsDesc(desc) { return SessionStorage.set('DisplayItemsDesc', desc)}
    
    static isHome(displayItemsDesc)     { return displayItemsDesc.route == Route.HOME }
    static isDrop(displayItemsDesc)     { return displayItemsDesc.route == Route.DROP }
-   static isArtist(displayItemsDesc)   { return displayItemsDesc.route == Route.ARTIST }
+   static isCategory(displayItemsDesc) { return displayItemsDesc.route == Route.CATEGORY }
    static isRecent(displayItemsDesc)   { return displayItemsDesc.route == Route.RECENT }
    static isCurrent(displayItemsDesc)  { return displayItemsDesc.route == Route.CURRENT }
    static isFavorite(displayItemsDesc) { return displayItemsDesc.route == Route.FAVORITE }
