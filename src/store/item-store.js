@@ -18,7 +18,6 @@ const actions = {
    }),
    bindRecentItems: firestoreAction(({ bindFirestoreRef }) => {
       const daysAgo = Date.now() - MILLIS_PER_DAY * MAX_DAYS_AGO
-      console.log("bindRecentItems: sortedCreateDate > " + daysAgo )
       bindFirestoreRef('recentItems', collection().where('sortedCreateDate', '>', daysAgo))
    }),
    setItem: firestoreAction((context, item) => { 

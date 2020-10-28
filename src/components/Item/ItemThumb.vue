@@ -1,5 +1,6 @@
-<template >
-	<q-img :src="thumbUrl" v-on:click="navToItemPage" :style="imageWH" class="image-centered" basic contain>
+<template>
+   <q-img :src="thumbUrl" v-on:click="navToItemPage" :style="imageWH" class="image-centered" basic contain
+         @mouseenter="imageMouseover=true" @mouseleave="imageMouseover=false">
       <item-liked :item="item" class="absolute-bottom-right"/>   
    </q-img>
 </template>  
@@ -9,7 +10,12 @@
    import { SessionMgr } from 'src/managers/SessionMgr'	
 	
 	export default {
-		props: ['item', 'image', 'hImageWidth', 'vImageWidth', 'imageMaxHeight', 'tagId'], 
+      props: ['item', 'image', 'hImageWidth', 'vImageWidth', 'imageMaxHeight', 'tagId'], 
+      data() {
+	  		return {
+            imageMouseover: false,
+			}
+		},
 		computed: {
          ...mapGetters('auth', ['loggedIn', 'userId']),
          ...mapGetters('user', ['getUser']),
@@ -17,8 +23,11 @@
 			// cellHeight() { return this.height ? "height: " + this.height : ""},			
          imageW() { return "width: " + (this.image.isHorizontal ? this.hImageWidth : this.vImageWidth) },	
          // imageH() { return "height: " + this.imageHeight },	
-         imageWH() { return "width: " + (this.image.isHorizontal ? this.hImageWidth : this.vImageWidth) + "; max-height: " + this.imageMaxHeight },	
-         thumbUrl() { return this.image.thumbUrl },	
+         imageWH() { return this.imageMouseover ? 
+            "width: " + (this.image.isHorizontal ? "400px" : "300px") :
+            "width: " + (this.image.isHorizontal ? this.hImageWidth : this.vImageWidth) + "; max-height: " + this.imageMaxHeight
+         },	
+         thumbUrl() { return this.imageMouseover ? this.image.url : this.image.thumbUrl },	
       },
       methods: {
          navToItemPage() { 
