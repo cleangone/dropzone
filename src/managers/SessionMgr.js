@@ -1,7 +1,7 @@
 import { SessionStorage } from 'quasar'
 import { Route } from 'src/utils/Constants'
 	
-export class SessionMgr {   
+export class SessionMgr {      
    static getDisplayItems() { return SessionStorage.getItem('DisplayItems') }
    static setDisplayItems(value) { 
       SessionStorage.set('DisplayItems', value)

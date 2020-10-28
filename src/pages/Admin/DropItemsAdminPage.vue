@@ -4,7 +4,7 @@
          Drop: {{ drop.name }}  
          <q-btn icon="edit" @click="showEditDropModal=true" size="sm" flat dense color="primary" />
       </div>
-		<items-admin :dropId="dropId" :items="items" :heading="heading" class="q-pa-xs absolute full-width full-height" :class="orange"/>
+		<items-admin :dropId="dropId" :items="items" :heading="heading" class="full-width full-height" :class="orange"/>
       <q-dialog v-model="showEditDropModal">
          <drop-add-edit :type="edit" :drop="drop" @close="showEditDropModal=false" />
 		</q-dialog>

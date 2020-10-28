@@ -32,10 +32,6 @@ const actions = {
 
 function collection() { return firestore.collection('drops') }
 
-
-function showPositiveNotify(msg) { Notify.create( {type: "positive", timeout: 1000, message: msg} )}
-function showNegativeNotify(msg) { Notify.create( {type: "negative", timeout: 5000, message: msg} )}
-
 const getters = {
    dropsExist: state => { return state.drops && state.drops.length > 0 },
    activeDropsExist: state => { 
@@ -67,6 +63,20 @@ const getters = {
          if (DropMgr.isStatus(drop, status)) { dropIds.push(drop.id) }
       }
       return dropIds
+   },
+   // getDropIdMap: state => { 
+   //    const map = new Map()
+   //    for (var drop of state.drops) {
+   //       map.set(drop.id, drop) 
+   //    }
+   //    return map
+   // },
+   getDropIdToNameDropMap: state => { 
+      const map = new Map()
+      for (var drop of state.drops) {
+         map.set(drop.id, drop.name) 
+      }
+      return map
    },
 }
 

@@ -84,7 +84,7 @@ export class ItemMgr {
       const text = []
       if (priv)      { text.push(priv + " Private") }
       if (setup)     { text.push(setup + " Setup") }
-      if (available) { text.push(available + (hold || sold?  " Avail" : " Available")) }
+      if (available) { text.push(available + (hold || invoiced || sold?  " Avail" : " Available")) }
       if (hold)      { text.push(hold + " Hold") }
       if (invoiced)  { text.push(invoiced + " Invoiced") }
       if (sold)      { text.push(sold + " Sold") }

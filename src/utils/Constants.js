@@ -10,7 +10,6 @@ export const Route = {
    HOME:     'Home',
    DROP:     'Drop',
    ITEM:     'Item',
-   // ARTIST:   'Artist',
    CATEGORY: 'Category',
    RECENT:   'Recent Updates',
    CURRENT:  'Current Activity',
@@ -33,6 +32,7 @@ export const UI = {
 }
 
 export const Versions = [
+   "v0.21.1 - 10/28/20", // Combine Name, Sort Name in one col, keep showCols in session
    "v0.21.0 - 10/27/20", // Category as a primary object
    "v0.20.0 - 10/26/20", // RecentItemsPage, refactor item/drop add/edit layout, item.dropId editable
    "v0.19.4 - 10/22/20", // fix TagMgr.primary bug, prev/next through favorites, curr acitivity
