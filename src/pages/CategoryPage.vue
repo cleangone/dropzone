@@ -11,8 +11,8 @@
          <div v-if="category.description" v-html="category.description" class="col q-mt-none" :class="green"  />
       </div>
       <div class="row q-mt-sm" :class="yellow">
-         <q-checkbox v-model="showHoldSold" label="Show Hold/Sold" class="text-grey-10 " color="grey-10" dense />
-       </div> 
+         <q-checkbox v-model="showHoldSold" label="Show Hold/Sold" @input="showHoldSoldChecked()" class="text-grey-10" color="grey-10" dense />
+      </div> 
       <tag-items v-if="recentItems.length" title="Recent" :tagId="recentItemsTagId" :items="recentItems" :expanded="recentItemsExpanded" />
       <tag-items v-for="(tag, key) in tags" :key="key" :title="tag.name" 
          :tagId="tag.id" :items="tagIdToItemsMap.get(tag.id)" :expanded="tagExpanded(tag.id)" />
@@ -34,7 +34,8 @@
    // items grouped by their tags on the page, with Recent added to the Top, and General to the bottom
    const RECENT_ITEMS_TAG_ID = "0"
    const GENERAL_TAG_ID = "-1"
-
+   const SESSION_SHOW_HOLD_SOLD = "ShowHoldSold"
+   
    export default {
 		data() {
 			return {				
@@ -65,7 +66,9 @@
             let recentItems = []
             this.displayItems.forEach(item => { 
                if (withinMonth(item.createdDate)) { recentItems.push(item) }
-		      })
+            })
+
+            SessionMgr.setTagDisplayItems(RECENT_ITEMS_TAG_ID, recentItems)
 				return recentItems
          },
          recentItemsTagId() { return RECENT_ITEMS_TAG_ID },
@@ -98,16 +101,25 @@
                
                map.get(primaryId).push(item)
             })
+            
+            map.forEach((items, tagId) => { // (value, key) iterator
+               SessionMgr.setTagDisplayItems(tagId, items)
+            }) 
+
             return map
          },
          recentItemsExpanded() { return this.initialExpandedTagId == RECENT_ITEMS_TAG_ID },
       },
 		methods: {
          tagExpanded(tagId) { return tagId == this.initialExpandedTagId },
+         showHoldSoldChecked() { SessionMgr.set(SESSION_SHOW_HOLD_SOLD, this.showHoldSold) }
 		},
       created() {
          this.categoryId = this.$route.params.id         
          if (this.$route.params.tagId) { this.initialExpandedTagId = this.$route.params.tagId }
+
+         const sessionShowHoldSold = SessionMgr.get(SESSION_SHOW_HOLD_SOLD)
+         if (sessionShowHoldSold != null) { this.showHoldSold = sessionShowHoldSold }
       },
 		components: {
 	  	   'tag-items' : require('components/Tag/TagItems.vue').default,

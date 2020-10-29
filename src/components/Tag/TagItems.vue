@@ -10,16 +10,12 @@
 
 <script>
    import { mapGetters } from 'vuex'
-   import { SessionMgr } from 'src/managers/SessionMgr'
    import { Colors } from 'src/utils/Constants'
    
 	export default {
       props: ['title', 'tagId', 'items', 'expanded'],
       computed: {
          ...mapGetters('color', Colors),
-      },
-      created() {
-         SessionMgr.setTagDisplayItems(this.tagId, this.items)
       },
       components: {
 	  	   'item' : require('components/Item/Item.vue').default,
