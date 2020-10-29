@@ -8,15 +8,27 @@
             <q-input v-model="categoryToSubmit.name" label="Name" class="col" filled />
          </div>
          <div class="row q-mb-sm q-gutter-sm" :class="orange">
-            <q-input v-model="categoryToSubmit.shortName" label="Short Name" class="col" filled />
-            <q-input v-model="categoryToSubmit.sortName"  label="Sort Name" class="col" filled />
-         </div>
-         <div class="row q-mb-sm q-gutter-sm" :class="orange">
             <q-input label="Video" v-model="categoryToSubmit.video" class="col" filled/>
          </div>
-         <div class="row q-mb-sm q-gutter-sm" :class="orange">
-            <q-select label="Status" v-model="categoryToSubmit.status" :options="statusOptions" class="col" filled />
-            <div class="col"/>
+         <div class="row q-mb-sm" :class="green">
+            <div v-if="!uploaderDisplayed" class="col q-gutter-sm">
+               <q-input v-model="categoryToSubmit.shortName" label="Short Name" filled />
+               <q-input v-model="categoryToSubmit.sortName"  label="Sort Name"  filled />
+               <q-select label="Status" v-model="categoryToSubmit.status" :options="statusOptions" filled />
+            </div>
+            <div class="col q-gutter-sm" :class="orange">
+               <q-img v-if="!uploaderDisplayed" :src="categoryToSubmit.primaryImage.url ? categoryToSubmit.primaryImage.url : 'statics/image-placeholder.png'"
+                     style="height: 160px; width: 260px" class="q-ml-sm" contain />
+               <q-btn v-if="!uploaderDisplayed" @click="uploaderDisplayed=true" label="Upload Image" class="float-right" color="primary" />
+    	      </div>
+         </div>
+         <div class="row q-mb-sm items-center" :class="blue">
+            <div class="col">
+               <div v-if="uploaderDisplayed" class="col q-gutter-xs">
+                  <q-firebase-uploader path="drops/" @upload="uploadCompleted" style="width: 100%; min-height: 190px"/> 
+                  <q-btn @click="uploaderDisplayed=false" icon="clear" class="float-right" color="primary" size="sm" dense />
+               </div>
+	         </div>
          </div>
          <div class="row q-mb-sm q-gutter-sm" :class="purple" >
             <description-edit :container="categoryToSubmit" class="col" />
@@ -24,7 +36,7 @@
    </q-card-section>
 
     <q-card-actions align="right">
-      <q-btn label="Cancel" color="grey" v-close-popup />
+      <q-btn @click="cancel" label="Cancel" color="grey"/>   
       <q-btn @click="save" label="Save" color="primary" />
     </q-card-actions>
   </q-card>
@@ -32,7 +44,9 @@
 
 <script>
    import { mapGetters, mapActions } from 'vuex'
-	import { CategoryStatus } from 'src/managers/CategoryMgr'
+   import QFirebaseUploader from 'components/QFirebaseUploader'
+   import { CategoryStatus } from 'src/managers/CategoryMgr'
+   import { ImageMgr } from 'src/managers/ImageMgr'
    import { UI, Colors } from 'src/utils/Constants'
    
 	export default {
@@ -43,9 +57,11 @@
 					name: '',
                status: CategoryStatus.PRIVATE,
                shortName: '',
-				   sortName: '',
+               sortName: '',
+               primaryImage: { },
             },
-            statusOptions: [ CategoryStatus.PRIVATE, CategoryStatus.PUBLIC ],            
+            statusOptions: [ CategoryStatus.PRIVATE, CategoryStatus.PUBLIC ],   
+            uploaderDisplayed: false,         
 			}
 		},
 		computed: {
@@ -53,21 +69,51 @@
          isEdit() { return this.category != null },
       },
 		methods: {
-			...mapActions('category', ['createCategory', 'updateCategory']),
+         ...mapActions('category', ['createCategory', 'updateCategory']),
+         uploadCompleted(emit) {
+				console.log("uploadCompleted", emit)
+				this.categoryToSubmit.imageUrl = emit.url
+				this.uploaderDisplayed = false
+         },
+         uploadCompleted(emit) {
+            const image = this.categoryToSubmit.primaryImage
+            image.url = emit.url
+            image.baseName = emit.name
+            image.thumbUrl = ""
+            ImageMgr.setFilePaths(image)
+            
+            this.uploaderDisplayed = false
+         },
 			save() {
             if (this.isEdit) { this.updateCategory(this.categoryToSubmit) }
             else { this.createCategory(this.categoryToSubmit) }
 
             this.$emit(UI.CLOSE)
-			},
+         },
+         cancel(emit) {
+            // delete primaryImage files if they are new
+            if (this.isEdit) {
+               const prevFilePath = this.category.primaryImage ? this.category.primaryImage.filePath : null
+               const currFilePath = this.categoryToSubmit.primaryImage ? this.categoryToSubmit.primaryImage.filePath : null
+               if (currFilePath != prevFilePath) { StorageMgr.deleteImageFiles(this.categoryToSubmit.primaryImage) }
+            }
+            else { StorageMgr.deleteImageFiles(this.categoryToSubmit.primaryImage) }
+
+            this.$emit(UI.CLOSE)
+         }
 		},
 		components: {
+         QFirebaseUploader,
     		'description-edit' : require('components/Admin/DescriptionEdit.vue').default,
       },
 		mounted() {
 			if (this.isEdit) {
             // param update propagating as modal is being popped up
-			   setTimeout(() => { this.categoryToSubmit = Object.assign({}, this.category) }, 100)  
+			   setTimeout(() => { 
+               this.categoryToSubmit = Object.assign({}, this.category) 
+               this.categoryToSubmit.primaryImage = Object.assign({}, this.category.primaryImage) // item copy not deep
+               if (!this.categoryToSubmit.primaryImage) { this.categoryToSubmit.primaryImage = {} } // backward compatibility
+            }, 100)  
          }
 		}
    }

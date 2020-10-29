@@ -39,7 +39,7 @@
 
 <style>
 	.card {
-		width: 350px;
+		width: 400px;
 		min-height: 250px;
 		max-width: 500px;
 		min-width: 200px;

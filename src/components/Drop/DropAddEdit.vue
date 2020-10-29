@@ -45,7 +45,7 @@
                   <q-firebase-uploader path="drops/" @upload="uploadCompleted" style="width: 100%; min-height: 190px"/> 
                   <q-btn @click="uploaderDisplayed=false" icon="clear" class="float-right" color="primary" size="sm" dense />
                </div>
-	      </div>
+	         </div>
          </div>
          <div class="col q-gutter-xs" :class="purple" >
             <description-edit :container="dropToSubmit" />

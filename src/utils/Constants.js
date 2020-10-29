@@ -32,6 +32,7 @@ export const UI = {
 }
 
 export const Versions = [
+   "v0.21.3 - 10/29/20", // add category image
    "v0.21.2 - 10/28/20", // mouse-over thumbnail pops up larger image
    "v0.21.1 - 10/28/20", // Combine Name, Sort Name in one col, keep showCols in session
    "v0.21.0 - 10/27/20", // Category as a primary object

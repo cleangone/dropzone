@@ -18,6 +18,7 @@
 	import { mapGetters, mapActions } from 'vuex'
    import QFirebaseUploader from 'components/QFirebaseUploader'
    import { CategoryMgr } from 'src/managers/CategoryMgr'
+   import { ImageMgr } from 'src/managers/ImageMgr'
    import { ItemMgr, ItemStatus } from 'src/managers/ItemMgr'
    import { StorageMgr } from 'src/managers/StorageMgr'
 	import { SaleType, UI } from 'src/utils/Constants'
@@ -51,7 +52,7 @@
 
             if (this.dropId) {item.dropId = this.dropId}
             if (this.category) {item.category = this.category}
-            ItemMgr.setFilePaths(item.primaryImage)
+            ImageMgr.setFilePaths(item.primaryImage)
 
             this.itemsToAdd.push(item)
             this.itemsToAdd.sort((a, b) => (a.primaryImage.baseName > b.primaryImage.baseName) ? 1 : -1) 

@@ -16,10 +16,11 @@
 
 <script>
 	import { mapGetters, mapActions } from 'vuex'
-	import QFirebaseUploader from 'components/QFirebaseUploader.js'
-   import { ItemMgr } from 'src/managers/ItemMgr.js'
-   import { StorageMgr } from 'src/managers/StorageMgr.js'
-	import { UI } from 'src/utils/Constants.js'
+	import QFirebaseUploader from 'components/QFirebaseUploader'
+   import { ImageMgr } from 'src/managers/ImageMgr'
+   import { ItemMgr } from 'src/managers/ItemMgr'
+   import { StorageMgr } from 'src/managers/StorageMgr'
+	import { UI } from 'src/utils/Constants'
    
 	export default {
       props: ['itemId', 'currImages'],
@@ -38,7 +39,7 @@
                isHorizontal: false, 
                url: emit.url 
             }
-            ItemMgr.setFilePaths(image)
+            ImageMgr.setFilePaths(image)
 
             this.imagesToAdd.push(image)
             this.imagesToAdd.sort((a, b) => (a.baseName > b.baseName) ? 1 : -1) 

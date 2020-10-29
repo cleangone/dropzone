@@ -46,6 +46,7 @@
    import { mapGetters, mapActions } from 'vuex'
    import QFirebaseUploader from 'components/QFirebaseUploader'
    import { CategoryMgr, CATEGORY_NONE } from 'src/managers/CategoryMgr'
+   import { ImageMgr } from 'src/managers/ImageMgr'
    import { ItemMgr, ItemStatus } from 'src/managers/ItemMgr'
    import { TagMgr, TagCategory } from 'src/managers/TagMgr'
    import { StorageMgr } from 'src/managers/StorageMgr'
@@ -127,7 +128,7 @@
             image.url = emit.url
             image.baseName = emit.name
             image.thumbUrl = ""
-            ItemMgr.setFilePaths(image)
+            ImageMgr.setFilePaths(image)
             
             this.uploaderDisplayed = false
          },

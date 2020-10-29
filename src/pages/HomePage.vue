@@ -1,8 +1,8 @@
 <template>
 	<q-page class="row justify-center" :class="pageClass">
-      <div class="col-1 q-mt-none q-gutter-y-md" style="width: 360px" :class="blue"> 
+      <div class="col-1 q-mt-none q-gutter-y-md" style="width: 400px" :class="blue"> 
          <drop v-for="(drop, key) in visibleDrops.primary" :key="'prime'+key" :drop="drop" />
-         <twitter v-if="hasTwitterId" :twitterId="twitterId" style="width: 350px" />
+         <twitter v-if="hasTwitterId" :twitterId="twitterId" style="width: 400px" />
          <drop v-for="(drop, key) in visibleDrops.secondary" :key="'second'+key" :drop="drop" />
       </div>
       <recent-items class="col q-mt-none" :class="indigo"/>

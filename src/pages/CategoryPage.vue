@@ -4,7 +4,12 @@
          {{ category.name }}
          <q-btn v-if="category.video" icon="videocam" @click="showVideo=true" @click.stop size="md" flat dense color="primary" />
       </div>
-      <div v-if="category.description" v-html="category.description" class="q-mt-none" :class="green"  />
+      <div class="row" :class="red">
+         <div v-if="thumbExists" class="q-mr-xs" :class="blue">
+            <q-img :src="category.primaryImage.thumbUrl" style="width: 150px" class="image-centered" basic contain />
+         </div>
+         <div v-if="category.description" v-html="category.description" class="col q-mt-none" :class="green"  />
+      </div>
       <div class="row q-mt-sm" :class="yellow">
          <q-checkbox v-model="showHoldSold" label="Show Hold/Sold" class="text-grey-10 " color="grey-10" dense />
        </div> 
@@ -44,8 +49,7 @@
          ...mapGetters('item', ['getActiveItemsWithCategory']),
          ...mapGetters('color', Colors),
          category() { return this.getCategory(this.categoryId) },
-         // hasVideo() { return this.category.video },
-         // hasDescription() { return this.category.Description },
+         thumbExists() { return (this.category && this.category.primaryImage && this.category.primaryImage.thumbUrl) },
          items() { return this.getActiveItemsWithCategory(this.categoryId) },
          displayItems() { 
             SessionMgr.setCategoryItemsDesc(this.category.name, this.categoryId)             
