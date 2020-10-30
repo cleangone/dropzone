@@ -37,7 +37,7 @@
                   <div v-if="userIsOutbid"     class="text-bold bg-red-5 q-px-xs">You have been outbid</div> 
                </div> 
 				</q-card-section>	
-            <div style="height:25px"/> <!-- spacer for actions when expanded -->
+            <div v-if="isAvailable || (userIsAdmin && isSetup)" style="height:25px"/> <!-- spacer for actions when expanded -->
 				<item-actions :item="item" :displayType="itemDisplayType" class="absolute-bottom-left q-ml-xs"/>
 			</q-card>
 		</div>
@@ -153,6 +153,7 @@
 			style() { return (this.image.isHorizontal ? "width: 300px" : "width: 200px") },			
          userIsAdmin() { return this.isAdmin(this.userId) },
          isSetup() { return ItemMgr.isSetup(this.item) },
+         isAvailable() { return ItemMgr.isAvailable(this.item) || ItemMgr.isDropping(this.item)  },
          isNotAvailable() { return ItemMgr.isHold(this.item) || ItemMgr.isInvoiced(this.item) || ItemMgr.isSold(this.item) },
          isDropping() { return ItemMgr.isDropping(this.item) },
 			isBid() { return this.itemSaleType == SaleType.BID },
