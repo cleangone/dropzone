@@ -11,7 +11,7 @@
          <div v-if="category.description" v-html="category.description" class="col q-mt-none" :class="green"  />
       </div>
       <div class="row q-mt-sm" :class="yellow">
-         <q-checkbox v-model="showHoldSold" label="Show Hold/Sold" @input="showHoldSoldChecked()" class="text-grey-10" color="grey-10" dense />
+         <toggle :modelContainer="showItemsModel" :options="showItemsOptions" :sessionKey="showItemsSessionKey" class="q-mr-md"/>
       </div> 
       <tag-items v-if="recentItems.length" title="Recent" :tagId="recentItemsTagId" :items="recentItems" :expanded="recentItemsExpanded" />
       <tag-items v-for="(tag, key) in tags" :key="key" :title="tag.name" 
@@ -28,13 +28,12 @@
    import { ItemMgr } from 'src/managers/ItemMgr'
    import { TagMgr } from 'src/managers/TagMgr'
    import { SessionMgr } from 'src/managers/SessionMgr'
-   import { Colors } from 'src/utils/Constants'
+   import { Toggle, UI, Colors } from 'src/utils/Constants'
    import { withinMonth } from 'src/utils/DateUtils'
    
    // items grouped by their tags on the page, with Recent added to the Top, and General to the bottom
    const RECENT_ITEMS_TAG_ID = "0"
    const GENERAL_TAG_ID = "-1"
-   const SESSION_SHOW_HOLD_SOLD = "ShowHoldSold"
    
    export default {
 		data() {
@@ -42,7 +41,9 @@
             categoryId: "",
             initialExpandedTagId: RECENT_ITEMS_TAG_ID, 
             showVideo: false,
-            showHoldSold: true
+            showItemsModel: Toggle.SHOW_MODEL,
+            showItemsOptions: Toggle.SHOW_OPTIONS, 
+            showItemsSessionKey: Toggle.SHOW_SESSION_KEY
         }
 		},
 	  	computed: {
@@ -54,7 +55,7 @@
          items() { return this.getActiveItemsWithCategory(this.categoryId) },
          displayItems() { 
             SessionMgr.setCategoryItemsDesc(this.category.name, this.categoryId)             
-            if (this.showHoldSold) { return this.items }
+            if (this.showItemsModel.model == UI.SHOW_ALL) { return this.items }
             
             let availableItems = []
             this.items.forEach(item => { 
@@ -112,18 +113,18 @@
       },
 		methods: {
          tagExpanded(tagId) { return tagId == this.initialExpandedTagId },
-         showHoldSoldChecked() { SessionMgr.set(SESSION_SHOW_HOLD_SOLD, this.showHoldSold) }
-		},
+      },
       created() {
          this.categoryId = this.$route.params.id         
          if (this.$route.params.tagId) { this.initialExpandedTagId = this.$route.params.tagId }
 
-         const sessionShowHoldSold = SessionMgr.get(SESSION_SHOW_HOLD_SOLD)
-         if (sessionShowHoldSold != null) { this.showHoldSold = sessionShowHoldSold }
+         const sessionShowItemsModel = SessionMgr.get(this.showItemsSessionKey)
+         if (sessionShowItemsModel != null) { this.showItemsModel = sessionShowItemsModel }
       },
 		components: {
 	  	   'tag-items' : require('components/Tag/TagItems.vue').default,
-      	'show-video' : require('components/General/ShowVideo.vue').default
+         'show-video' : require('components/General/ShowVideo.vue').default,
+         'toggle' : require('components/General/Toggle.vue').default,
       },
       watch: {
          $route() {
