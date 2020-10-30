@@ -1,16 +1,8 @@
 <template>
 	<q-card class="form-card">
-    <q-card-section>
+   <q-card-section>
       <div class="text-h6 heading">Sort Create Dates</div>
-    </q-card-section>
-    <!-- <q-card-section>
-      <div class="q-mb-sm">
-         <q-select label="Sale Type" v-model="saleType" :options="saleTypeOptions" filled/>
-      </div>
-      <div class="q-mb-sm">
-         <q-checkbox label="Delete Items" v-model="deleteItems" dense/>
-		</div>
-	</q-card-section> -->
+   </q-card-section>
    <q-card-actions align="right">
       <q-btn @click="cancel" label="Cancel" color="grey" />
       <q-btn @click="save"   label="Save"   color="primary" />
@@ -19,7 +11,8 @@
 </template>
 
 <script>
-	import { mapActions } from 'vuex'
+   import { mapActions } from 'vuex'
+   import { UI } from 'src/utils/Constants'
 	
 	export default {
       props: ['items'],
@@ -45,10 +38,9 @@
             })
 
             this.updateItems(itemUpdates)
-            this.$emit('close')
+            this.$emit(UI.CLOSE)
          },
-         
-         cancel() { this.$emit('close') }
+         cancel() { this.$emit(UI.CLOSE) }
 		},
 	}
 </script>

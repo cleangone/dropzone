@@ -112,7 +112,7 @@
 					{ name: 'status',     label: 'Status',      align: 'center', field: 'status',       sortable: true },
 					{ name: 'actions' }
             ],
-            pagination: { rowsPerPage: 30 },
+            pagination: { rowsPerPage: 50 },
 			}
 		},
 		computed: {
@@ -163,7 +163,7 @@
          showSortDatesButton() { 
             if (this.selectedRowItems.length < 2) { return false } 
             for (var rowItem of this.selectedRowItems) {
-               if (!ItemMgr.isPrivate(rowItem)) { return false }
+               if (!(ItemMgr.isPrivate(rowItem) || ItemMgr.isSetup(rowItem)) ) { return false }
             }
             return true
          },

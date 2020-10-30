@@ -99,6 +99,7 @@
                this.itemToSubmit.dropDoneDate = 0 
                this.itemToSubmit.userUpdatedDate = this.itemToSubmit.sortedCreateDate  
             }
+            if (ItemMgr.isAvailable(this.itemToSubmit)) { this.itemToSubmit.availableDate = new Date().getTime() }   
 
             if (this.itemToSubmit.category && CategoryMgr.isNone(this.itemToSubmit.category)) { this.itemToSubmit.category = null }
             

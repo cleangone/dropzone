@@ -94,6 +94,7 @@
                      update.dropDoneDate = 0 
                      update.userUpdatedDate = item.sortedCreateDate
                   }
+                  if (ItemMgr.isAvailable(update)) { update.availableDate = new Date().getTime() }
                }
 
                if (this.saleType.length) { update.saleType = this.saleType }

@@ -3,11 +3,13 @@
 		<div v-if="drop">
 			<div class="row q-mt-sm text-h5">{{ drop.name }}</div>
          <div v-if="adminViewingPreDrop" class="row q-mt-none">
-            <q-checkbox v-model="adminView" label="Admin Item View" class="text-grey-7" color="grey-7" dense />
+            <q-checkbox v-model="adminView" label="Admin Item View" class="text-grey-7" color="grey-10" dense />
          </div>
-			<div v-else-if="showItems" class="row q-mt-none">
-				<q-checkbox v-model="showHoldSold" label="Show Hold/Sold" class="text-grey-10" color="grey-10" dense />
-			</div>
+			<div v-else-if="showItems" class="row q-mt-xs">
+				<q-btn-toggle v-model="show"   :options="showOptions" toggle-color="blue" color="white" text-color="grey-10" class="q-mr-md" no-caps />
+            <q-btn-toggle v-model="sortBy" :options="sortOptions" toggle-color="blue" color="white" text-color="grey-10" no-caps />
+            <!-- <q-checkbox v-model="showHoldSold" label="Show Hold/Sold" class="text-grey-10 q-ml-md" color="blue" dense /> -->
+         </div>
          <div v-if="showItems" class="row q-mt-sm q-gutter-sm">
 				<item v-for="(item, key) in displayItems" :key="key" :item="item" />
 			</div>
@@ -31,13 +33,25 @@
    import { SessionMgr } from 'src/managers/SessionMgr'
    import { formatTodayOr_ddd_MMM_D_h_mm } from 'src/utils/DateUtils'
    
+   const SHOW_ALL = "all"
+   const SHOW_AVAILABLE = "available"
+   const SORT_BY_NAME = "name"
+   const SORT_BY_DATE = "date"
+   
 	export default {
 		data() {
 			return {				
 				dropId: 0,
-            showHoldSold: true,
-            adminView: false
-        }
+            adminView: false,
+            show: SHOW_ALL,
+            sortBy: SORT_BY_NAME,
+            showOptions: [
+               { label: 'Show All', value: SHOW_ALL },
+               { label: 'Show Available', value: SHOW_AVAILABLE } ],
+            sortOptions: [
+               { label: 'Sort by Name', value: SORT_BY_NAME },
+               { label: 'Sort by Most Recent Updated', value: SORT_BY_DATE } ],
+         }
 		},
 	  	computed: {
 			...mapGetters('auth', ['loggedIn', 'userId']),
@@ -57,12 +71,19 @@
 		      })
             return visibleItems
          },
+         sortedItems() { 
+            if (this.sortBy == SORT_BY_NAME) { return this.visibleItems }
+            
+            const sortedItems = [...this.visibleItems]
+            sortedItems.sort((a, b) => (a.userUpdatedDate > b.userUpdatedDate) ? -1 : 1)
+            return sortedItems
+         },
          displayItems() { 
             SessionMgr.setDropItemsDesc("Drop", this.dropId) 
-            if (this.showHoldSold) { return SessionMgr.setDisplayItems(this.visibleItems) }
+            if (this.show == SHOW_ALL) { return SessionMgr.setDisplayItems(this.sortedItems) }
 
             const displayItems = []
-            this.visibleItems.forEach(item => { 
+            this.sortedItems.forEach(item => { 
                if (ItemMgr.isAvailable(item) || ItemMgr.isDropping(item)) { displayItems.push(item) }
             })
             return SessionMgr.setDisplayItems(displayItems)

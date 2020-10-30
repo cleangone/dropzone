@@ -36,7 +36,6 @@
                if (ItemMgr.isActive(item)) { activeItems.push(item) }
             }
 
-            activeItems.sort((a, b) => (a.userUpdatedDate > b.userUpdatedDate) ? -1 : 1)            
             return activeItems
          },
          visibleItems() {
