@@ -8,9 +8,9 @@
 		<div class="row q-mt-xs q-gutter-xs" :class="orange">
 			<item v-for="(item, key) in visibleItems" :key="key" :item="item" :displayType="displayType"/>
 		</div>
-      <div v-if="this.activeItems.length > this.visibleItems.length" class="self-center text-h6" :class="green"> 
+      <div v-if="this.activeItems.length > this.visibleItems.length" class="self-center text-h6 q-mt-lg" :class="green"> 
          <router-link :to="{name: recentPageRoute}" :class="blue">
-            See All {{ this.visibleItems.length }} Recent Updates
+            See All {{ this.activeItems.length }} Recent Updates
          </router-link> 
       </div>
   	</div> 

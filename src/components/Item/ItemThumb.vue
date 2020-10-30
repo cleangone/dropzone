@@ -25,7 +25,7 @@
          imageW() { return "width: " + (this.image.isHorizontal ? this.hImageWidth : this.vImageWidth) },	
          // imageH() { return "height: " + this.imageHeight },	
          imageWH() { return this.imageMouseover ? 
-            "width: " + (this.image.isHorizontal ? "400px" : "300px") :
+            "width: " + (this.image.isHorizontal ? "450px" : "300px") :
             "width: " + (this.image.isHorizontal ? this.hImageWidth : this.vImageWidth) + "; max-height: " + this.imageMaxHeight
          },	
          thumbUrl() { return this.imageMouseover ? this.image.url : this.image.thumbUrl },	

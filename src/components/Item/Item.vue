@@ -2,7 +2,7 @@
 	<div>
 		<div v-if="displayIsMini">
 			<q-card v-if="hasImageUrl" class="q-pt-xs q-px-xs" style="min-height: 260px;" :class="textBgColor">				
-				<item-thumb :item="item" :image="image" vImageWidth="125px" hImageWidth="250px" imageMaxHeight="200px" :tagId="tagId"/>
+				<item-thumb :item="item" :image="image" vImageWidth="125px" hImageWidth="262px" imageMaxHeight="200px" :tagId="tagId"/>
 				<q-card-section class="text-caption q-pa-xs" :class="purple">
 					<div style="line-height: 1.25em" :class="orange">
                   <span>{{ item.name }}</span>
@@ -17,7 +17,7 @@
 		</div>
 		<div v-else-if="displayIsThumb || displayIsBidThumb">
 			<q-card v-if="hasImageUrl" class="q-pt-xs q-px-xs" style="min-height: 320px;" :class="textBgColor">
-				<item-thumb :item="item" :image="image" vImageWidth="150px" hImageWidth="300px" imageMaxHeight="250px" :tagId="tagId"/>
+				<item-thumb :item="item" :image="image" vImageWidth="150px" hImageWidth="316px" imageMaxHeight="250px" :tagId="tagId"/>
 				<q-card-section class="text-caption q-px-xs q-pt-xs q-pb-none" :class="purple">
 					<div style="line-height: 1.25em" :class="orange">
                   <span class="text-weight-bold">{{ item.name }}</span>
