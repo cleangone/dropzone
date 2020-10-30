@@ -30,6 +30,10 @@
                </div>
 	         </div>
          </div>
+         <div class="row q-mb-sm q-gutter-sm" :class="orange">
+            <q-input label="Avatar Top Line Name"    v-model="categoryToSubmit.topLineName"    class="col" filled/>
+            <q-input label="Avatar Bottom Line Name" v-model="categoryToSubmit.bottomLineName" class="col" filled/>
+         </div>
          <div class="row q-mb-sm q-gutter-sm" :class="purple" >
             <description-edit :container="categoryToSubmit" class="col" />
          </div>	

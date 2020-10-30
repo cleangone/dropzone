@@ -6,9 +6,8 @@
             <q-checkbox v-model="adminView" label="Admin Item View" class="text-grey-7" color="grey-10" dense />
          </div>
 			<div v-else-if="showItems" class="row q-mt-xs">
-				<q-btn-toggle v-model="show"   :options="showOptions" toggle-color="blue" color="white" text-color="grey-10" class="q-mr-md" no-caps />
-            <q-btn-toggle v-model="sortBy" :options="sortOptions" toggle-color="blue" color="white" text-color="grey-10" no-caps />
-            <!-- <q-checkbox v-model="showHoldSold" label="Show Hold/Sold" class="text-grey-10 q-ml-md" color="blue" dense /> -->
+				<q-btn-toggle v-model="show"   :options="showOptions" toggle-color="blue" color="grey-1"  text-color="blue-8" dense unelevated no-caps class="q-mr-md"/>
+            <q-btn-toggle v-model="sortBy" :options="sortOptions" toggle-color="blue" color="grey-1"  text-color="blue-8" dense unelevated no-caps />
          </div>
          <div v-if="showItems" class="row q-mt-sm q-gutter-sm">
 				<item v-for="(item, key) in displayItems" :key="key" :item="item" />

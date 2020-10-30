@@ -23,6 +23,7 @@ module.exports = function (ctx) {
       // all: true, // --- includes everything; for dev only!
 
       components: [
+        'QAvatar',
         'QBtn', 'QBtnToggle',
         'QDate',
         'QDrawer',

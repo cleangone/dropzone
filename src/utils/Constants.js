@@ -32,7 +32,8 @@ export const UI = {
 }
 
 export const Versions = [
-   "v0.21.5 - 10/30/20", // increase admin-items display to 50/page
+   "v0.21.6 - 10/30/20", // Category avatar
+   "v0.21.5 - 10/29/20", // fix Recent Items sort, add expand icon for thumb mouseover, add Drop Page sort selection
    "v0.21.4 - 10/29/20", // fix hold/sold when scrolling through category items 
    "v0.21.3 - 10/29/20", // add category image
    "v0.21.2 - 10/28/20", // mouse-over thumbnail pops up larger image

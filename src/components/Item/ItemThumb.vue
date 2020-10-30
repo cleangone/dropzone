@@ -1,7 +1,7 @@
 <template>
    <q-img :src="thumbUrl" v-on:click="navToItemPage" :style="imageWH" class="image-centered" basic contain>
       <q-icon name="mdi-arrow-expand" size="md" color="blue-9" class="absolute-top-left" 
-         @mouseenter="imageMouseover=true" @mouseleave.native="imageMouseover=false" /> 
+         @mouseenter="imageMouseover=true" @mouseleave="imageMouseover=false" /> 
       <item-liked :item="item" class="absolute-bottom-right"/>   
    </q-img>
 </template>  

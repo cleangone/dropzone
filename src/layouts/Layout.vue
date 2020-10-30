@@ -26,14 +26,17 @@
          desktop - mini is always shown, hamburger locks it open, mouseover also opens, drawer pushes content to right
          mobile - drawer not shown, hamburger shows it, no mini mode, drawer overlays content 
       -->
-      <q-drawer id="drawer" v-model="showDrawer" :breakpoint="767" :width="225" bordered
+      <q-drawer id="drawer" v-model="showDrawer" :breakpoint="767" :width="210" bordered
          :mini="drawerMini" :overlay="$q.platform.is.mobile ? true : false"
          @mouseover="drawerMouseover=true" @mouseout="drawerMouseover=false">
          <q-list>
-            <layout-item v-if="currentUserActionsExist" path="/current" :class="activeItemsClass" 
-            label="Current Activity" iconName="fas fa-gavel"/>          
+            <layout-item v-if="currentUserActionsExist" primary :class="activeItemsClass"
+               path="/current" label="Current Activity" iconName="fas fa-gavel" />          
             <q-expansion-item label="Artists" icon="brush" expand-separator>
-               <layout-item v-for="(category, key) in getPublicCategories" :key="key" :path="'/category/' + category.id" :label="category.name" />
+               <layout-item v-for="(category, key) in getPublicCategories" :key="key" 
+                  :path="'/category/' + category.id" :label="category.name" 
+                  :avatarImage="category.primaryImage ? category.primaryImage.thumbUrl : null" 
+                  :topLabel="category.topLineName" :botLabel="category.bottomLineName"/>
             </q-expansion-item>                
             <q-expansion-item v-if="loggedIn" label="My Account" icon="account_circle" :content-inset-level="0.25" expand-separator>  
                <layout-item path="/account"   label="Account"   iconName="account_circle"/>
