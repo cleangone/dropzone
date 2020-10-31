@@ -48,7 +48,6 @@
 
 <script>
    import { mapGetters, mapActions } from 'vuex'
-   import QFirebaseUploader from 'components/QFirebaseUploader'
    import { CategoryStatus } from 'src/managers/CategoryMgr'
    import { ImageMgr } from 'src/managers/ImageMgr'
    import { UI, Colors } from 'src/utils/Constants'
@@ -107,7 +106,7 @@
          }
 		},
 		components: {
-         QFirebaseUploader,
+         'q-firebase-uploader' : require('components/Imported/QFirebaseUploader.js').default,
     		'description-edit' : require('components/Admin/DescriptionEdit.vue').default,
       },
 		mounted() {

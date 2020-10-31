@@ -16,8 +16,7 @@
 
 <script>
 	import { mapGetters, mapActions } from 'vuex'
-	import QFirebaseUploader from 'components/QFirebaseUploader'
-   import { ImageMgr } from 'src/managers/ImageMgr'
+	import { ImageMgr } from 'src/managers/ImageMgr'
    import { ItemMgr } from 'src/managers/ItemMgr'
    import { StorageMgr } from 'src/managers/StorageMgr'
 	import { UI } from 'src/utils/Constants'
@@ -59,7 +58,7 @@
          }
       },
 		components: {
-    		QFirebaseUploader
+    	   'q-firebase-uploader' : require('components/Imported/QFirebaseUploader.js').default,
 		}
 	}
 </script>

@@ -62,8 +62,7 @@
 <script>
    import { date } from 'quasar'
    import { mapGetters, mapActions } from 'vuex'
-	import QFirebaseUploader from 'components/QFirebaseUploader'
-   import { DropMgr, DropStatus, HomeGroup } from 'src/managers/DropMgr'
+	import { DropMgr, DropStatus, HomeGroup } from 'src/managers/DropMgr'
    import { SaleType, Colors } from 'src/utils/Constants.js'
    import { localTimezone } from 'src/utils/DateUtils'
 
@@ -118,7 +117,7 @@
 			}
 		},
 		components: {
-    		QFirebaseUploader,
+    		'q-firebase-uploader' : require('components/Imported/QFirebaseUploader.js').default,
          'description-edit' : require('components/Admin/DescriptionEdit.vue').default,
       },
 		mounted() {

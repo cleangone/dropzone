@@ -1,6 +1,7 @@
 <template>
 	<q-card class="card">
-      <q-img :src="drop.imageUrl ? drop.imageUrl : 'statics/image-placeholder.png'" v-on:click="navToDropPage" basic contain>
+      <q-img :src="drop.imageUrl ? drop.imageUrl : 'statics/image-placeholder.png'" 
+         v-on:click="navToDropPage" class="cursor-pointer" basic contain>
          <drop-timer v-if="isCountdown" :drop="drop"/>
          <div v-else class="absolute-bottom text-h6">{{ drop.name }}</div>
       </q-img>
