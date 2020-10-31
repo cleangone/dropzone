@@ -1,8 +1,9 @@
 <template>
-	<div>
+	<div @mouseleave="mouseleave()">
 		<div v-if="displayIsMini">
 			<q-card v-if="hasImageUrl" class="q-pt-xs q-px-xs" style="min-height: 260px;" :class="textBgColor">				
-				<item-thumb :item="item" :image="image" vImageWidth="125px" hImageWidth="262px" imageMaxHeight="200px" :tagId="tagId"/>
+				<item-thumb :item="item" :image="image" :mouseContainer="getMouseContainer"
+               vImageWidth="125px" hImageWidth="262px" imageMaxHeight="200px" :tagId="tagId"/>
 				<q-card-section class="text-caption q-pa-xs" :class="purple">
 					<div style="line-height: 1.25em" :class="orange">
                   <span>{{ item.name }}</span>
@@ -14,10 +15,11 @@
 					<item-timer v-if="isDropping" :item="item"/>
 				</q-card-section>	
 			</q-card>
-		</div>
+      </div>
 		<div v-else-if="displayIsThumb || displayIsBidThumb">
 			<q-card v-if="hasImageUrl" class="q-pt-xs q-px-xs" style="min-height: 320px;" :class="textBgColor">
-				<item-thumb :item="item" :image="image" vImageWidth="150px" hImageWidth="316px" imageMaxHeight="250px" :tagId="tagId"/>
+				<item-thumb :item="item" :image="image" vImageWidth="150px" :mouseContainer="getMouseContainer"
+               hImageWidth="316px" imageMaxHeight="250px" :tagId="tagId"/>
 				<q-card-section class="text-caption q-px-xs q-pt-xs q-pb-none" :class="purple">
 					<div style="line-height: 1.25em" :class="orange">
                   <span class="text-weight-bold">{{ item.name }}</span>
@@ -100,6 +102,7 @@
          'tagId'], // used when displaying full image from a page with tagged sections
       data() {
 			return {
+            mouseContainer: { mouseover: false }
 			}
 		},
 		computed: {
@@ -111,6 +114,7 @@
 			displayIsMini() { return this.itemDisplayType == ItemDisplayType.MINI },
 			displayIsThumb() { return this.itemDisplayType ==  ItemDisplayType.THUMB },
          displayIsBidThumb() { return this.itemDisplayType ==  ItemDisplayType.BID_THUMB },
+         getMouseContainer() { return this.displayIsMini || this.displayIsThumb ? this.mouseContainer : null },
          itemsCollection() { return SessionMgr.getDisplayItemsDesc() },
          itemsCollectionName() { return this.itemsCollection.name },
          itemsCollectionRouterLink() { 
@@ -192,7 +196,8 @@
 				else if (ItemMgr.isHold(this.item) || ItemMgr.isInvoiced(this.item)) { return ItemStatus.HOLD + " (" + this.currPrice + ")" }
             else if (ItemMgr.isDropping(this.item)) { return prefix + this.currPrice }
             else return prefix + this.currPrice
-			},
+         },
+         mouseleave() { this.mouseContainer.mouseover = false }
       },
 		filters: {
 			formatPrice(priceObj) { return "$" + priceObj + (String(priceObj).includes(".") ? "" : ".00") }

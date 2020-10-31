@@ -11,10 +11,9 @@
    import { SessionMgr } from 'src/managers/SessionMgr'	
 	
 	export default {
-      props: ['item', 'image', 'hImageWidth', 'vImageWidth', 'imageMaxHeight', 'tagId'], 
+      props: ['item', 'image', 'hImageWidth', 'vImageWidth', 'imageMaxHeight', 'mouseContainer', 'tagId'], 
       data() {
 	  		return {
-            imageMouseover: false,
             mouseleaveTime: 0,
 			}
 		},
@@ -22,11 +21,11 @@
          ...mapGetters('auth', ['loggedIn', 'userId']),
          ...mapGetters('user', ['getUser']),
          user() { return this.getUser(this.userId)},		
-         imageWH() { return this.imageMouseover ? 
+         imageWH() { return this.mouseContainer && this.mouseContainer.mouseover ? 
             "width: " + (this.image.isHorizontal ? "450px" : "300px") :
             "width: " + (this.image.isHorizontal ? this.hImageWidth : this.vImageWidth) + "; max-height: " + this.imageMaxHeight
          },	
-         thumbUrl() { return this.imageMouseover ? this.image.url : this.image.thumbUrl },	
+         thumbUrl() { return this.mouseContainer && this.mouseContainer.mouseover ? this.image.url : this.image.thumbUrl },	
       },
       methods: {
          navToItemPage() { 
@@ -37,15 +36,14 @@
             // todo - the last item in each row does nt have enough space to expand
             // could it expand left and over it's neighbor?  Could others expand over their neighbors?
             // would be nice to at least not have the expand icon
-            const mouseenterTime = Date.now()
-            setTimeout(() => {  // debounce mouseover 
-               if (mouseenterTime > this.mouseleaveTime ) { this.imageMouseover = true }
-            }, 250)  
+            if (this.mouseContainer) {
+               const mouseenterTime = Date.now()
+               setTimeout(() => {  // debounce mouseover 
+                  if (mouseenterTime > this.mouseleaveTime ) { this.mouseContainer.mouseover = true }
+               }, 250)  
+            }
          },
-         mouseleave() {
-            this.mouseleaveTime = Date.now()
-            this.imageMouseover = false
-         }
+         mouseleave() { if (this.mouseContainer) { this.mouseleaveTime = Date.now() } },
       },
       components: {
 			'item-liked' : require('components/Item/ItemLiked.vue').default,

@@ -34,6 +34,7 @@ export const UI = {
 }
 
 export const Versions = [
+   "v0.21.8 - 10/31/20", // Debounce ItemThumb expand
    "v0.21.7 - 10/30/20", // Toggle component, use on Drop and Category pages
    "v0.21.6 - 10/30/20", // Category avatar
    "v0.21.5 - 10/29/20", // fix Recent Items sort, add expand icon for thumb mouseover, add Drop Page sort selection
