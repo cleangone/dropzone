@@ -33,13 +33,6 @@ export const UI = {
    SHOW_AVAILABLE: 'available',
 }
 
-// should probably go soemwhere else
-export const Toggle = {
-   SHOW_SESSION_KEY: "ShowItemsModel",
-   SHOW_MODEL: { model: UI.SHOW_ALL }, 
-   SHOW_OPTIONS: [ { label: 'Show All', value: UI.SHOW_ALL }, { label: 'Show Available', value: UI.SHOW_AVAILABLE } ],
-}
-
 export const Versions = [
    "v0.21.7 - 10/30/20", // Toggle component, use on Drop and Category pages
    "v0.21.6 - 10/30/20", // Category avatar

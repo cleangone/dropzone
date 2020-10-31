@@ -20,9 +20,7 @@
       computed: {
          ...mapGetters('color', Colors),
          dense() { return this.primary == null ? true : false },
-         splitLabel() { 
-            console.log(this.label, this.topLabel, this.botLabel)
-            return this.topLabel != null || this.botLabel != null },
+         splitLabel() { return this.topLabel != null || this.botLabel != null },
          itemClass() { return this.bold ? "text-bold" : "" },
       },
    }

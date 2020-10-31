@@ -1,7 +1,7 @@
 <template>
 	<q-page class="q-pa-md">
 		<div class="q-mt-sm text-h5">Recent Updates</div>
-      <q-checkbox v-model="showHoldSold" label="Show Hold/Sold" class="text-grey-10" color="grey-10" dense />
+      <toggle :toggleContainer="showItemsToggleContainer" class="q-mt-sm"/>      
       <div v-if="recentItemsExist">
          <div class="row q-mt-sm q-gutter-sm">
 				<item v-for="(item, key) in displayItems" :key="key" :item="item" />
@@ -15,18 +15,19 @@
    import { mapGetters  } from 'vuex'
    import { ItemMgr } from 'src/managers/ItemMgr'
    import { SessionMgr } from 'src/managers/SessionMgr'
+   import { getShowItemsToggleContainer, isShowItemsAll } from 'src/utils/Utils'
    
 	export default {
 		data() {
 			return {				
-				showHoldSold: true,
+				showItemsToggleContainer: {},
         }
 		},
 	  	computed: {
 			...mapGetters('item', ['recentItemsExist', 'getRecentItems']),
 			displayItems() { 
             SessionMgr.setRecentItemsDesc() 
-            if (this.showHoldSold) { return SessionMgr.setDisplayItems(this.getRecentItems) }
+            if (isShowItemsAll(this.showItemsToggleContainer)) { return SessionMgr.setDisplayItems(this.getRecentItems) }
 
             const displayItems = []
             this.getRecentItems.forEach(item => { 
@@ -38,9 +39,11 @@
 		methods: {
 		},
       created() {
+         this.showItemsToggleContainer = getShowItemsToggleContainer()
 		},
 		components: {
-	  	   'item' : require('components/Item/Item.vue').default,
+         'item' : require('components/Item/Item.vue').default,
+         'toggle' : require('components/General/Toggle.vue').default,
 	  	}
 	}
 

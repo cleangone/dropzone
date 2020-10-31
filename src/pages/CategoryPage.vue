@@ -11,7 +11,7 @@
          <div v-if="category.description" v-html="category.description" class="col q-mt-none" :class="green"  />
       </div>
       <div class="row q-mt-sm" :class="yellow">
-         <toggle :modelContainer="showItemsModel" :options="showItemsOptions" :sessionKey="showItemsSessionKey" class="q-mr-md"/>
+         <toggle :toggleContainer="showItemsToggleContainer" />   
       </div> 
       <tag-items v-if="recentItems.length" title="Recent" :tagId="recentItemsTagId" :items="recentItems" :expanded="recentItemsExpanded" />
       <tag-items v-for="(tag, key) in tags" :key="key" :title="tag.name" 
@@ -28,8 +28,9 @@
    import { ItemMgr } from 'src/managers/ItemMgr'
    import { TagMgr } from 'src/managers/TagMgr'
    import { SessionMgr } from 'src/managers/SessionMgr'
-   import { Toggle, UI, Colors } from 'src/utils/Constants'
+   import { Colors } from 'src/utils/Constants'
    import { withinMonth } from 'src/utils/DateUtils'
+   import { getShowItemsToggleContainer, isShowItemsAll } from 'src/utils/Utils'
    
    // items grouped by their tags on the page, with Recent added to the Top, and General to the bottom
    const RECENT_ITEMS_TAG_ID = "0"
@@ -41,9 +42,7 @@
             categoryId: "",
             initialExpandedTagId: RECENT_ITEMS_TAG_ID, 
             showVideo: false,
-            showItemsModel: Toggle.SHOW_MODEL,
-            showItemsOptions: Toggle.SHOW_OPTIONS, 
-            showItemsSessionKey: Toggle.SHOW_SESSION_KEY
+            showItemsToggleContainer: {},
         }
 		},
 	  	computed: {
@@ -55,7 +54,7 @@
          items() { return this.getActiveItemsWithCategory(this.categoryId) },
          displayItems() { 
             SessionMgr.setCategoryItemsDesc(this.category.name, this.categoryId)             
-            if (this.showItemsModel.model == UI.SHOW_ALL) { return this.items }
+            if (isShowItemsAll(this.showItemsToggleContainer)) { return this.items }
             
             let availableItems = []
             this.items.forEach(item => { 
@@ -117,9 +116,7 @@
       created() {
          this.categoryId = this.$route.params.id         
          if (this.$route.params.tagId) { this.initialExpandedTagId = this.$route.params.tagId }
-
-         const sessionShowItemsModel = SessionMgr.get(this.showItemsSessionKey)
-         if (sessionShowItemsModel != null) { this.showItemsModel = sessionShowItemsModel }
+         this.showItemsToggleContainer = getShowItemsToggleContainer()
       },
 		components: {
 	  	   'tag-items' : require('components/Tag/TagItems.vue').default,

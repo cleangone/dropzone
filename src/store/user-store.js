@@ -45,7 +45,7 @@ const getters = {
       return { id: userId }
    }, 
    isAdmin: state => userId => { 
-      console.log("isAdmin", userId)
+      // console.log("isAdmin", userId)
       let user = getters.getUser(userId)
       return user ? user.isAdmin : false
    },

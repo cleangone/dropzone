@@ -6,8 +6,8 @@
             <q-checkbox v-model="adminView" label="Admin Item View" class="text-grey-7" color="grey-10" dense />
          </div>
 			<div v-else-if="showItems" class="row q-mt-xs" style="height: 20px">
-            <toggle :modelContainer="showItemsModel" :options="showItemsOptions" :sessionKey="showItemsSessionKey" class="q-mr-md"/>
-            <toggle :modelContainer="sortBy"         :options="sortOptions" />
+            <toggle :toggleContainer="showItemsToggleContainer" class="q-mr-md"/>
+            <toggle :toggleContainer="sortByToggleContainer" />
          </div>
          <div v-if="showItems" class="row q-mt-sm q-gutter-sm">
 				<item v-for="(item, key) in displayItems" :key="key" :item="item" />
@@ -30,8 +30,8 @@
    import { DropMgr } from 'src/managers/DropMgr'
 	import { ItemMgr } from 'src/managers/ItemMgr'
    import { SessionMgr } from 'src/managers/SessionMgr'
-   import { Toggle, UI } from 'src/utils/Constants'
    import { formatTodayOr_ddd_MMM_D_h_mm } from 'src/utils/DateUtils'
+   import { getShowItemsToggleContainer, isShowItemsAll } from 'src/utils/Utils'
    
    const SORT_BY_NAME = "name"
    const SORT_BY_DATE = "date"
@@ -41,13 +41,11 @@
 			return {				
 				dropId: 0,
             adminView: false,
-            showItemsModel: Toggle.SHOW_MODEL,
-            showItemsOptions: Toggle.SHOW_OPTIONS, 
-            showItemsSessionKey: Toggle.SHOW_SESSION_KEY,
-            sortBy: { model: SORT_BY_NAME },
-            sortOptions: [
-               { label: 'Sort by Name', value: SORT_BY_NAME },
-               { label: 'Sort by Most Recent Updated', value: SORT_BY_DATE } ],
+            showItemsToggleContainer: {},
+            sortByToggleContainer: {
+               model: SORT_BY_NAME, 
+               options: [{ label: 'Sort by Name', value: SORT_BY_NAME }, { label: 'Sort by Most Recent Updated', value: SORT_BY_DATE }],
+            }
          }
 		},
 	  	computed: {
@@ -69,7 +67,7 @@
             return visibleItems
          },
          sortedItems() { 
-            if (this.sortBy.model == SORT_BY_NAME) { return this.visibleItems }
+            if (this.sortByToggleContainer.model == SORT_BY_NAME) { return this.visibleItems }
             
             const sortedItems = [...this.visibleItems]
             sortedItems.sort((a, b) => (a.userUpdatedDate > b.userUpdatedDate) ? -1 : 1)
@@ -77,7 +75,7 @@
          },
          displayItems() { 
             SessionMgr.setDropItemsDesc("Drop", this.dropId) 
-            if (this.showItemsModel.model == UI.SHOW_ALL) { return SessionMgr.setDisplayItems(this.sortedItems) }
+            if (isShowItemsAll(this.showItemsToggleContainer)) { return SessionMgr.setDisplayItems(this.sortedItems) }
 
             const displayItems = []
             this.sortedItems.forEach(item => { 
@@ -91,10 +89,8 @@
 		methods: {
 		},
       created() {
-         this.dropId = this.$route.params.id
-         
-         const sessionShowItemsModel = SessionMgr.get(this.showItemsSessionKey)
-         if (sessionShowItemsModel != null) { this.showItemsModel = sessionShowItemsModel }
+         this.dropId = this.$route.params.id   
+         this.showItemsToggleContainer = getShowItemsToggleContainer()
       },
 		components: {
 	  	   'drop-timer' : require('components/Drop/DropTimer.vue').default,
