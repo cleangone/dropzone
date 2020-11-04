@@ -1,9 +1,14 @@
 <template>
-   <q-img :src="thumbUrl" v-on:click="navToItemPage" :style="imageWH" class="image-centered cursor-pointer" basic contain>
+   <div>
+   <q-img :src="image.thumbUrl" v-on:click="navToItemPage" :style="thumbWH" class="image-centered cursor-pointer" 
+      @mouseleave="imageMouseleave()" basic contain>
       <q-icon name="mdi-arrow-expand" size="md" color="blue-9" class="absolute-top-left" 
-         @mouseenter="mouseenter()" @mouseleave="mouseleave()" /> 
+         @mouseenter="mouseenter($event)" @mouseleave="iconMouseleave()" /> 
       <item-liked :item="item" class="absolute-bottom-right"/>   
    </q-img>
+   <q-img v-if="mouseover" :src="image.url" :placeholder-src="image.thumbUrl" 
+      class="z-top image-centered image-popup" :style="popupStyle" basic />
+   </div>
 </template>  
 
 <script>
@@ -15,35 +20,42 @@
       data() {
 	  		return {
             mouseleaveTime: 0,
+            mouseover: false,
+            mouse: { x: 0, y: 0},
+            page:  { w: 0, h: 0 }
 			}
 		},
 		computed: {
-         ...mapGetters('auth', ['loggedIn', 'userId']),
-         ...mapGetters('user', ['getUser']),
-         user() { return this.getUser(this.userId)},		
-         imageWH() { return this.mouseContainer && this.mouseContainer.mouseover ? 
-            "width: " + (this.image.isHorizontal ? "450px" : "300px") :
-            "width: " + (this.image.isHorizontal ? this.hImageWidth : this.vImageWidth) + "; max-height: " + this.imageMaxHeight
-         },	
-         thumbUrl() { return this.mouseContainer && this.mouseContainer.mouseover ? this.image.url : this.image.thumbUrl },	
+         thumbWidth() { return parseInt(this.image.isHorizontal ? this.hImageWidth : this.vImageWidth) },	
+         thumbWH() { return "width: " + this.thumbWidth + "px; max-height: " + this.imageMaxHeight + "px;"},	
+         popupStyle() { 
+            // console.log("popupStyle", this.mouse, this.page)
+            const popupWidth = this.image.isHorizontal ? 450 : 300
+            const xPos = this.mouse.x + 75 + popupWidth < this.page.w ? 
+               this.mouse.x + 75 : this.mouse.x - 20 - popupWidth
+            const yPos =  this.mouse.y + parseInt(this.hImageWidth) < this.page.h ? 
+              this.mouse.y - 50 : this.page.h - parseInt(this.hImageWidth) - 100
+
+            return  "width: " + popupWidth +  "px; left: " + xPos + "px; top: " + yPos + "px;"
+         },
       },
       methods: {
          navToItemPage() { 
             if (SessionMgr.isCategory(SessionMgr.getDisplayItemsDesc())) { SessionMgr.setCategoryTag(this.tagId) }
             this.$router.push("/item/" + this.item.id) 
          },
-         mouseenter() {
-            // todo - the last item in each row does nt have enough space to expand
-            // could it expand left and over it's neighbor?  Could others expand over their neighbors?
-            // would be nice to at least not have the expand icon
-            if (this.mouseContainer) {
-               const mouseenterTime = Date.now()
-               setTimeout(() => {  // debounce mouseover 
-                  if (mouseenterTime > this.mouseleaveTime ) { this.mouseContainer.mouseover = true }
-               }, 250)  
-            }
+         mouseenter(event) {
+            console.log("mouseenter", event)
+            this.mouse = { x: event.x, y: event.y }
+            this.page  = { w: event.view.innerWidth, h: event.view.innerHeight }
+            
+            const mouseenterTime = Date.now()
+            setTimeout(() => {  // debounce mouseover 
+               if (mouseenterTime > this.mouseleaveTime ) { this.mouseover = true }
+            }, 250)  
          },
-         mouseleave() { if (this.mouseContainer) { this.mouseleaveTime = Date.now() } },
+         iconMouseleave() { this.mouseleaveTime = Date.now() },
+         imageMouseleave() { this.mouseover = false }
       },
       components: {
 			'item-liked' : require('components/Item/ItemLiked.vue').default,
@@ -54,8 +66,12 @@
 <style>
 	.image-centered {
 		display: block; 
-		margin-left: auto; 
+      margin-left: auto; 
 		margin-right: auto; 
+	}
+   .image-popup {
+      position: fixed;
+		border: 5px solid; 
 	}
 </style>
 
