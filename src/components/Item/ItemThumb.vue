@@ -32,9 +32,16 @@
             // console.log("popupStyle", this.mouse, this.page)
             const popupWidth = this.image.isHorizontal ? 450 : 300
             const xPos = this.mouse.x + 75 + popupWidth < this.page.w ? 
-               this.mouse.x + 75 : this.mouse.x - 20 - popupWidth
-            const yPos =  this.mouse.y + parseInt(this.hImageWidth) < this.page.h ? 
-              this.mouse.y - 50 : this.page.h - parseInt(this.hImageWidth) - 100
+               this.mouse.x + 75 : // x pos to right of cursor if space
+               this.mouse.x - 20 - popupWidth  // or to left with room for popup
+            
+            const yPct = this.mouse.y * 100 / this.page.h // rough % down the page
+            const avgThumbH = parseInt(this.hImageWidth) // avg thumb height is width of horz image
+            let yPos = 0  
+            if (yPct < 25) { yPos = this.mouse.y } // top 1/4 - position top of popup at cursor 
+            else if (yPct < 50) { yPos = this.mouse.y - 50 } // 2nd - popup slightly above cursor
+            else if (yPct < 75) { yPos = this.mouse.y - avgThumbH/2 - 20 } // 3rd - popup centered at cursor
+            else { yPos = this.page.h - avgThumbH - 125 } // bottom - popup completely visible
 
             return  "width: " + popupWidth +  "px; left: " + xPos + "px; top: " + yPos + "px;"
          },
