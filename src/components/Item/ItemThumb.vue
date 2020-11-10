@@ -1,13 +1,13 @@
 <template>
    <div>
-   <q-img :src="image.thumbUrl" v-on:click="navToItemPage" :style="thumbWH" class="image-centered cursor-pointer" 
-      @mouseleave="imageMouseleave()" basic contain>
-      <q-icon name="mdi-arrow-expand" size="md" color="blue-9" class="absolute-top-left" 
-         @mouseenter="mouseenter($event)" @mouseleave="iconMouseleave()" /> 
-      <item-liked :item="item" class="absolute-bottom-right"/>   
-   </q-img>
-   <q-img v-if="mouseover" :src="image.url" :placeholder-src="image.thumbUrl" 
-      class="z-top image-centered image-popup" :style="popupStyle" basic />
+      <q-img :src="image.thumbUrl" v-on:click="navToItemPage" :style="thumbWH" class="image-centered cursor-pointer" 
+         @mouseenter="mouseenter($event)" @mouseleave="mouseleave()" basic contain>
+         <!-- <q-icon name="mdi-arrow-expand" size="md" color="blue-9" class="absolute-top-left" 
+            @mouseenter="mouseenter($event)" @mouseleave="iconMouseleave()" />  -->
+         <item-liked :item="item" class="absolute-bottom-right"/>   
+      </q-img>
+      <q-img v-if="mouseover" :src="image.url" :placeholder-src="image.thumbUrl" 
+         class="z-top image-centered image-popup contain" :style="popupStyle" basic />
    </div>
 </template>  
 
@@ -30,7 +30,7 @@
          thumbWH() { return "width: " + this.thumbWidth + "px; max-height: " + this.imageMaxHeight + "px;"},	
          popupStyle() { 
             // console.log("popupStyle", this.mouse, this.page)
-            const popupWidth = this.image.isHorizontal ? 450 : 300
+            const popupWidth = this.image.isHorizontal ? 500 : 350
             const xPos = this.mouse.x + 75 + popupWidth < this.page.w ? 
                this.mouse.x + 75 : // x pos to right of cursor if space
                this.mouse.x - 20 - popupWidth  // or to left with room for popup
@@ -40,8 +40,8 @@
             let yPos = 0  
             if (yPct < 25) { yPos = this.mouse.y } // top 1/4 - position top of popup at cursor 
             else if (yPct < 50) { yPos = this.mouse.y - 50 } // 2nd - popup slightly above cursor
-            else if (yPct < 75) { yPos = this.mouse.y - avgThumbH/2 - 20 } // 3rd - popup centered at cursor
-            else { yPos = this.page.h - avgThumbH - 125 } // bottom - popup completely visible
+            // else if (yPct < 75) { yPos = this.mouse.y - avgThumbH/2 - 20 } // 3rd - popup centered at cursor
+            else { yPos = this.page.h - avgThumbH - 150 } // bottom - popup completely visible
 
             return  "width: " + popupWidth +  "px; left: " + xPos + "px; top: " + yPos + "px;"
          },
@@ -52,7 +52,7 @@
             this.$router.push("/item/" + this.item.id) 
          },
          mouseenter(event) {
-            console.log("mouseenter", event)
+            // console.log("mouseenter", event)
             this.mouse = { x: event.x, y: event.y }
             this.page  = { w: event.view.innerWidth, h: event.view.innerHeight }
             
@@ -61,8 +61,12 @@
                if (mouseenterTime > this.mouseleaveTime ) { this.mouseover = true }
             }, 250)  
          },
-         iconMouseleave() { this.mouseleaveTime = Date.now() },
-         imageMouseleave() { this.mouseover = false }
+         mouseleave() { 
+            this.mouseleaveTime = Date.now()
+            this.mouseover = false 
+         },
+         // iconMouseleave() { this.mouseleaveTime = Date.now() },
+         // imageMouseleave() { this.mouseover = false }
       },
       components: {
 			'item-liked' : require('components/Item/ItemLiked.vue').default,
@@ -72,9 +76,9 @@
 
 <style>
 	.image-centered {
-		display: block; 
-      margin-left: auto; 
-		margin-right: auto; 
+		/* display: block;  */
+      /* margin-left: auto; 
+		margin-right: auto;  */
 	}
    .image-popup {
       position: fixed;
