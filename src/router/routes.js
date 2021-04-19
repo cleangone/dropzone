@@ -22,6 +22,7 @@ const routes = [
       { path: '/invoices',             component: () => import('pages/User/InvoicesPage.vue') },
       { path: '/admin/drops',          component: () => import('pages/Admin/DropsAdminPage.vue') },      
       { path: '/admin/dropitems/:id',  component: () => import('pages/Admin/DropItemsAdminPage.vue') },      
+      { path: '/admin/reqs/:itemId',   component: () => import('pages/Admin/PurchaseReqsAdminPage.vue') },      
       { path: '/admin/categories',     component: () => import('pages/Admin/CategoriesAdminPage.vue') },      
       { path: '/admin/catitems/:id',   component: () => import('pages/Admin/CategoryItemsAdminPage.vue') },      
       { path: '/admin/images/:itemId', component: () => import('pages/Admin/ItemImagesPage.vue') },      

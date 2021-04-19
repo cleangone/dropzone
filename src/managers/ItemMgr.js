@@ -14,6 +14,9 @@ import { Config } from 'boot/Config'
       buyerName
       bidderIds [ id ]
       numberOfBids
+      numberOfPurchaseReqs
+      acceptedPurchaseReqId 
+      purchaseReqs [ { actionId, userId, userNickname, amount, date }]
       currBid { actionId, userId, userNickname, amount, date }
       prevBids [ currBid obj ]
       createdDate
@@ -29,6 +32,7 @@ export const ItemStatus = {
    SETUP:     'Setup',
    AVAILABLE: 'Available',
    DROPPING:  'Dropping',
+   REQUESTED: 'Requested',
    HOLD:      'On Hold',
    INVOICED:  'Invoiced',
    SOLD:      'Sold',
@@ -39,6 +43,7 @@ export class ItemMgr {
       let priv = 0
       let setup = 0
       let available = 0
+      let requested = 0
       let hold = 0
       let invoiced = 0
       let sold = 0
@@ -47,6 +52,7 @@ export class ItemMgr {
          if (ItemMgr.isPrivate(item)) { priv++ }
          else if (ItemMgr.isSetup(item)) { setup++ }
          else if (ItemMgr.isAvailable(item) || ItemMgr.isDropping(item)) { available++ }
+         else if (ItemMgr.isRequested(item)) { requested++ }
          else if (ItemMgr.isHold(item)) { hold++ }
          else if (ItemMgr.isInvoiced(item)) { invoiced++ }
          else if (ItemMgr.isSold(item)) { sold++ }
@@ -55,7 +61,8 @@ export class ItemMgr {
       const text = []
       if (priv)      { text.push(priv + " Private") }
       if (setup)     { text.push(setup + " Setup") }
-      if (available) { text.push(available + (hold || invoiced || sold?  " Avail" : " Available")) }
+      if (available) { text.push(available + (requested || hold || invoiced || sold ?  " Avail" : " Available")) }
+      if (requested) { text.push(requested + " Req") }
       if (hold)      { text.push(hold + " Hold") }
       if (invoiced)  { text.push(invoiced + " Invoiced") }
       if (sold)      { text.push(sold + " Sold") }
@@ -72,6 +79,7 @@ export class ItemMgr {
    static isSetup(item)     { return item.status == ItemStatus.SETUP }
    static isAvailable(item) { return item.status == ItemStatus.AVAILABLE }
    static isDropping(item)  { return item.status == ItemStatus.DROPPING }
+   static isRequested(item) { return item.status == ItemStatus.REQUESTED }
    static isHold(item)      { return item.status == ItemStatus.HOLD }
    static isInvoiced(item)  { return item.status == ItemStatus.INVOICED }
    static isSold(item)      { return item.status == ItemStatus.SOLD }

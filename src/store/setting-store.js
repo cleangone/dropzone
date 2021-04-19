@@ -1,14 +1,6 @@
 import { firestoreAction } from 'vuexfire'
 import { firestore } from 'boot/firebase'
 
-/*
-   settings:
-      id (unused)
-      siteUrl
-      fromEmail
-      bidAdditionalSeconds
-*/
-
 const state = {
 	settings: [],
 }

@@ -2,7 +2,7 @@
 	<q-page class="q-pa-md">
 		<div class="q-mt-sm text-h5">Recent Updates</div>
       <toggle :toggleContainer="showItemsToggleContainer" class="q-mt-sm"/>      
-      <div v-if="recentItemsExist">
+      <div v-if="itemsExist">
          <div class="row q-mt-sm q-gutter-sm">
 				<item v-for="(item, key) in displayItems" :key="key" :item="item" />
 			</div>
@@ -24,7 +24,7 @@
         }
 		},
 	  	computed: {
-			...mapGetters('item', ['recentItemsExist', 'getRecentItems']),
+			...mapGetters('item', ['itemsExist', 'getRecentItems']),
 			displayItems() { 
             SessionMgr.setRecentItemsDesc() 
             if (isShowItemsAll(this.showItemsToggleContainer)) { return SessionMgr.setDisplayItems(this.getRecentItems) }

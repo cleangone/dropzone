@@ -11,7 +11,7 @@
             <div class="row q-mb-sm q-gutter-sm">
             	<q-input v-model="settingToUpdate.paypal" label="Paypal Address" filled class="col-4" />
                <q-input v-model="settingToUpdate.twitterId" label="Twitter ID" filled class="col-4" />
-               <div class="col"/>
+               <q-select v-model="settingToUpdate.purchaseReqProcessingType" label="Purchase Req Processing" :options="reqProcessingOptions" filled class="col"/>
             </div>
             <div class="row q-mb-sm q-gutter-sm">
 				   <q-input v-model.number="settingToUpdate.bidPeriod" label="Bidding Period (mins)" type="number" filled class="col-3"/>
@@ -36,16 +36,7 @@
 
 <script>
 	import { mapGetters, mapActions } from 'vuex'
-   import { Notify } from 'quasar'
-   import { EmailFields } from 'src/utils/Constants.js'
-   
-   const EmailType = {
-      PURCHASE_SUCCESS: 'emailPurchaseSuccess',
-      PURCHASE_FAIL:    'emailPurchaseFail',
-      WINNING_BID:      'winningBid',
-   }
-   const EMAIL_FIELD_SUBJECT_SUFFIX = 'Subject'
-   const EMAIL_FIELD_BODY_SUFFIX    = 'Body'
+   import { SettingsMgr, PurchaseReqProcessingType } from 'src/managers/SettingsMgr'
 
 	export default {
 		data() {
@@ -54,6 +45,7 @@
             emailPurchaseSuccess: {},
             emailPurchaseFail: {},
             emailWinningBid: {},
+            reqProcessingOptions: [ PurchaseReqProcessingType.AUTOMATIC, PurchaseReqProcessingType.MANUAL ], 
          }
 		},
 		computed: {
@@ -63,33 +55,23 @@
 			...mapActions('setting', ['setSetting']),
          reset() { 
             this.settingToUpdate = Object.assign({}, this.getSetting) 
-            this.emailPurchaseSuccess = this.getEmailSetting(EmailType.PURCHASE_SUCCESS, "Successful Purchase Request")
-            this.emailPurchaseFail    = this.getEmailSetting(EmailType.PURCHASE_FAIL,    "Failed Purchase Request")
-            this.emailWinningBid      = this.getEmailSetting(EmailType.WINNING_BID,      "Winning Bid")
+            this.emailPurchaseSuccess = SettingsMgr.getPurchaseSuccessEmailSetting(this.settingToUpdate, "Successful Purchase Request")
+            this.emailPurchaseFail    = SettingsMgr.getPurchaseFailEmailSetting(this.settingToUpdate, "Failed Purchase Request")
+            this.emailWinningBid      = SettingsMgr.getWinningBidEmailSetting(this.settingToUpdate, "Winning Bid")
          },
          submitUpdate() { 
-            this.setEmailSettings(this.emailPurchaseSuccess, EmailType.PURCHASE_SUCCESS)
-            this.setEmailSettings(this.emailPurchaseFail,    EmailType.PURCHASE_FAIL)
-            this.setEmailSettings(this.emailWinningBid,      EmailType.WINNING_BID)
+            SettingsMgr.setEmailSettings(this.settingToUpdate, this.emailPurchaseSuccess)
+            SettingsMgr.setEmailSettings(this.settingToUpdate, this.emailPurchaseFail)
+            SettingsMgr.setEmailSettings(this.settingToUpdate, this.emailWinningBid)
             this.setSetting(this.settingToUpdate)
          },
-         getEmailSetting(emailType, label) { 
-            return { 
-               subject: this.settingToUpdate[emailType + EMAIL_FIELD_SUBJECT_SUFFIX], 
-               body:    this.settingToUpdate[emailType + EMAIL_FIELD_BODY_SUFFIX], 
-               label: label 
-            }
-         },
-         setEmailSettings(emailSetting, emailType) { 
-            this.settingToUpdate[emailType + EMAIL_FIELD_SUBJECT_SUFFIX] = emailSetting.subject
-            this.settingToUpdate[emailType + EMAIL_FIELD_BODY_SUFFIX] = emailSetting.body
-         }
       },
       components: {
 			'email-settings-edit' : require('components/Admin/EmailSettingsEdit.vue').default,
       },
 		created() { 
-         this.reset() }
+         this.reset() 
+      }
    }
 
 </script>

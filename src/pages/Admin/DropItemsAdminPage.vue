@@ -39,6 +39,7 @@
          edit() { return UI.EDIT }
 		},
 		components: {
+         'drop-add-edit' : require('components/Drop/DropAddEdit.vue').default,
          'items-admin' : require('components/Admin/ItemsAdmin.vue').default,
       },
       created() {

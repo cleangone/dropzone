@@ -24,15 +24,19 @@ const actions = {
       // console.log("submitBid", action)
       ActionMgr.initBid(action)
       collection().doc(action.id).set(action)
-   
       showPositiveNotify("Bid submitted")
    }),
    submitPurchaseRequest: firestoreAction((context, action) => {
       // console.log("submitPurchaseRequest", action)
       ActionMgr.initPurchaseReq(action)
       collection().doc(action.id).set(action)
-   
       showPositiveNotify("Purchase Request submitted")
+   }),
+   acceptPurchaseRequest: firestoreAction((context, action) => {
+      // console.log("acceptPurchaseRequest", action)
+      ActionMgr.initAcceptReq(action)
+      collection().doc(action.id).set(action)
+      showPositiveNotify("Acceptance of Purchase Request submitted")
    }),
 }
 

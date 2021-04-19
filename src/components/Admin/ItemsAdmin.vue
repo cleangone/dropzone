@@ -8,7 +8,7 @@
             <q-checkbox                   v-model="showCols.tag"      label="Category"  @input="showColsChecked()" dense class="q-ml-sm" />
             <q-checkbox                   v-model="showCols.saleType" label="Sale Type" @input="showColsChecked()" dense class="q-ml-sm" />
             <q-checkbox                   v-model="showCols.buyer"    label="Buyer"     @input="showColsChecked()" dense class="q-ml-sm" />
-            <q-checkbox                   v-model="showCols.bids"     label="Bids"      @input="showColsChecked()" dense class="q-ml-sm" />
+            <q-checkbox                   v-model="showCols.bidreq"   label="Bid/Req"   @input="showColsChecked()" dense class="q-ml-sm" />
          </span>
 		</div>
 		<div class="q-mt-xs absolute full-width full-height" :class="green">
@@ -26,8 +26,11 @@
             <q-td slot="body-cell-price" slot-scope="props" :props="props"> 
                {{ priceText(props.row) }}
             </q-td>
-            <q-td slot="body-cell-bids" slot-scope="props" :props="props"> 
-               <a v-if="props.row.numberOfBids > 0" :href="'#/bids/' + props.row.id">{{ props.row.numberOfBids }}</a>
+            <q-td slot="body-cell-bidreq" slot-scope="props" :props="props"> 
+               <a v-if="props.row.numberOfBids == 1"     :href="'#/bids/' + props.row.id">{{ props.row.numberOfBids }} Bid</a>
+	            <a v-else-if="props.row.numberOfBids > 0" :href="'#/bids/' + props.row.id">{{ props.row.numberOfBids }} Bids</a>
+	            <a v-else-if="props.row.numberOfPurchaseReqs == 1" :href="'#/admin/reqs/' + props.row.id">{{ props.row.numberOfPurchaseReqs }} Req</a>
+	            <a v-else-if="props.row.numberOfPurchaseReqs > 0"  :href="'#/admin/reqs/' + props.row.id">{{ props.row.numberOfPurchaseReqs }} Reqs</a>
 	         </q-td>
             <q-td slot="body-cell-actions" slot-scope="props" :props="props" auto-width>
                <q-btn icon="edit"   @click="editItem(props.row.id)"   @click.stop size="sm" flat dense color="primary" />
@@ -101,14 +104,14 @@
 				displayColumns: [ 'name', 'price', 'status', 'actions'],
  				columns: [
         			{ name: 'id', field: 'id' },
-				 	{ name: 'name',  label: 'Name (Sort Name)', align: 'left',   field: 'tempName',     sortable: true },
-				 	{ name: 'category',   label: 'Artist',      align: 'center', field: 'category',     sortable: true, format: val => val ? val.name : "" },
-				 	{ name: 'drop',       label: 'Drop',        align: 'center', field: 'tempDrop',     sortable: true },
-				 	{ name: 'tag',        label: 'Category',    align: 'center', field: 'tempTag',      sortable: true },
-				 	{ name: 'saleType',   label: 'Sale Type',   align: 'center', field: 'saleType',     sortable: true },
-					{ name: 'buyerId',    label: 'Buyer',       align: 'left',   field: 'buyerId',      sortable: true, format: val => this.userName(val) },
-					{ name: 'price', label:'Start/Final Price', align: 'right',  field: 'startPrice',   sortable: true },
-					{ name: 'bids',       label: 'Bids',        align: 'center', field: 'numberOfBids', sortable: true },
+				 	{ name: 'name',     label: 'Name (Sort Name)', align: 'left',       sortable: true },
+				 	{ name: 'category', label: 'Artist',        align: 'center', field: 'category',     sortable: true, format: val => val ? val.name : "" },
+				 	{ name: 'drop',     label: 'Drop',          align: 'center', field: 'tempDrop',     sortable: true },
+				 	{ name: 'tag',      label: 'Category',      align: 'center', field: 'tempTag',      sortable: true },
+				 	{ name: 'saleType', label: 'Sale Type',     align: 'center', field: 'saleType',     sortable: true },
+					{ name: 'buyerId',  label: 'Buyer',         align: 'left',   field: 'buyerId',      sortable: true, format: val => this.userName(val) },
+					{ name: 'price', label:'Start/Final Price', align: 'right',                         sortable: true },
+					{ name: 'bidreq',     label: 'Bid/Req',     align: 'center',                        sortable: true },
 					{ name: 'status',     label: 'Status',      align: 'center', field: 'status',       sortable: true },
 					{ name: 'actions' }
             ],
@@ -128,7 +131,7 @@
             if (this.showCols.tag)      { columns.push('tag') }
             if (this.showCols.saleType) { columns.push('saleType') }
             if (this.showCols.buyer)    { columns.push('buyerId') }
-            if (this.showCols.bids)     { columns.push('bids') }
+            if (this.showCols.bidreq)   { columns.push('bidreq') }
             return columns 
          },
          tableItems() { 
@@ -204,7 +207,7 @@
       created() {
          this.showCols = SessionStorage.getItem(SHOW_COLS)    
          if (!this.showCols) { this.showCols = { 
-            category: true, drop: true, tag: true, saleType: true, buyer: true, bids: true } }
+            category: true, drop: true, tag: true, saleType: true, buyer: true, bidreq: true } }
       },
 		components: {
          'drop-add-edit'    : require('components/Drop/DropAddEdit.vue').default,

@@ -9,6 +9,7 @@ import { dateUid } from 'src/utils/Utils'
       itemId
       itemName
       userId
+      refActionId
       amount
       createdDate
       processedDate    
@@ -22,6 +23,7 @@ export const ActionStatus = {
 export const ActionType = {
    BID:          'Bid',
    PURCHASE_REQ: 'Purchase Request',
+   ACCEPT_REQ:   'Accept Purchase Request',
 }
 
 export const ActionResultType = {
@@ -37,6 +39,7 @@ export const ActionResultType = {
 export class ActionMgr {
    static initBid(action) { ActionMgr.init(action, ActionType.BID) }
    static initPurchaseReq(action) { ActionMgr.init(action, ActionType.PURCHASE_REQ) }
+   static initAcceptReq(action) { ActionMgr.init(action, ActionType.ACCEPT_REQ) }
    static init(action, actionType) { 
       action.id = dateUid()
       action.actionType = actionType

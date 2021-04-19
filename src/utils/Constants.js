@@ -25,6 +25,11 @@ export const SaleType = {
    BUY: 'Buy',
 }
 
+export const RequestProcessing = {
+   AUTOMATIC: 'Automatic',
+   MANUAL: 'Manual',
+}
+
 export const UI = {
    CLOSE:    'close',
    EDIT:     'edit',
@@ -34,7 +39,8 @@ export const UI = {
 }
 
 export const Versions = [
-   "v0.21.10 - 11/9/20",  // Remove expand icon over image for popup, larger popup
+   "v1.0.0 - 4/17/21",   // Add manual processing of purchase requests
+   "v0.21.10 - 11/9/20", // Remove expand icon over image for popup, larger popup
    "v0.21.9 - 11/3/20",  // Popup large image instead of expanding thumb in place
    "v0.21.8 - 10/31/20", // Debounce ItemThumb expand
    "v0.21.7 - 10/30/20", // Toggle component, use on Drop and Category pages

@@ -38,8 +38,12 @@
                </div> 
 				</q-card-section>	
             <div v-if="isAvailable || (userIsAdmin && isSetup)" style="height:25px"/> <!-- spacer for actions when expanded -->
-				<item-actions :item="item" :displayType="itemDisplayType" class="absolute-bottom-left q-ml-xs"/>
-			</q-card>
+				<q-card-section class="absolute-bottom-left q-px-xs q-pt-xs q-pb-none" style="width: 100%" :class="green">
+				
+            
+               <item-actions :item="item" :displayType="itemDisplayType"/>
+			   </q-card-section>	
+         </q-card>
 		</div>
 		<div v-else>
 			<q-card-section :class="textFullBgColor">

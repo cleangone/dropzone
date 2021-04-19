@@ -108,6 +108,13 @@ const getters = {
          if (ItemMgr.isActive(item)) { items.push(item) }
       })
       
+      // fallback if no recent
+      if (items.length == 0) {
+         state.items.forEach(item => {
+            if (ItemMgr.isActive(item)) { items.push(item) }
+         })
+      }
+
       items.sort((a, b) => (a.sortedCreateDate > b.sortedCreateDate) ? -1 : 1)
       return items
    },

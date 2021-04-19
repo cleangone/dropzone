@@ -12,7 +12,7 @@ const actions = {
       return bindFirestoreRef('drops', collection())
    }),
    createDrop: firestoreAction((context, drop) => {
-      // console.log("createDrop", drop)
+      console.log("createDrop", drop)
       drop.id = dateUid()
       collection().doc(drop.id).set(drop)
    }),

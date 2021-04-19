@@ -1,3 +1,15 @@
+
+/*
+   drop
+      id
+      status
+      name
+      description
+      startDate
+      defaultSaleType
+      imageUrl
+*/
+
 export const DropStatus = {
    PRIVATE:    'Private',
    SETUP:      'Setup',
