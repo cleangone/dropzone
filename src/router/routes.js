@@ -15,6 +15,7 @@ const routes = [
       { path: '/category/:id/:tagId',  component: () => import('pages/CategoryPage.vue'),             name: Route.CATEGORY },      
       { path: '/bids/:itemId',         component: () => import('pages/BidsPage.vue') },      
       { path: '/recent',               component: () => import('pages/RecentItemsPage.vue'),          name: Route.RECENT },
+      { path: '/cart',                 component: () => import('pages/CartPage.vue') },
       { path: '/current',              component: () => import('pages/User/CurrentActivityPage.vue'), name: Route.CURRENT },
       { path: '/account',              component: () => import('pages/User/AccountPage.vue') },
       { path: '/favorites',            component: () => import('pages/User/FavoritesPage.vue'),       name: Route.FAVORITE },

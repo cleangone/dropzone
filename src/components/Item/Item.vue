@@ -15,6 +15,25 @@
 				</q-card-section>	
 			</q-card>
       </div>
+      <div v-else-if="displayIsCart">
+			<q-card v-if="hasImageUrl" class="q-pt-xs q-px-xs" style="min-height: 260px;" :class="textBgColor">				
+				<item-thumb :item="item" :image="image" vImageWidth="125" hImageWidth="262" imageMaxHeight="200" :tagId="tagId"/>
+				<q-card-section class="text-caption q-pa-xs" :class="purple">
+					<div style="line-height: 1.25em" :class="orange">
+                  <span>{{ item.name }}</span>
+                  <span v-if="hasArtist && this.image.isHorizontal" class="float-right">{{artist}}</span>
+               </div>
+               <div v-if="hasArtist && !this.image.isHorizontal" style="line-height: 1.5em" class="q-ma-none q-pa-none"> {{artist}} </div>
+               <div v-if="priceTextBgColor" :class="priceTextBgColor" class="text-bold q-px-xs">{{ priceTextMini }}</div>	
+					<div v-else :class="blue">{{ priceTextMini }}</div>	
+				</q-card-section>	
+            <q-card-actions class="q-my-none q-px-none q-pb-xs q-pt-none" style="width: 100%" :class="blue">      
+               <div class="col" align="right" :class="yellow">
+                  <q-btn  @click="removeFromCart()" label="Remove" color="primary" size="sm" dense no-caps/>
+               </div>
+            </q-card-actions>
+			</q-card>
+      </div>
 		<div v-else-if="displayIsThumb || displayIsBidThumb">
 			<q-card v-if="hasImageUrl" class="q-pt-xs q-px-xs" style="min-height: 320px;" :class="textBgColor">
 				<item-thumb :item="item" :image="image" vImageWidth="150" hImageWidth="316" imageMaxHeight="250" :tagId="tagId"/>
@@ -39,8 +58,6 @@
 				</q-card-section>	
             <div v-if="isAvailable || (userIsAdmin && isSetup)" style="height:25px"/> <!-- spacer for actions when expanded -->
 				<q-card-section class="absolute-bottom-left q-px-xs q-pt-xs q-pb-none" style="width: 100%" :class="green">
-				
-            
                <item-actions :item="item" :displayType="itemDisplayType"/>
 			   </q-card-section>	
          </q-card>
@@ -90,10 +107,9 @@
 </template>
 
 <script>
-   import { mapGetters } from 'vuex'
+   import { mapGetters, mapActions } from 'vuex'
    import { CategoryMgr } from 'src/managers/CategoryMgr'
    import { ItemMgr, ItemStatus } from 'src/managers/ItemMgr'
-	import { TagMgr } from 'src/managers/TagMgr'
 	import { SessionMgr } from 'src/managers/SessionMgr'
 	import { ItemDisplayType, SaleType, Route, Colors } from 'src/utils/Constants'
    import { dollars } from 'src/utils/Utils'
@@ -113,6 +129,7 @@
          ...mapGetters('color', Colors),
 			itemDisplayType() { return this.displayType  ? this.displayType : ItemDisplayType.THUMB },
 			displayIsMini() { return this.itemDisplayType == ItemDisplayType.MINI },
+			displayIsCart() { return this.itemDisplayType == ItemDisplayType.CART },
 			displayIsThumb() { return this.itemDisplayType ==  ItemDisplayType.THUMB },
          displayIsBidThumb() { return this.itemDisplayType ==  ItemDisplayType.BID_THUMB },
          itemsCollection() { return SessionMgr.getDisplayItemsDesc() },
@@ -191,12 +208,14 @@
          itemPageRoute() { return Route.ITEM },
       },
       methods: {
+         ...mapActions('cart', ['removeItemFromCart']),
          buildPriceText(prefix) {
 				if (ItemMgr.isSold(this.item)) { return ItemStatus.SOLD }
 				else if (ItemMgr.isHold(this.item) || ItemMgr.isInvoiced(this.item)) { return ItemStatus.HOLD + " (" + this.currPrice + ")" }
             else if (ItemMgr.isDropping(this.item)) { return prefix + this.currPrice }
             else return prefix + this.currPrice
          },
+         removeFromCart() { this.removeItemFromCart(this.item.id) },
       },
 		filters: {
 			formatPrice(priceObj) { return "$" + priceObj + (String(priceObj).includes(".") ? "" : ".00") }

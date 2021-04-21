@@ -6,7 +6,7 @@
             <q-btn v-else-if="isBuy" @click="promptToBuy()" :label="purchaseAction" color="primary" :size="buttonSize" dense no-caps/>
 		   </div>
          <div class="col" align="right" :class="yellow">
-            <q-btn v-if="isBuy" @click="promptToBuy()" label="Add to Cart" color="primary" :size="buttonSize" dense no-caps/>
+            <q-btn v-if="isBuy" @click="addToCart()" label="Add to Cart" color="primary" :size="buttonSize" dense no-caps/>
          </div>
       </div>
       <div v-else-if="isAvailable" class="row" style="width: 100%" :class="pink">
@@ -14,7 +14,7 @@
             <router-link to="/auth/login" class="text-weight-medium" :style="'font-size:'+fontSize">Login to {{purchaseAction}}</router-link> 
          </div>
          <div class="col" align="right" :class="yellow">
-            <q-btn v-if="isBuy" @click="promptToBuy()" label="Add to Cart" color="primary" :size="buttonSize" dense no-caps/>
+            <q-btn v-if="isBuy" @click="addToCart()" label="Add to Cart" color="primary" :size="buttonSize" dense no-caps/>
          </div>
       </div>
       <div v-else-if="isAdminSetup" class="row" style="width: 100%" :class="pink">
@@ -33,7 +33,6 @@
 </template>
 
 <script>
-	import { date } from 'quasar'
 	import { mapGetters, mapActions } from 'vuex'
    import { ItemMgr } from 'src/managers/ItemMgr.js'
    import { DropMgr } from 'src/managers/DropMgr.js'
@@ -42,8 +41,6 @@
    import { ItemDisplayType, SaleType, Colors } from 'src/utils/Constants.js'
    import { dollars } from 'src/utils/Utils'
    
-	var timeouts = {};
-	
 	export default {
 		props: ['item', 'displayType'], 
 		data() {
@@ -82,6 +79,7 @@
       },
 		methods: {
          ...mapActions('action', ['submitBid', 'submitPurchaseRequest']),
+         ...mapActions('cart', ['addItemIdToCart']),
          ...mapActions('current', ['setCurrentActivity']),
          ...mapActions('user', ['setLikes']),
 			login() { this.$router.push("/auth/login") },
@@ -95,7 +93,8 @@
                }) 
                this.setCurrentActivity(true) 
 				})
-			},			
+			},
+         addToCart() { this.addItemIdToCart(this.item.id) },			
 		},
 		filters: {
 			formatPrice(priceObj) { return "$" + priceObj + (String(priceObj).includes(".") ? "" : ".00") }

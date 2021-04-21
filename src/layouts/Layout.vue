@@ -19,6 +19,9 @@
                </q-menu>
             </q-btn>        
             <q-btn v-else icon-right="account_circle" to="/auth/login" label="Login" dense flat />
+            <q-btn icon="shopping_cart" to="/cart" dense flat >
+               <q-badge v-if="cartItemsExist" color="blue" floating>{{cartItemCount}}</q-badge>
+            </q-btn>
          </q-toolbar>
       </q-header>
 
@@ -94,6 +97,7 @@
       computed: {
          ...mapGetters('auth', ['userId', 'loggedIn']),
          ...mapGetters('action', ['actionsExist', 'getUserActions']),
+         ...mapGetters('cart', ['cartSize']),
          ...mapGetters('category', ['getPublicCategories']),
          ...mapGetters('current', ['currentActivityExists']),
          ...mapGetters('invoice', ['invoicesExist']),
@@ -152,6 +156,8 @@
             setTimeout(() => { this.setCurrentActivity(false) }, 3000)              
             return "text-bold bg-yellow-4"
          },
+         cartItemsExist() { return this.cartItemCount > 0 },
+         cartItemCount() { return this.cartSize },
          version() { return Versions[0] },
       },
       methods: {

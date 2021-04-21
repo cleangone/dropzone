@@ -3,6 +3,7 @@ export const ItemDisplayType = {
    MINI: 'MiniThumbnail',
    THUMB: 'Thumbnail',
    BID_THUMB: 'BidThumbnail',
+   CART: 'CartThumbnail',
    FULL: 'Full'
 }
 
@@ -39,7 +40,8 @@ export const UI = {
 }
 
 export const Versions = [
-   "v1.0.0 - 4/17/21",   // Add manual processing of purchase requests
+   "v1.1.0  - 4/20/21",  // Initial cart functionality
+   "v1.0.0  - 4/17/21",  // Add manual processing of purchase requests
    "v0.21.10 - 11/9/20", // Remove expand icon over image for popup, larger popup
    "v0.21.9 - 11/3/20",  // Popup large image instead of expanding thumb in place
    "v0.21.8 - 10/31/20", // Debounce ItemThumb expand

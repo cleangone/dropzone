@@ -4,6 +4,7 @@ import { vuexfireMutations } from 'vuexfire'
 
 import action   from './action-store'
 import auth      from './auth-store'
+import cart     from './cart-store'
 import category from './category-store'
 import color    from './color-store'
 import current  from './current-store'
@@ -23,6 +24,7 @@ export default function () {
     modules: {
       action,
       auth,
+      cart,
       category,
       color,
       current,
