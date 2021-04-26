@@ -1,16 +1,6 @@
 import { firestoreAction } from 'vuexfire'
 import { firestore } from 'boot/firebase'
 	
-/*
-    user: 
-      id (auth userId)    
-      authEmailCopy
-      firstName
-      lastName
-      isAdmin   
-      likedItemIds []
-*/  
-
 const state = {
 	users: [],
 }

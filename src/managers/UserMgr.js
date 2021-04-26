@@ -1,4 +1,18 @@
 
+/*
+    user: 
+      id (auth userId, or generated for temp user)    
+      authEmailCopy
+      tempUserEmail
+      firstName, lastName
+      nickname
+      address, city, state, zip, country
+      phone
+      acceptTexts
+      isAdmin   
+      likedItemIds []
+*/  
+
 export const AlertType = {
    LATE_BID: 'Late Bid',
    OUTBID:   'Outbid',

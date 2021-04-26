@@ -10,11 +10,13 @@ import { firestore } from 'boot/firebase'
 const state = {
    // vuex goes crazy if the entire user is stored 
    userId: null,
+   isAnon: false,
    // errorMessage: ''
 }
 
 const mutations = {
-    setUserId(state, id) { state.userId = id },
+   setUserId(state, id) { state.userId = id },
+   setIsAnon(state, isAnon) { state.isAnon = isAnon },
 }
 
 const actions = {
@@ -23,15 +25,19 @@ const actions = {
    async loginUser({}, payload) { return firebaseAuth.signInWithEmailAndPassword(payload.email, payload.password) },
    async sendPasswordResetEmail({}, email) { return firebaseAuth.sendPasswordResetEmail(email) },
    async updateEmail({}, email) { return firebaseAuth.currentUser.updateEmail(email) },
+   loginAnonUser() { return firebaseAuth.signInAnonymously() },
    logoutUser() { firebaseAuth.signOut() },
 
    handleAuthStateChange({commit, dispatch}) { 
       console.log('handleAuthStateChange')
       firebaseAuth.onAuthStateChanged(user => {
          if (user) { 
-            // console.log('handleAuthStateChange: logged in', user)
-            commit ('setUserId', user.uid)    
-            usersCollection().doc(user.uid).update({ authEmailCopy: firebaseAuth.currentUser.email })
+            console.log('handleAuthStateChange: logged in', user)
+            commit ('setUserId', user.uid)  
+            commit ('setIsAnon', user.isAnonymous)
+            if (!user.isAnonymous) {
+               usersCollection().doc(user.uid).update({ authEmailCopy: firebaseAuth.currentUser.email })
+            }
          }
          else { 
             // console.log('handleAuthStateChange: logged out')
@@ -45,7 +51,8 @@ const actions = {
 function usersCollection() { return firestore.collection('users') }
 
 const getters = {
-   loggedIn: (state) => { return state.userId != null },
+   loggedIn: (state) =>     { return state.userId != null && !state.isAnon },
+   anonLoggedIn: (state) => { return state.userId != null && state.isAnon},
    userId: (state) => { return state.userId },
    currentUser: (state) => { 
       console.log("auth-store.currentUser")

@@ -1,6 +1,10 @@
+import { shallowEquals } from 'src/utils/Utils'
 
+// Cart items handled in cart-store for push update of displayed count
 export class CartMgr {
-   itemIds = []
-   add(id) { itemIds.push(id) }
-   itemCount() { return itemIds.length } 
+   static anonUser = {}
+   static persistedAnonUser = {}
+   
+   static isAnonUserPersisted() { return shallowEquals(this.anonUser, this.persistedAnonUser) }  
+   static setPersistedAnonUser() { this.persistedAnonUser = Object.assign({}, this.anonUser) } 
 }
