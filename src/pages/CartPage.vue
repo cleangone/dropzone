@@ -9,11 +9,14 @@
       <div v-else class="q-mt-md">
          Cart is empty
       </div>
+      <!-- <div>Auth userId: {{userId}}</div> -->
       <q-card v-if="anonLoggedIn" class="form-card flat q-mt-md">
+         <!-- <div>AnonUser.id: {{anonUser.id}}</div> -->
 			<q-card-section>
             <div class="row">
                <div class="col q-gutter-sm">
-                  <q-input v-model="anonUser.anonUserEmail" label="Email" filled/>
+                  <q-input v-model="anonUser.anonUserEmail" label="Email" ref="email" type="email" autocomplete="email" 
+                     lazy-rules :rules="[ val => isValidEmailAddressLocal(val) || 'Not a valid email']" filled />
                   <div class="row">
                      <q-input v-model="anonUser.firstName" label="First Name" class="col-5" filled />
                      <q-input v-model="anonUser.lastName"  label="Last Name"  class="col q-ml-sm"  filled />
@@ -53,6 +56,7 @@
    import { UserMgr } from 'src/managers/UserMgr'
    import { CartMgr } from 'src/managers/CartMgr'
    import { ItemDisplayType } from 'src/utils/Constants'
+   import { isValidEmailAddress } from 'src/utils/EmailUtils'
    
 	export default {
 		data() {
@@ -83,7 +87,8 @@
          ...mapActions('cart', ['clearCart']),
          ...mapActions('user', ['setUser']),
          loginAnon() { this.loginAnonUser() },
-         persistAnonUser() { 
+         isValidEmailAddressLocal(email) { return isValidEmailAddress(email) },
+		   persistAnonUser() { 
             if (!this.anonUser.id) { this.anonUser.id = this.userId } 
             if (!CartMgr.isAnonUserPersisted()) { 
                this.setUser(CartMgr.anonUser) 
@@ -102,7 +107,7 @@
             this.submitPurchaseRequests(actions)
             this.clearCart()
          },
-		},
+      },
 		components: {
          'item' : require('components/Item/Item.vue').default,
       },
