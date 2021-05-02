@@ -11,7 +11,7 @@
       </div>
       <div v-else-if="isAvailable" class="row" style="width: 100%" :class="pink">
          <div class="col-6">
-            <router-link to="/auth/login" class="text-weight-medium" :style="'font-size:'+fontSize">Login to {{purchaseAction}}</router-link> 
+            <router-link :to="loginPage" class="text-weight-medium" :style="'font-size:'+fontSize">Login to {{purchaseAction}}</router-link> 
          </div>
          <div class="col" align="right" :class="yellow">
             <q-btn v-if="isBuy" @click="addToCart()" label="Add to Cart" color="primary" :size="buttonSize" dense no-caps/>
@@ -38,7 +38,7 @@
    import { DropMgr } from 'src/managers/DropMgr.js'
    import { UserMgr } from 'src/managers/UserMgr.js'
    import { SettingsMgr } from 'src/managers/SettingsMgr'
-   import { ItemDisplayType, SaleType, Colors } from 'src/utils/Constants.js'
+   import { Route, ItemDisplayType, SaleType, Colors } from 'src/utils/Constants.js'
    import { dollars } from 'src/utils/Utils'
    
 	export default {
@@ -76,6 +76,7 @@
          userIsAdmin() { return this.user && this.user.isAdmin },
 			isBid() { return this.itemSaleType == SaleType.BID && this.item.startPrice },
 			isBuy() { return this.itemSaleType == SaleType.BUY && this.item.startPrice },	
+         loginPage() { return "/auth/login/" + Route.HOME },  // todo - update to be this page
       },
 		methods: {
          ...mapActions('action', ['submitBid', 'submitPurchaseRequest']),

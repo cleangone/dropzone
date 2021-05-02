@@ -18,7 +18,7 @@
                   </q-list>
                </q-menu>
             </q-btn>        
-            <q-btn v-else icon-right="account_circle" to="/auth/login" label="Login" dense flat />
+            <q-btn v-else icon-right="account_circle" :to="loginPage" label="Login" dense flat />
             <q-btn icon="shopping_cart" to="/cart" dense flat >
                <q-badge v-if="cartItemsExist" color="blue" floating>{{cartItemCount}}</q-badge>
             </q-btn>
@@ -81,8 +81,8 @@
 
 <script>
    import { mapGetters, mapActions } from 'vuex'
-   import { Versions } from 'src/utils/Constants'
-
+   import { Route, Versions } from 'src/utils/Constants'
+   
    export default {
       name: 'MyLayout',
       data () {
@@ -91,13 +91,14 @@
             drawerLockedOpen: false,
             drawerMouseover: false,
             boundUserId: null,
+            unboundCartItemIds: [],
             cancelledAlertIds: []
          }
       },
       computed: {
-         ...mapGetters('auth', ['userId', 'loggedIn']),
+         ...mapGetters('auth', ['userId', 'loggedIn', 'anonLoggedIn']),
          ...mapGetters('action', ['actionsExist', 'getUserActions']),
-         ...mapGetters('cart', ['cartSize']),
+         ...mapGetters('cart', ['cartSize', 'getCartItemIds']),
          ...mapGetters('category', ['getPublicCategories']),
          ...mapGetters('current', ['currentActivityExists']),
          ...mapGetters('invoice', ['invoicesExist']),
@@ -106,25 +107,46 @@
          drawerOverlay() { return this.$q.platform.is.mobile ? true : false },
          user() { return this.getUser(this.userId)},
          userIsLoggedIn() { 
-            // console.log("userIsLoggedIn")
             if (this.loggedIn) {
+               console.log("userIsLoggedIn: user " + this.userId)
                if (this.userId != this.boundUserId) { 
-                  // console.log("binding userId " + this.userId)
                   this.bindUserActions(this.userId) 
                   this.bindUserInvoices(this.userId) 
+                  this.bindCart() 
+                  this.boundUserId = this.userId
+               }
+            }
+            else if (this.anonLoggedIn) {
+               console.log("userIsLoggedIn: anon user " + this.userId)
+               if (this.userId != this.boundUserId) { 
+                  this.bindCart() 
                   this.boundUserId = this.userId
                }
             }
             else {
+               console.log("userIsLoggedIn: none")
                if (this.boundUserId != null) { 
                   // console.log("unbinding userId " + this.boundUserId)
                   this.unbindUserActions() 
                   this.unbindUserInvoices() 
+                  
+                  this.unboundCartItemIds = this.getCartItemIds
+                  this.unbindUserCarts()
                   this.boundUserId = null
                }
+
+               // wait 2 secs to let auth settle, and then anon login if not logged in
+               setTimeout(() => { 
+                  if (!this.loggedIn && !this.anonLoggedIn) {
+                     console.log("userIsLoggedIn: logging in anon user")
+                     this.loginAnonUser()
+                  }
+               }, 2000) 
             }
+            
             return this.loggedIn
          },
+         loginPage() { return "/auth/login/" + Route.HOME },
          userIsAdmin() { 
             const isAdmin = this.user && this.user.isAdmin
             // console.log("Layout.userIsAdmin", isAdmin)
@@ -162,7 +184,8 @@
       },
       methods: {
          ...mapActions('action',  ['bindActions', 'bindUserActions', 'unbindUserActions']),
-         ...mapActions('auth',    ['logoutUser']),
+         ...mapActions('auth',    ['loginAnonUser', 'logoutUser']),
+         ...mapActions('cart',    ['bindUserCarts', 'unbindUserCarts', 'addItemIdsToCart']),
          ...mapActions('current', ['setCurrentActivity']),
          ...mapActions('drop',    ['bindDrops']),
          ...mapActions('category',['bindCategories']),         
@@ -180,6 +203,14 @@
                this.drawerLockedOpen = !this.drawerLockedOpen
                // console.log("desktop - drawerLockedOpen", this.drawerLockedOpen)
             }
+         },
+         bindCart() { 
+            // preserve any items in current cart or in cart when logged out  
+            const currItemIds = this.getCartItemIds
+            this.bindUserCarts(this.userId)  
+            this.addItemIdsToCart(currItemIds)  
+            this.addItemIdsToCart(this.unboundCartItemIds)  
+            this.unboundCartItemIds = []
          },
          logout() {        
             this.logoutUser()

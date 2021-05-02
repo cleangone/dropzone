@@ -22,7 +22,9 @@ const mutations = {
 const actions = {
    async reload({}) { return firebaseAuth.currentUser.reload() },
    async registerUser({}, payload) { return firebaseAuth.createUserWithEmailAndPassword(payload.email, payload.password) },
-   async loginUser({}, payload) { return firebaseAuth.signInWithEmailAndPassword(payload.email, payload.password) },
+   async loginUser({}, payload) { 
+      return firebaseAuth.signInWithEmailAndPassword(payload.email, payload.password) 
+   },
    async sendPasswordResetEmail({}, email) { return firebaseAuth.sendPasswordResetEmail(email) },
    async updateEmail({}, email) { return firebaseAuth.currentUser.updateEmail(email) },
    loginAnonUser() { return firebaseAuth.signInAnonymously() },

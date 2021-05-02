@@ -6,7 +6,7 @@ const routes = [
     component: () => import('layouts/Layout.vue'),
     children: [
       { path: '',                      component: () => import('pages/HomePage.vue'),                 name: Route.HOME },
-      { path: '/auth/login',           component: () => import('pages/Auth/LoginRegisterPage.vue'),   name: Route.LOGIN },
+      { path: '/auth/login/:route',    component: () => import('pages/Auth/LoginRegisterPage.vue'),   name: Route.LOGIN },
       { path: '/auth/register',        component: () => import('pages/Auth/LoginRegisterPage.vue'),   name: Route.REGISTER },
       { path: '/auth/forgot',          component: () => import('pages/Auth/ForgotPasswordPage.vue') },
       { path: '/drop/:id',             component: () => import('pages/DropPage.vue'),                 name: Route.DROP },
@@ -15,7 +15,7 @@ const routes = [
       { path: '/category/:id/:tagId',  component: () => import('pages/CategoryPage.vue'),             name: Route.CATEGORY },      
       { path: '/bids/:itemId',         component: () => import('pages/BidsPage.vue') },      
       { path: '/recent',               component: () => import('pages/RecentItemsPage.vue'),          name: Route.RECENT },
-      { path: '/cart',                 component: () => import('pages/CartPage.vue') },
+      { path: '/cart',                 component: () => import('pages/CartPage.vue'),                 name: Route.CART },
       { path: '/current',              component: () => import('pages/User/CurrentActivityPage.vue'), name: Route.CURRENT },
       { path: '/account',              component: () => import('pages/User/AccountPage.vue') },
       { path: '/favorites',            component: () => import('pages/User/FavoritesPage.vue'),       name: Route.FAVORITE },

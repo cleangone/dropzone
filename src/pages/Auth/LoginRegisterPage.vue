@@ -20,8 +20,8 @@
          <q-btn class="full-width q-mt-md" color="primary" data-cy="submit" type="submit" :label="authAction"/>
 
          <div class="q-mt-md q-mb-none text-center">
-            <router-link v-if="isRegistration" to="/auth/login" class="text-blue">Login to an existing account</router-link>
-            <router-link v-else             to="/auth/register" class="text-blue">Create an account</router-link>
+            <router-link v-if="isRegistration" :to="loginPage" class="text-blue">Login to an existing account</router-link>
+            <router-link v-else            to="/auth/register" class="text-blue">Create an account</router-link>
          </div>
          <p class="q-ma-sm text-center">
             <router-link to="/auth/forgot" class="text-blue">Forgot Password?</router-link>
@@ -40,6 +40,7 @@
       data () {
          return {
             email: null,
+            postLoginRoute: Route.HOME,
             password: null,
             passwordVerify: null,
             showPassword: false,
@@ -47,6 +48,7 @@
       },
       computed: {
          isRegistration () { return this.$route.name === Route.REGISTER },
+         loginPage() { return "/auth/login/" + this.postLoginRoute },
          authAction () { return this.isRegistration ? 'Register' : 'Login' },
          passwordType () { return this.showPassword ? 'text' : 'password' },
       },
@@ -62,7 +64,7 @@
                      console.log(this.isRegistration ? "Registering " + email : "Logging in " + email)
                      if (this.isRegistration) { await this.registerUser({ email, password }) } 
                      else { await this.loginUser({ email, password }) }
-                     this.$router.push({ path: '/' })
+                     this.$router.push({ name: this.postLoginRoute })
                   } catch (error) {
                      let msg = "Cannot login. Email/password incorrect"
                      if (this.isRegistration) { 
@@ -77,7 +79,8 @@
                }
             })
          }
-      }
+      },   
+      created() { this.postLoginRoute = this.$route.params.route }
    }
 </script>
 

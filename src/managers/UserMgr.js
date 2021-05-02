@@ -1,9 +1,9 @@
 
 /*
     user: 
-      id (auth userId, or generated for temp user)    
-      authEmailCopy
-      tempUserEmail
+      id (auth userId)    
+      authEmailCopy (filled in if user logged in with email, password)
+      anonUserEmail (used for anon logins)
       firstName, lastName
       nickname
       address, city, state, zip, country
