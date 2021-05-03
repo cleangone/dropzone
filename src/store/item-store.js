@@ -1,6 +1,6 @@
 import { firestoreAction } from 'vuexfire'
 import { firestore, firebaseStorage } from 'boot/firebase'
-import { ItemMgr } from 'src/managers/ItemMgr.js'   
+import { ItemMgr, ItemStatus } from 'src/managers/ItemMgr.js'   
 import { TagMgr } from 'src/managers/TagMgr.js'  
 import { dateUid } from 'src/utils/Utils'
 
@@ -94,6 +94,13 @@ function setThumbUrl(item, retry) {
 const getters = {
    itemsExist: state => { return state.items && state.items.length > 0 },
    recentItemsExist: state => { return state.recentItems && state.recentItems.length > 0 },
+   requestedItemsExist: state => { 
+      for (var item of state.items) { 
+         if (item.status == ItemStatus.REQUESTED) { return true } 
+      }
+      
+      return false
+   },
    getItems: state => itemIds => {   
       // console.log("getItems", itemIds)
       let items = []
@@ -134,6 +141,15 @@ const getters = {
       state.items.forEach(item => {
          if (dropIds.includes(item.dropId)) { items.push(item) }
       })
+      return items
+   },
+   getRequestedItems: state => { 
+      let items = []
+      state.items.forEach(item => {
+         if (item.status == ItemStatus.REQUESTED) { items.push(item) }
+      })
+
+      // items.sort((a, b) => (a.lastUserActivityDate > b.lastUserActivityDate) ? 1 : -1)
       return items
    },
    getActiveItemsWithTag: state => tag => { 

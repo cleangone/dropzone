@@ -33,6 +33,9 @@
          :mini="drawerMini" :overlay="$q.platform.is.mobile ? true : false"
          @mouseover="drawerMouseover=true" @mouseout="drawerMouseover=false">
          <q-list>
+            <layout-item v-if="todosExist" primary :class="activeItemsClass"
+               path="/admin/todo" label="ToDo" iconName="fas fa-check-circle" />  
+
             <layout-item v-if="currentUserActionsExist" primary :class="activeItemsClass"
                path="/current" label="Current Activity" iconName="fas fa-gavel" />          
             <q-expansion-item label="Artists" icon="brush" expand-separator>
@@ -102,6 +105,7 @@
          ...mapGetters('category', ['getPublicCategories']),
          ...mapGetters('current', ['currentActivityExists']),
          ...mapGetters('invoice', ['invoicesExist']),
+         ...mapGetters('item', ['requestedItemsExist']),
          ...mapGetters('user', ['getUser', 'isAdmin']),
          drawerMini() { return this.$q.platform.is.mobile ? false : (!this.drawerLockedOpen && !this.drawerMouseover) },
          drawerOverlay() { return this.$q.platform.is.mobile ? true : false },
@@ -166,6 +170,7 @@
             return null
          },
          userHasAlert() { return this.userAlert != null },
+         todosExist() { return this.requestedItemsExist },
          currentUserActionsExist() { 
             const yesterday = new Date().getTime() - 1000*60*60*24 // 24 hours ago in millis
             for (var action of this.getUserActions(this.userId)) {

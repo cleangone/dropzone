@@ -14,7 +14,6 @@
 <script>
 	import { mapGetters } from 'vuex'
    import { DropMgr } from 'src/managers/DropMgr'
-   import { TagMgr } from 'src/managers/TagMgr'
    import { UI, Colors } from 'src/utils/Constants'
    import { formatDateTimeOptYear } from 'src/utils/DateUtils'
 

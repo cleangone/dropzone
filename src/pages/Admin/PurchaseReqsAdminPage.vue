@@ -30,6 +30,8 @@
 		data() {
 	  		return {
 				itemId: '',
+            returnRoute: null,
+            requestAccepted: false,
 				tableDataFilter: '',
 				visibleColumns: [ 'name', 'date', 'status'],
  				columns: [ 
@@ -38,15 +40,21 @@
                { name: 'status' }
 				],
             pagination: { rowsPerPage: 25 },
-            hidePagination: true
+            hidePagination: true,
          }
 		},
 		computed: {
 			...mapGetters('item', ['getItem']),
          item() { return this.getItem(this.itemId) },
-         itemIsRequested() { return ItemMgr.isRequested(this.item) },
+         itemIsRequested() {             
+            const requested =  ItemMgr.isRequested(this.item)
+            if (!requested && this.returnRoute && this.requestAccepted) { 
+               this.$router.push({ name: this.returnRoute }) 
+            }
+
+            return requested 
+         },
          imageW() { return "width: " + (this.item.isHorizontal ? this.hImageWidth : this.vImageWidth) },	
-         
          itemDivWidth() { return this.item.isHorizontal ? 200 : 350 },
          displayType() { return ItemDisplayType.MINI },
          reqs() { 
@@ -58,7 +66,7 @@
          ...mapActions('action', ['acceptPurchaseRequest']),
          requestedIsAccepted(actionId) { return this.item.acceptedPurchaseReqId == actionId },
          acceptReq(purchaseReq) { 
-            // alert("actionId " + purchaseReq.actionId)
+            this.requestAccepted = true
             this.acceptPurchaseRequest( {
                itemId: this.item.id, itemName: this.item.name, amount: purchaseReq.amount, refActionId: purchaseReq.actionId, 
                userId: purchaseReq.userId, userNickname: purchaseReq.userNickname 
@@ -68,6 +76,9 @@
       components: {
 	  	   'item' : require('components/Item/Item.vue').default,
 	  	},
-      created() { this.itemId = this.$route.params.itemId }
+      created() { 
+         this.itemId = this.$route.params.itemId 
+         if (this.$route.params.route && this.$route.params.route != '.') { this.returnRoute = this.$route.params.route }
+      }
    }
 </script>
