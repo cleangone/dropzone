@@ -41,6 +41,7 @@ export const UI = {
 }
 
 export const Versions = [
+   "v1.1.3  - 5/2/21",   // Show user the items they have requested, add anon users to user admin
    "v1.1.2  - 5/1/21",   // Persist cart, specify postLoginRoute
    "v1.1.1  - 4/26/21",  // Create anonymous user for purchase if not logged in
    "v1.1.0  - 4/20/21",  // Initial cart functionality

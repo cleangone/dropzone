@@ -1,15 +1,15 @@
 <template>
 	<q-card-actions class="q-my-none q-px-none q-pb-xs q-pt-none" style="width: 100%" :class="blue">      
-      <div v-if="isAvailable && loggedIn" class="row" style="width: 100%" :class="pink">
+      <div v-if="isAvailable && loggedIn && !userHasRequested" class="row" style="width: 100%" :class="pink">
          <div class="col-6">
             <q-btn v-if="isBid"  @click="showBidModal=true" :label="purchaseAction" color="primary" :size="buttonSize" dense no-caps/>
             <q-btn v-else-if="isBuy" @click="promptToBuy()" :label="purchaseAction" color="primary" :size="buttonSize" dense no-caps/>
-		   </div>
+         </div>
          <div class="col" align="right" :class="yellow">
             <q-btn v-if="isBuy" @click="addToCart()" label="Add to Cart" color="primary" :size="buttonSize" dense no-caps/>
          </div>
       </div>
-      <div v-else-if="isAvailable" class="row" style="width: 100%" :class="pink">
+      <div v-else-if="isAvailable && !loggedIn" class="row" style="width: 100%" :class="pink">
          <div class="col-6">
             <router-link :to="loginPage" class="text-weight-medium" :style="'font-size:'+fontSize">Login to {{purchaseAction}}</router-link> 
          </div>
@@ -73,6 +73,7 @@
          buttonSize() { return this.displayType == ItemDisplayType.FULL ? "md"  : "sm"  },        
          fontSize()   { return this.displayType == ItemDisplayType.FULL ? "1em" : ".65em"  },        
          user() { return this.getUser(this.userId)},
+         userHasRequested() { return this.loggedIn && ItemMgr.isRequestedByUser(this.item, this.userId) },
          userIsAdmin() { return this.user && this.user.isAdmin },
 			isBid() { return this.itemSaleType == SaleType.BID && this.item.startPrice },
 			isBuy() { return this.itemSaleType == SaleType.BUY && this.item.startPrice },	

@@ -70,6 +70,16 @@ export class ItemMgr {
       return text.length ? text.join(", ") : "None"
    }
 
+   static isRequestedByUser(item, userId) { 
+      if (ItemMgr.isRequested(item)) { 
+         for (var purchaseReq of item.purchaseReqs) {
+            if (purchaseReq.userId == userId) { return true }
+         }
+      }
+
+      return false;
+   }
+
    static isBuyerId(item, userId) { return item.buyerId == userId } 
                     
    static isActive(item)    { return !ItemMgr.isPrivate(item) && !ItemMgr.isSetup(item) } 

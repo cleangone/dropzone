@@ -1,7 +1,13 @@
 <template>
   <q-page>
-		<div class="q-pa-sm absolute full-width full-height">
-			<q-table title="Users" :columns="columns" :visible-columns="visibleColumns" :data="getUsers" row-key="name" :filter="tableDataFilter">
+      <div class="q-pt-md q-pl-md text-h5">Users</div>
+      <div class="q-pl-md q-mt-none">
+         <q-checkbox v-model="showRegUsers"  label="Registered Users"  class="text-grey-10" color="grey-10" dense/>
+         <q-checkbox v-model="showAnonUsers" label="Anon Users"  class="text-grey-10 q-pl-md" color="grey-10" dense/>
+      </div>
+		<div class="q-px-sm absolute full-width full-height">
+			<q-table :columns="columns" :visible-columns="visibleColumns" :data="users" no-data-label="No users"
+            row-key="name" :filter="tableDataFilter" flat>
 				<template v-slot:top-right>
 					<q-input borderless dense debounce="300" v-model="tableDataFilter" placeholder="Search">
 						<template v-slot:append><q-icon name="search"/></template>
@@ -41,16 +47,18 @@
 	export default {
 		data() {
 	  		return {
+            showRegUsers:  true,
+				showAnonUsers: false,
 				showEditModal: false,
 				showTextModal: false,
 				textUser: null,
             textMsg: '',
             userText: '',
 				tableDataFilter: '',
-				visibleColumns: [ 'email', 'firstName', 'lastName', 'nickname', 'phone', 'sendEmail', 'admin', 'errorEmail', 'edit'],
- 				columns: [
+				columns: [
         			{ name: 'id', field: 'id' },
 				 	{ name: 'email',      label: 'Email',       align: 'left',   field: 'authEmailCopy', sortable: true },
+				 	{ name: 'anonEmail',  label: 'Anon Email',  align: 'left',   field: 'anonUserEmail', sortable: true },
 				 	{ name: 'firstName',  label: 'First Name',  align: 'left',   field: 'firstName',     sortable: true },
 				 	{ name: 'lastName',   label: 'Last Name',   align: 'left',   field: 'lastName',      sortable: true },
 					{ name: 'nickname',   label: 'Nickname',    align: 'left',   field: 'nickname',      sortable: true },
@@ -64,11 +72,30 @@
 		},
 		computed: {
 			...mapGetters('user', ['getUsers', 'getUser']),
-			userToEdit() { return this.getUser(this.userIdToEdit) },
+			visibleColumns() { 
+            let cols = []
+            if (this.showRegUsers)  { cols = cols.concat(['email']) }
+            if (this.showAnonUsers) { cols = cols.concat(['anonEmail']) }
+            cols = cols.concat(['firstName', 'lastName', 'nickname'])
+            if (this.showRegUsers)  { cols = cols.concat(['phone', 'sendEmail', 'admin', 'errorEmail']) }
+            return cols.concat(['edit'])
+         },
+         users() { 
+            if (this.showRegUsers && this.showAnonUsers) { return this.getUsers }
+
+            let dispUsers = []
+            for (var user of this.getUsers) {
+               if ((this.showRegUsers && user.authEmailCopy) || (this.showAnonUsers && user.anonUserEmail)) { 
+                  dispUsers.push(user) 
+               }  
+            }
+            return dispUsers
+         },
+ 			userToEdit() { return this.getUser(this.userIdToEdit) },
 		},
 		methods: {
          ...mapActions('sms', ['createOutboundSms']),
-			edit(userId) {
+         edit(userId) {
 				this.userIdToEdit = userId
 				this.showEditModal = true
          },

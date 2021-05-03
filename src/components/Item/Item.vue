@@ -48,8 +48,9 @@
                   <span v-if="hasBids && displayThumb"> - <a :href="'#/bids/' + item.id">{{ bidText }}</a></span>
                </div>
                <div v-if="userIsBuyer" class="text-bold" style="line-height: 1.5em">You are the buyer</div> 
-               <div v-if="userIsWinningBidder" class="text-bold" style="line-height: 1.5em">You are the winning bidder</div> 
-               <div v-if="isDropping">
+               <div v-else-if="userIsWinningBidder" class="text-bold" style="line-height: 1.5em">You are the winning bidder</div> 
+               <div v-else-if="userHasRequested" class="text-bold">You have requested</div>                
+               <div v-else-if="isDropping">
                   <item-timer :item="item"/>
                   <div v-if="userIsHighBidder" class="text-bold bg-green q-px-xs">You are High Bidder</div>
                   <div v-if="userHasHigherMax" class="text-bold bg-green q-px-xs">Max bid {{ userMaxBid }}</div>
@@ -91,8 +92,9 @@
                   <span v-if="hasBids"> - <a :href="'#/bids/' + item.id">{{ bidText }}</a></span>
                </div>
                <div v-if="userIsBuyer" class="text-bold">You are the buyer</div>
-               <div v-if="userIsWinningBidder" class="text-bold">You are the winning bidder</div> 
-               <div v-if="isDropping">
+               <div v-else-if="userIsWinningBidder" class="text-bold">You are the winning bidder</div> 
+               <div v-else-if="userHasRequested" class="text-bold">You have requested</div>                
+               <div v-else-if="isDropping">
                   <item-timer :item="item"/>
                   <div v-if="userIsHighBidder" class="text-bold bg-green q-px-xs">You are High Bidder</div>
                   <div v-if="userHasHigherMax" class="text-bold bg-green q-px-xs">Max bid {{ userMaxBid }}</div>
@@ -198,8 +200,8 @@
             else { return this.item.numberOfBids + " Bids" }
          },
          isHorizontal() { return ItemMgr.isSetup(this.item) },
-         
-			userIsBuyer()         { return this.loggedIn && this.isNotAvailable && !this.item.currBid && (this.item.buyerId == this.userId) },
+			userHasRequested()    { return this.loggedIn && ItemMgr.isRequestedByUser(this.item, this.userId) },
+         userIsBuyer()         { return this.loggedIn && this.isNotAvailable && !this.item.currBid && (this.item.buyerId == this.userId) },
 			userIsWinningBidder() { return this.loggedIn && this.isNotAvailable && this.item.currBid  && (this.item.buyerId == this.userId) },
 			userIsHighBidder() { return this.loggedIn && this.item.currBid && (this.item.currBid.userId == this.userId) },
 			userIsOutbid() { return this.loggedIn && !this.userIsHighBidder && this.item.bidderIds && this.item.bidderIds.includes(this.userId) },
