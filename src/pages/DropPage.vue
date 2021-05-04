@@ -25,8 +25,7 @@
 </template>
 
 <script>
-   import { date } from 'quasar'
-	import { mapState, mapGetters, mapActions } from 'vuex'
+   import { mapGetters } from 'vuex'
    import { DropMgr } from 'src/managers/DropMgr'
 	import { ItemMgr } from 'src/managers/ItemMgr'
    import { SessionMgr } from 'src/managers/SessionMgr'
@@ -79,7 +78,7 @@
 
             const displayItems = []
             this.sortedItems.forEach(item => { 
-               if (ItemMgr.isAvailable(item) || ItemMgr.isDropping(item)) { displayItems.push(item) }
+               if (ItemMgr.isAvailable(item) || ItemMgr.isRequested(item) || ItemMgr.isDropping(item)) { displayItems.push(item) }
             })
             return SessionMgr.setDisplayItems(displayItems)
 			},

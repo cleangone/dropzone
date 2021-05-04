@@ -33,9 +33,8 @@
          :mini="drawerMini" :overlay="$q.platform.is.mobile ? true : false"
          @mouseover="drawerMouseover=true" @mouseout="drawerMouseover=false">
          <q-list>
-            <layout-item v-if="todosExist" primary :class="activeItemsClass"
+            <layout-item v-if="userIsAdmin && todosExist" primary :class="activeItemsClass"
                path="/admin/todo" label="ToDo" iconName="fas fa-check-circle" />  
-
             <layout-item v-if="currentUserActionsExist" primary :class="activeItemsClass"
                path="/current" label="Current Activity" iconName="fas fa-gavel" />          
             <q-expansion-item label="Artists" icon="brush" expand-separator>

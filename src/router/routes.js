@@ -1,39 +1,39 @@
 import { Route } from 'src/utils/Constants.js';
 
 const routes = [
-  {
-    path: '/',
-    component: () => import('layouts/Layout.vue'),
-    children: [
-      { path: '',                      component: () => import('pages/HomePage.vue'),                 name: Route.HOME },
-      { path: '/auth/login/:route',    component: () => import('pages/Auth/LoginRegisterPage.vue'),   name: Route.LOGIN },
-      { path: '/auth/register',        component: () => import('pages/Auth/LoginRegisterPage.vue'),   name: Route.REGISTER },
-      { path: '/auth/forgot',          component: () => import('pages/Auth/ForgotPasswordPage.vue') },
-      { path: '/drop/:id',             component: () => import('pages/DropPage.vue'),                 name: Route.DROP },
-      { path: '/item/:itemId',         component: () => import('pages/ItemPage.vue'),                 name: Route.ITEM },      
-      { path: '/category/:id/',        component: () => import('pages/CategoryPage.vue') },      
-      { path: '/category/:id/:tagId',  component: () => import('pages/CategoryPage.vue'),             name: Route.CATEGORY },      
-      { path: '/bids/:itemId',         component: () => import('pages/BidsPage.vue') },      
-      { path: '/recent',               component: () => import('pages/RecentItemsPage.vue'),          name: Route.RECENT },
-      { path: '/cart',                 component: () => import('pages/CartPage.vue'),                 name: Route.CART },
-      { path: '/current',              component: () => import('pages/User/CurrentActivityPage.vue'), name: Route.CURRENT },
-      { path: '/account',              component: () => import('pages/User/AccountPage.vue') },
-      { path: '/favorites',            component: () => import('pages/User/FavoritesPage.vue'),       name: Route.FAVORITE },
-      { path: '/actions',              component: () => import('pages/User/ActionsPage.vue') },
-      { path: '/invoices',             component: () => import('pages/User/InvoicesPage.vue') },
-      { path: '/admin/todo',           component: () => import('pages/Admin/ToDoAdminPage.vue'),      name: Route.TODO },      
-      { path: '/admin/drops',          component: () => import('pages/Admin/DropsAdminPage.vue') },      
-      { path: '/admin/dropitems/:id',  component: () => import('pages/Admin/DropItemsAdminPage.vue') },      
-      { path: '/admin/reqs/:itemId/:route', component: () => import('pages/Admin/PurchaseReqsAdminPage.vue') },      
-      { path: '/admin/categories',     component: () => import('pages/Admin/CategoriesAdminPage.vue') },      
-      { path: '/admin/catitems/:id',   component: () => import('pages/Admin/CategoryItemsAdminPage.vue') },      
-      { path: '/admin/images/:itemId', component: () => import('pages/Admin/ItemImagesPage.vue') },      
-      { path: '/admin/users',          component: () => import('pages/Admin/UsersAdminPage.vue') },  
-      { path: '/admin/invoices',       component: () => import('pages/Admin/InvoicesAdminPage.vue') },  
-      { path: '/admin/tags',           component: () => import('pages/Admin/TagsAdminPage.vue') },  
-      { path: '/admin/settings',       component: () => import('pages/Admin/SettingsPage.vue') },  
-      
-   ]
+   {
+      path: '/',
+      component: () => import('layouts/Layout.vue'),
+      children: [
+         createRoute('',                     'HomePage',                 Route.HOME),
+         createRoute('/auth/login/:route',   'Auth/LoginRegisterPage',   Route.LOGIN),
+         createRoute('/auth/register',       'Auth/LoginRegisterPage',   Route.REGISTER),
+         createRoute('/auth/forgot',         'Auth/ForgotPasswordPage'),
+         createRoute('/drop/:id',            'DropPage',                 Route.DROP),
+         createRoute('/item/:itemId',        'ItemPage',                 Route.ITEM),
+         createRoute('/category/:id/',       'CategoryPage'),
+         createRoute('/category/:id/:tagId', 'CategoryPage',             Route.CATEGORY),
+         createRoute('/bids/:itemId',        'BidsPage'),
+         createRoute('/recent',              'RecentItemsPage',          Route.RECENT),
+         createRoute('/cart',                'CartPage',                 Route.CART),
+         createRoute('/current',             'User/CurrentActivityPage', Route.CURRENT),
+         createRoute('/account',             'User/AccountPage'),
+         createRoute('/favorites',           'User/FavoritesPage',       Route.FAVORITE),
+         createRoute('/actions',             'User/ActionsPage'),
+         createRoute('/invoices',            'User/InvoicesPage'),
+         createAdminRoute('/todo',           'ToDoAdminPage',            Route.TODO),
+         createAdminRoute('/drops',          'DropsAdminPage'),
+         createAdminRoute('/dropitems/:id',  'DropItemsAdminPage'),
+         createAdminRoute('/reqs/:itemId',        'PurchaseReqsAdminPage'),
+         createAdminRoute('/reqs/:itemId/:route', 'PurchaseReqsAdminPage'),
+         createAdminRoute('/categories',     'CategoriesAdminPage'),
+         createAdminRoute('/catitems/:id',   'CategoryItemsAdminPage'),
+         createAdminRoute('/images/:itemId', 'ItemImagesPage'),
+         createAdminRoute('/users',          'UsersAdminPage'),
+         createAdminRoute('/invoices',       'InvoicesAdminPage'),
+         createAdminRoute('/tags',           'TagsAdminPage'),
+         createAdminRoute('/settings',       'SettingsPage'),
+    ]
   }
 ]
 
@@ -46,3 +46,15 @@ if (process.env.MODE !== 'ssr') {
 }
 
 export default routes
+
+function createAdminRoute(path, page, name) {   
+   const route = createRoute('/admin' + path, 'Admin/' + page, name)
+   route.meta = { requiresAdmin: true }
+   return route 
+}
+
+function createRoute(path, page, name) {    
+   return name ? 
+      { path: path, component: () => import('pages/' + page + '.vue'), name: name } :
+      { path: path, component: () => import('pages/' + page + '.vue') }
+}

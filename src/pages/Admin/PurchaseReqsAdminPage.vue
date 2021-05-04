@@ -78,7 +78,7 @@
 	  	},
       created() { 
          this.itemId = this.$route.params.itemId 
-         if (this.$route.params.route && this.$route.params.route != '.') { this.returnRoute = this.$route.params.route }
+         if (this.$route.params.route) { this.returnRoute = this.$route.params.route }
       }
    }
 </script>

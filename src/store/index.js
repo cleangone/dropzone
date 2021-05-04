@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 import { vuexfireMutations } from 'vuexfire'
 
 import action   from './action-store'
-import auth      from './auth-store'
+import auth     from './auth-store'
 import cart     from './cart-store'
 import category from './category-store'
 import color    from './color-store'
@@ -20,30 +20,30 @@ import user     from './user-store'
 Vue.use(Vuex)
 
 export default function () {
-  const Store = new Vuex.Store({
-    modules: {
-      action,
-      auth,
-      cart,
-      category,
-      color,
-      current,
-      drop,
-      error,
-      invoice,
-      item,
-      setting,
-      sms,
-      tag,
-      user
-    },
-    mutations: {
-      ...vuexfireMutations
-    },
-    // enable strict mode (adds overhead!)
-    // for dev mode only
-    strict: process.env.DEV
-  })
+   const Store = new Vuex.Store({
+      modules: {
+         action,
+         auth,
+         cart,
+         category,
+         color,
+         current,
+         drop,
+         error,
+         invoice,
+         item,
+         setting,
+         sms,
+         tag,
+         user
+      },
+      mutations: {
+         ...vuexfireMutations
+      },
+      // enable strict mode (adds overhead!)
+      // for dev mode only
+      strict: process.env.DEV
+   })
 
-  return Store
+   return Store
 }

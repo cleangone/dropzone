@@ -29,8 +29,8 @@
             <q-td slot="body-cell-bidreq" slot-scope="props" :props="props"> 
                <a v-if="props.row.numberOfBids == 1"     :href="'#/bids/' + props.row.id">{{ props.row.numberOfBids }} Bid</a>
 	            <a v-else-if="props.row.numberOfBids > 0" :href="'#/bids/' + props.row.id">{{ props.row.numberOfBids }} Bids</a>
-	            <a v-else-if="props.row.numberOfPurchaseReqs == 1" :href="'#/admin/reqs/' + props.row.id + '/.'">{{ props.row.numberOfPurchaseReqs }} Req</a>
-	            <a v-else-if="props.row.numberOfPurchaseReqs > 0"  :href="'#/admin/reqs/' + props.row.id + '/.'">{{ props.row.numberOfPurchaseReqs }} Reqs</a>
+	            <a v-else-if="props.row.numberOfPurchaseReqs == 1" :href="'#/admin/reqs/' + props.row.id">{{ props.row.numberOfPurchaseReqs }} Req</a>
+	            <a v-else-if="props.row.numberOfPurchaseReqs > 0"  :href="'#/admin/reqs/' + props.row.id">{{ props.row.numberOfPurchaseReqs }} Reqs</a>
 	         </q-td>
             <q-td slot="body-cell-actions" slot-scope="props" :props="props" auto-width>
                <q-btn icon="edit"   @click="editItem(props.row.id)"   @click.stop size="sm" flat dense color="primary" />
@@ -77,8 +77,7 @@
 <script>
    import { mapGetters, mapActions } from 'vuex'
    import { SessionStorage } from 'quasar'
-   import { DropMgr } from 'src/managers/DropMgr'
-	import { ItemMgr } from 'src/managers/ItemMgr'
+   import { ItemMgr } from 'src/managers/ItemMgr'
    import { TagMgr } from 'src/managers/TagMgr'
    import { UI, Colors } from 'src/utils/Constants'
    import { dollars } from 'src/utils/Utils'

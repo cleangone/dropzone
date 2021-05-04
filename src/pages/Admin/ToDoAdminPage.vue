@@ -1,7 +1,9 @@
 <template>
   <q-page>
-		<todo-items-admin :items="items"  class="full-width full-height" :class="orange"/>
-  	</q-page>
+     <div class="text-h5 q-mt-md q-ml-sm">ToDo</div>
+      <!-- page may contain multiple sections with diff types of todo's -->
+		<purchase-req-todo class="q-pa-sm" :class="orange"/>
+   </q-page>
 </template>
 
 <script>
@@ -9,17 +11,11 @@
    import { Colors } from 'src/utils/Constants'
    
 	export default {
-		data() {
-	  		return {
-         }
-		},
 		computed: {
-         ...mapGetters('item', ['getRequestedItems']),
          ...mapGetters('color', Colors),
- 			items() { return this.getRequestedItems },
       },
 		components: {
-         'todo-items-admin' : require('components/Admin/ToDoItemsAdmin.vue').default,
+         'purchase-req-todo' : require('components/Admin/PurchaseReqToDo.vue').default,
       },
    }
 

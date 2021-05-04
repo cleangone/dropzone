@@ -42,6 +42,8 @@ export const UI = {
 }
 
 export const Versions = [
+   "v1.2.2  - 5/4/21",   // Navigation guard for admin pages, refactor ToDo page and route creation
+   "v1.2.1  - 5/3/21",   // Fix ToDo page privledge
    "v1.2.0  - 5/3/21",   // Create Admin ToDo page
    "v1.1.3  - 5/2/21",   // Show user the items they have requested, add anon users to user admin
    "v1.1.2  - 5/1/21",   // Persist cart, specify postLoginRoute

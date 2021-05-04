@@ -3,22 +3,22 @@ import { firestore } from 'boot/firebase'
 	
 const state = {
 	users: [],
+	adminUsers: [], // additional binding because there will only be a couple admins
 }
 
 const actions = {
+   // todo - regular user should not bind all users
    bindUsers: firestoreAction(({ bindFirestoreRef }) => {
-      // console.log("bindUsers")
-      return bindFirestoreRef('users', collection())
+      bindFirestoreRef('users', collection())
+      bindFirestoreRef('adminUsers', collection().where('isAdmin', '==', true)) 
    }),
    setUser: firestoreAction((context, user) => {
-      // console.log("setUser", user)
       collection().doc(user.id).set(user)
    }),
    updateUser: firestoreAction((context, user) => {
       collection().doc(user.id).update(user)
    }),
    setLikes: firestoreAction((context, user) => {
-      // console.log("setLikes", user.likedItemIds) 
       collection().doc(user.id).update({ likedItemIds: user.likedItemIds })
    }),
 }
@@ -28,16 +28,15 @@ function collection() { return firestore.collection('users') }
 const getters = {
    getUsers: state => { return state.users },
    getUser: state => userId => {
-      // console.log("getUser - " + state.users.length + " users")
       for (var user of state.users) {
           if (user.id == userId) { return user }
       }
       return { id: userId }
    }, 
    isAdmin: state => userId => { 
-      // console.log("isAdmin", userId)
-      let user = getters.getUser(userId)
-      return user ? user.isAdmin : false
+      for (var user of state.adminUsers) {
+         if (user.id == userId) { return user.isAdmin }
+      }
    },
    getUserIdToName() {
       let userIdToName = new Map()
