@@ -37,7 +37,7 @@
                path="/admin/todo" label="ToDo" iconName="fas fa-check-circle" />  
             <layout-item v-if="currentUserActionsExist" primary :class="activeItemsClass"
                path="/current" label="Current Activity" iconName="fas fa-gavel" />          
-            <q-expansion-item label="Artists" icon="brush" expand-separator>
+            <q-expansion-item v-model="artistsExpanded" label="Artists" icon="brush" expand-separator>
                <layout-item v-for="(category, key) in getPublicCategories" :key="key" 
                   :path="'/category/' + category.id" :label="category.name" 
                   :avatarImage="category.primaryImage ? category.primaryImage.thumbUrl : null" 
@@ -89,6 +89,7 @@
       name: 'MyLayout',
       data () {
          return {
+            artistsExpanded: true,
             showDrawer: true,
             drawerLockedOpen: false,
             drawerMouseover: false,

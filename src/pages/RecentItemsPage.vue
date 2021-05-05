@@ -27,12 +27,7 @@
 			...mapGetters('item', ['itemsExist', 'getRecentItems']),
 			displayItems() { 
             SessionMgr.setRecentItemsDesc() 
-            if (isShowItemsAll(this.showItemsToggleContainer)) { return SessionMgr.setDisplayItems(this.getRecentItems) }
-
-            const displayItems = []
-            this.getRecentItems.forEach(item => { 
-               if (ItemMgr.isAvailable(item) || ItemMgr.isDropping(item)) { displayItems.push(item) }
-            })
+            const displayItems = isShowItemsAll(this.showItemsToggleContainer) ? this.getRecentItems : ItemMgr.getAvailable(this.getRecentItems)
             return SessionMgr.setDisplayItems(displayItems)
 			},
       },

@@ -7,6 +7,7 @@ import { Config } from 'boot/Config'
       dropId
       categoryId - todo may also need category name for searching, may have multiple categories
       name
+      sortName
       startPrice
       buyPrice
       buyDate
@@ -20,7 +21,7 @@ import { Config } from 'boot/Config'
       currBid { actionId, userId, userNickname, amount, date }
       prevBids [ currBid obj ]
       createdDate
-      sortedCreateDate
+      sortedCreateDate - createdDate adjusted by millis so drop items line up by sortName when sorted by date
       userUpdatedDate
       dropDoneDate
       primaryImage { baseName, isHorizontal, url, filePath, thumbUrl, thumbFilePath }
@@ -70,6 +71,29 @@ export class ItemMgr {
       return text.length ? text.join(", ") : "None"
    }
 
+   static getRecent(items) {   
+      let mostRecentAvailableDate = 0
+      items.forEach(item => { 
+         if (item.availableDate > mostRecentAvailableDate) { mostRecentAvailableDate = item.availableDate }
+      })
+
+      const recentItemsCutoffDate = mostRecentAvailableDate - 1000*60*60*24*7 // go back a week
+      const recentItems = []
+      items.forEach(item => { 
+         if (item.availableDate > recentItemsCutoffDate) { recentItems.push(item) }
+      })
+
+      return recentItems
+   }
+
+   static getAvailable(items) {   
+      const availableItems = []
+      items.forEach(item => { 
+         if (ItemMgr.isListed(item)) { availableItems.push(item) }
+      })
+      return availableItems
+   }
+   
    static isRequestedByUser(item, userId) { 
       if (ItemMgr.isRequested(item)) { 
          for (var purchaseReq of item.purchaseReqs) {
@@ -83,6 +107,7 @@ export class ItemMgr {
    static isBuyerId(item, userId) { return item.buyerId == userId } 
                     
    static isActive(item)    { return !ItemMgr.isPrivate(item) && !ItemMgr.isSetup(item) } 
+   static isListed(item)    { return ItemMgr.isAvailable(item) || ItemMgr.isDropping(item) || ItemMgr.isRequested(item) }
    static isGone(item)      { return ItemMgr.isHold(item) || ItemMgr.isInvoiced(item) || ItemMgr.isSold(item) } 
    
    static isPrivate(item)   { return item.status == ItemStatus.PRIVATE }

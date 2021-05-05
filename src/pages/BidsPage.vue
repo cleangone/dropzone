@@ -43,7 +43,7 @@
          imageW() { return "width: " + (this.item.isHorizontal ? this.hImageWidth : this.vImageWidth) },	
          
          itemDivWidth() { return this.item.isHorizontal ? 200 : 350 },
-         displayType() { return ItemDisplayType.BID_THUMB },
+         displayType() { return ItemDisplayType.BID },
          bids() { 
             const bids = []
             let currBidder = 1

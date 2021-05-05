@@ -17,8 +17,7 @@
 </template>
 
 <script>
-   import { mapGetters, mapActions } from 'vuex'
-   import { DropStatus } from 'src/managers/DropMgr'
+   import { mapGetters } from 'vuex'
    import { ItemMgr } from 'src/managers/ItemMgr'
    import { SessionMgr } from 'src/managers/SessionMgr'
    import { ItemDisplayType, Route, Colors } from 'src/utils/Constants'

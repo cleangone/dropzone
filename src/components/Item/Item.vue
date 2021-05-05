@@ -45,7 +45,7 @@
                <div v-if="hasArtist && !this.image.isHorizontal" style="line-height: 1.5em" :class="pink"> {{artist}} </div>
                <div style="line-height: 1.5em" :class="indigo">
                   {{ priceText }}
-                  <span v-if="hasBids && displayThumb"> - <a :href="'#/bids/' + item.id">{{ bidText }}</a></span>
+                  <span v-if="hasBids && displayIsThumb"> - <a :href="'#/bids/' + item.id">{{ bidText }}</a></span>
                </div>
                <div v-if="userIsBuyer" class="text-bold" style="line-height: 1.5em">You are the buyer</div> 
                <div v-else-if="userIsWinningBidder" class="text-bold" style="line-height: 1.5em">You are the winning bidder</div> 
@@ -133,7 +133,7 @@
 			displayIsMini() { return this.itemDisplayType == ItemDisplayType.MINI },
 			displayIsCart() { return this.itemDisplayType == ItemDisplayType.CART },
 			displayIsThumb() { return this.itemDisplayType ==  ItemDisplayType.THUMB },
-         displayIsBidThumb() { return this.itemDisplayType ==  ItemDisplayType.BID_THUMB },
+         displayIsBidThumb() { return this.itemDisplayType ==  ItemDisplayType.BID },
          itemsCollection() { return SessionMgr.getDisplayItemsDesc() },
          itemsCollectionName() { return this.itemsCollection.name },
          itemsCollectionRouterLink() { 

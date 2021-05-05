@@ -1,10 +1,10 @@
 
 export const ItemDisplayType = {
-   MINI: 'MiniThumbnail',
+   MINI:  'MiniThumbnail',
    THUMB: 'Thumbnail',
-   BID_THUMB: 'BidThumbnail',
-   CART: 'CartThumbnail',
-   FULL: 'Full'
+   BID:   'BidThumbnail',
+   CART:  'CartThumbnail',
+   FULL:  'Full'
 }
 
 export const Route = {
@@ -42,6 +42,7 @@ export const UI = {
 }
 
 export const Versions = [
+   "v1.2.3  - 5/5/21",   // Base artist recent art on their most recent item avail date, add ItemMgr.getAvailable(...)
    "v1.2.2  - 5/4/21",   // Navigation guard for admin pages, refactor ToDo page and route creation
    "v1.2.1  - 5/3/21",   // Fix ToDo page privledge
    "v1.2.0  - 5/3/21",   // Create Admin ToDo page

@@ -29,7 +29,6 @@
    import { TagMgr } from 'src/managers/TagMgr'
    import { SessionMgr } from 'src/managers/SessionMgr'
    import { Colors } from 'src/utils/Constants'
-   import { withinMonth } from 'src/utils/DateUtils'
    import { getShowItemsToggleContainer, isShowItemsAll } from 'src/utils/Utils'
    
    // items grouped by their tags on the page, with Recent added to the Top, and General to the bottom
@@ -54,20 +53,10 @@
          items() { return this.getActiveItemsWithCategory(this.categoryId) },
          displayItems() { 
             SessionMgr.setCategoryItemsDesc(this.category.name, this.categoryId)             
-            if (isShowItemsAll(this.showItemsToggleContainer)) { return this.items }
-            
-            let availableItems = []
-            this.items.forEach(item => { 
-               if (ItemMgr.isAvailable(item) || ItemMgr.isDropping(item)) { availableItems.push(item) }
-		      })
-            return availableItems
+            return (isShowItemsAll(this.showItemsToggleContainer) ? this.items : ItemMgr.getAvailable(this.items))
          },
          recentItems() { 
-            let recentItems = []
-            this.displayItems.forEach(item => { 
-               if (withinMonth(item.createdDate)) { recentItems.push(item) }
-            })
-
+            let recentItems = ItemMgr.getRecent(this.displayItems)
             SessionMgr.setTagDisplayItems(RECENT_ITEMS_TAG_ID, recentItems)
 				return recentItems
          },

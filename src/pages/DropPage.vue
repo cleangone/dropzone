@@ -74,12 +74,8 @@
          },
          displayItems() { 
             SessionMgr.setDropItemsDesc("Drop", this.dropId) 
-            if (isShowItemsAll(this.showItemsToggleContainer)) { return SessionMgr.setDisplayItems(this.sortedItems) }
-
-            const displayItems = []
-            this.sortedItems.forEach(item => { 
-               if (ItemMgr.isAvailable(item) || ItemMgr.isRequested(item) || ItemMgr.isDropping(item)) { displayItems.push(item) }
-            })
+            const displayItems = isShowItemsAll(this.showItemsToggleContainer) ? 
+               this.sortedItems : ItemMgr.getAvailable(this.sortedItems)
             return SessionMgr.setDisplayItems(displayItems)
 			},
          showItems() { return DropMgr.isActive(this.drop) || (this.adminView && DropMgr.isPreDrop(this.drop)) },

@@ -92,7 +92,10 @@
                      update.buyerId = ''
                      update.buyerName = ''
                      update.dropDoneDate = 0 
-                     update.userUpdatedDate = item.sortedCreateDate
+                     
+                     // old items do not have sortedCreateDate
+                     update.userUpdatedDate = item.sortedCreateDate ? 
+                        item.sortedCreateDate : item.createdDate 
                   }
                   if (ItemMgr.isAvailable(update)) { update.availableDate = new Date().getTime() }
                }
