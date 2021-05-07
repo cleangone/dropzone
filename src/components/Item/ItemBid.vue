@@ -22,9 +22,9 @@
 
 <script>
 	import { mapGetters, mapActions } from 'vuex'
-   import { UserMgr } from 'src/managers/UserMgr.js';
-   import { Colors } from 'src/utils/Constants.js';
+   import { UserMgr } from 'src/managers/UserMgr'
    import { dollars } from 'src/utils/Utils'
+   import { Colors } from 'src/utils/Constants'
    
 	export default {
       props: ['msg', 'item'],

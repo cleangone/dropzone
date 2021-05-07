@@ -223,11 +223,11 @@
 			formatPrice(priceObj) { return "$" + priceObj + (String(priceObj).includes(".") ? "" : ".00") }
       },	
 		components: {
-			'item-actions'    : require('components/Item/ItemActions.vue').default,
+			'item-thumb'      : require('components/Item/ItemThumb.vue').default,
+         'item-actions'    : require('components/Item/ItemActions.vue').default,
 			'item-image-full' : require('components/Item/ItemImageFull.vue').default,
      	   'item-liked'      : require('components/Item/ItemLiked.vue').default,
-			'item-thumb'      : require('components/Item/ItemThumb.vue').default,
-         'item-timer'      : require('components/Item/ItemTimer.vue').default,
+			'item-timer'      : require('components/Item/ItemTimer.vue').default,
 		}
    }
    

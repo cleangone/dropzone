@@ -1,18 +1,17 @@
 <template>
    <div>
-      <q-img :src="image.thumbUrl" v-on:click="navToItemPage" :style="thumbWH" class="image-centered cursor-pointer" 
+      <q-img :src="image.thumbUrl" v-on:click="navToItemPage" :style="thumbWH" class="cursor-pointer" 
          @mouseenter="mouseenter($event)" @mouseleave="mouseleave()" basic contain>
          <!-- <q-icon name="mdi-arrow-expand" size="md" color="blue-9" class="absolute-top-left" 
             @mouseenter="mouseenter($event)" @mouseleave="iconMouseleave()" />  -->
          <item-liked :item="item" class="absolute-bottom-right"/>   
       </q-img>
       <q-img v-if="mouseover" :src="image.url" :placeholder-src="image.thumbUrl" 
-         class="z-top image-centered image-popup contain" :style="popupStyle" basic />
+         class="z-top image-popup contain" :style="popupStyle" basic />
    </div>
 </template>  
 
 <script>
-   import { mapGetters, mapActions } from 'vuex'
    import { SessionMgr } from 'src/managers/SessionMgr'	
 	
 	export default {
@@ -75,11 +74,6 @@
 </script>
 
 <style>
-	.image-centered {
-		/* display: block;  */
-      /* margin-left: auto; 
-		margin-right: auto;  */
-	}
    .image-popup {
       position: fixed;
 		border: 5px solid; 
