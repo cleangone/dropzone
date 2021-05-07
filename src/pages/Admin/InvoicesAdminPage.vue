@@ -4,8 +4,7 @@
 			<q-table title="Invoices" :data="invoices" 
 				:columns="columns" :visible-columns="visibleColumns" 
 				row-key="id" :filter="tableDataFilter"  :pagination.sync="pagination"
-            no-data-label="No invoices"
-				:dense="$q.screen.lt.md" class="q-mb-sm">
+            no-data-label="No invoices" flat :dense="$q.screen.lt.md" class="q-mb-sm">
 				<template v-slot:top-right>
 					<q-space />					
 					<q-input borderless dense debounce="300" v-model="tableDataFilter" placeholder="Search">

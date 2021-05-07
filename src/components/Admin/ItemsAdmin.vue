@@ -1,18 +1,23 @@
 <template>
   <div>     
-      <div class="row q-pl-sm q-pr-xs" :class="purple">
+      <div class="row q-pl-sm q-pr-sm" :class="purple">
          <span class="col text-subtitle1 heading" :class="yellow" >{{ heading }}</span>
-         <span class="col text-grey-10 text-right" color="grey-10" :class="red">
+         <span class="col text-grey-10 text-center" color="grey-10" :class="red">
 			   <q-checkbox v-if="dropId"     v-model="showCols.category" label="Artist"    @input="showColsChecked()" dense />
             <q-checkbox v-if="categoryId" v-model="showCols.drop"     label="Drop"      @input="showColsChecked()" dense />
-            <q-checkbox                   v-model="showCols.tag"      label="Category"  @input="showColsChecked()" dense class="q-ml-sm" />
+            <q-checkbox                   v-model="showCols.tags"     label="Tags"      @input="showColsChecked()" dense class="q-ml-sm" />
             <q-checkbox                   v-model="showCols.saleType" label="Sale Type" @input="showColsChecked()" dense class="q-ml-sm" />
             <q-checkbox                   v-model="showCols.buyer"    label="Buyer"     @input="showColsChecked()" dense class="q-ml-sm" />
             <q-checkbox                   v-model="showCols.bidreq"   label="Bid/Req"   @input="showColsChecked()" dense class="q-ml-sm" />
          </span>
+         <span class="col text-grey-10 text-right" color="grey-10" :class="red">
+			   <q-checkbox  v-model="showItems.available" label="Available" @input="showItemsChecked()" dense />
+            <q-checkbox  v-model="showItems.hold"      label="On Hold"   @input="showItemsChecked()" dense class="q-ml-sm" />
+            <q-checkbox  v-model="showItems.sold"      label="Sold"      @input="showItemsChecked()" dense class="q-ml-sm" />
+         </span>
 		</div>
 		<div class="q-mt-xs absolute full-width full-height" :class="green">
-         <q-table title="Items" :data="tableItems" 
+         <q-table title="Items" :data="displayItems" 
             :columns="columns" :visible-columns="visibleColumns" row-key="name" :filter="tableDataFilter" no-data-label="No Items"
             selection="multiple" :selected.sync="selectedRowItems" :pagination.sync="pagination" :dense="$q.screen.lt.md" class="q-mb-sm">
 				<template v-slot:top-right>
@@ -78,18 +83,18 @@
    import { mapGetters, mapActions } from 'vuex'
    import { SessionStorage } from 'quasar'
    import { ItemMgr } from 'src/managers/ItemMgr'
-   import { TagMgr } from 'src/managers/TagMgr'
    import { UI, Colors } from 'src/utils/Constants'
    import { dollars } from 'src/utils/Utils'
-   import { formatDateTimeOptYear } from 'src/utils/DateUtils'
-
-   const SHOW_COLS = 'ItemsAdminShowColumns'
+   
+   const SHOW_COLS  = 'ItemsAdminShowColumns'
+   const SHOW_ITEMS = 'ItemsAdminShowItemStatus'
          
 	export default {
       props: ['heading', 'items', 'dropId', 'categoryId'], // one of dropId/categoryId will be set
 		data() {
 	  		return {
             showCols: {},
+            showItems: {},
             showSortDatesModal: false,
 				showAddModal: false,
             showEditModal: false,
@@ -103,15 +108,15 @@
 				displayColumns: [ 'name', 'price', 'status', 'actions'],
  				columns: [
         			{ name: 'id', field: 'id' },
-				 	{ name: 'name',     label: 'Name (Sort Name)', align: 'left',       sortable: true },
-				 	{ name: 'category', label: 'Artist',        align: 'center', field: 'category',     sortable: true, format: val => val ? val.name : "" },
-				 	{ name: 'drop',     label: 'Drop',          align: 'center', field: 'tempDrop',     sortable: true },
-				 	{ name: 'tag',      label: 'Category',      align: 'center', field: 'tempTag',      sortable: true },
-				 	{ name: 'saleType', label: 'Sale Type',     align: 'center', field: 'saleType',     sortable: true },
-					{ name: 'buyerId',  label: 'Buyer',         align: 'left',   field: 'buyerId',      sortable: true, format: val => this.userName(val) },
-					{ name: 'price', label:'Start/Final Price', align: 'right',                         sortable: true },
-					{ name: 'bidreq',     label: 'Bid/Req',     align: 'center',                        sortable: true },
-					{ name: 'status',     label: 'Status',      align: 'center', field: 'status',       sortable: true },
+				 	{ name: 'name',     label: 'Name (Sort Name)', align: 'left',                       sortable: true },
+				 	{ name: 'category', label: 'Artist',           align: 'center', field: 'category',  sortable: true, format: val => val ? val.name : "" },
+				 	{ name: 'drop',     label: 'Drop',             align: 'center', field: 'tempDrop',  sortable: true },
+				 	{ name: 'tags',     label: 'Tags',             align: 'center', field: 'tempTags',  sortable: true },
+				 	{ name: 'saleType', label: 'Sale Type',        align: 'center', field: 'saleType',  sortable: true },
+					{ name: 'buyerId',  label: 'Buyer',            align: 'left',   field: 'buyerId',   sortable: true, format: val => this.userName(val) },
+					{ name: 'price',    label:'Start/Final Price', align: 'right',                      sortable: true },
+					{ name: 'bidreq',   label: 'Bid/Req',          align: 'center',                     sortable: true },
+					{ name: 'status',   label: 'Status',           align: 'center', field: 'status',    sortable: true },
 					{ name: 'actions' }
             ],
             pagination: { rowsPerPage: 50 },
@@ -127,7 +132,7 @@
             const columns = [...this.displayColumns]
             if (this.categoryId && this.showCols.drop)     { columns.push('drop') } 
             if (this.dropId     && this.showCols.category) { columns.push('category') } 
-            if (this.showCols.tag)      { columns.push('tag') }
+            if (this.showCols.tags)     { columns.push('tags') }
             if (this.showCols.saleType) { columns.push('saleType') }
             if (this.showCols.buyer)    { columns.push('buyerId') }
             if (this.showCols.bidreq)   { columns.push('bidreq') }
@@ -139,10 +144,32 @@
                const copy = Object.assign({}, item)
                copy.tempName = copy.sortName + " " + copy.name // sort by sortName and be able to filter by name
                copy.tempDrop = copy.dropId ? this.getDropIdToNameDropMap.get(copy.dropId) : ""
-               copy.tempTag = TagMgr.primaryName(copy) // can filter by primary category
+
+               const tagNames = []
+               if (item.tags) {
+                  for (var tag of item.tags) {
+                     tagNames.push(tag.name) 
+                  }
+               }
+               copy.tempTags = tagNames.join(', ')
+
                copies.push(copy) 
             })
             return copies
+         },
+         displayItems() { 
+            if (this.showItems.available && this.showItems.hold && this.showItems.sold) { return this.tableItems }
+            let displayItems = []
+            for (var item of this.tableItems) {
+               let dispItem = true
+               if (ItemMgr.isAvailable(item)) { dispItem = this.showItems.available }
+               else if (ItemMgr.isHold(item)) { dispItem = this.showItems.hold }
+               else if (ItemMgr.isSold(item)) { dispItem = this.showItems.sold }
+            
+               if (dispItem) { displayItems.push(item) }         
+            }
+
+            return displayItems
          },
          itemToEdit() { return this.itemIdToEdit ? getItem(this.items, this.itemIdToEdit) : null },
          itemsExist() { return this.items.length > 0 },
@@ -202,11 +229,16 @@
          },
          editImages(itemId) { this.$router.push("/admin/images/" + itemId) },
          showColsChecked() { SessionStorage.set(SHOW_COLS, this.showCols) },
+         showItemsChecked() { SessionStorage.set(SHOW_ITEMS, this.showItems) },
       },
       created() {
          this.showCols = SessionStorage.getItem(SHOW_COLS)    
          if (!this.showCols) { this.showCols = { 
-            category: true, drop: true, tag: true, saleType: true, buyer: true, bidreq: true } }
+            category: true, drop: true, tags: true, saleType: true, buyer: true, bidreq: true } }
+      
+         this.showItems = SessionStorage.getItem(SHOW_ITEMS)    
+         if (!this.showItems) { this.showItems = { 
+            available: true, hold: true, sold: true } }      
       },
 		components: {
          'drop-add-edit'    : require('components/Drop/DropAddEdit.vue').default,

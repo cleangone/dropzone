@@ -14,7 +14,7 @@
       // ...mapActions('user', ['createUserFirebaseCallbacks'])
     },
     mounted() {
-      console.log("App.mounted")
+      // console.log("App.mounted")
       // this.createFirebaseCallbacks()
       // this.createUserFirebaseCallbacks()
       this.handleAuthStateChange()

@@ -40,9 +40,9 @@ export default function () {
       mutations: {
          ...vuexfireMutations
       },
-      // enable strict mode (adds overhead!)
-      // for dev mode only
-      strict: process.env.DEV
+      // enable strict mode - dev mode only, adds overhead
+      // note - disabling in dev because of vuex unhappy with vuexfire collection updates not in mutations
+      // strict: process.env.DEV
    })
 
    return Store

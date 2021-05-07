@@ -1,9 +1,8 @@
 <template>
 	<q-card class="form-card">
     <q-card-section>
-      <div class="text-h6 heading">{{ updateType }} {{ tagToSubmit.category }}</div>
+      <div class="text-h6 heading">{{ updateType }} Tag</div>
     </q-card-section>
-
     <q-card-section>
     	<div class="row q-mb-sm">
 	      <q-input v-model="tagToSubmit.name" label="Name" ref="name" class="col" filled
@@ -13,14 +12,7 @@
 		<div class="row q-mb-sm q-gutter-md">
 		   <q-input label="Sort Name" v-model="tagToSubmit.sortName" class="col" filled/>
 		</div>	
-      <div v-if="showVideo" class="row q-mb-sm q-gutter-md">
-		   <q-input label="Video" v-model="tagToSubmit.video" class="col" filled/>
-		</div>	
-      <div v-if="showLink" class="row q-mb-sm q-gutter-md">
-		   <q-checkbox label="Show Link" v-model="tagToSubmit.showLink"  class="col" dense />
-		</div>	
 	</q-card-section>
-
     <q-card-actions align="right">
       <q-btn label="Cancel" color="grey" v-close-popup />
       <q-btn @click="submitForm" label="Save" color="primary" />
@@ -29,27 +21,22 @@
 </template>
 
 <script>
-	import { mapState, mapActions } from 'vuex'
-	import { DropMgr, DropStatus } from 'src/managers/DropMgr'
-   
+	import { mapActions } from 'vuex'
+	
    const UPDATE_ADD = "Add"
    const UPDATE_EDIT = "Edit"
 
 	export default {
-		props: ['tag', 'category', 'showLink', 'showVideo'],
+		props: ['tag'],
 		data() {
 			return {
             updateType: "",
             tagToSubmit: {
 					name: "",
                sortName: "",
-               showLink: false,
-               category: "",
             },
 			}
 		},
-		computed: {
-      },
 		methods: {
 			...mapActions('tag', ['createTag', 'setTag']),
 			submitForm() {
@@ -62,7 +49,6 @@
 				}
 			},
 		},
-		
 		mounted() {
          // param update propagating as modal being popped up
 			setTimeout(() => { 
@@ -72,7 +58,6 @@
             }
             else { 
                this.updateType = UPDATE_ADD
-               this.tagToSubmit.category = this.category
             }
          }, 100)  
 		}

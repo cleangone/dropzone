@@ -16,7 +16,7 @@
             </div>
             <div class="col q-mb-sm q-gutter-sm" :class="green">
                <q-input v-model="itemToSubmit.sortName" label="Sort Name" filled />
-               <q-select v-model="primaryTagName" label="Category" :options="tagOptions" filled />
+               <q-select v-model="uiTags" label="Tags" :options="uiTagOptions" multiple filled />
                <q-img v-if="!uploaderDisplayed" style="height: 200px; width: 200px;" class="q-ml-sm" :class="pink" contain
                   :src="itemToSubmit.primaryImage.url ? itemToSubmit.primaryImage.url : 'statics/image-placeholder.png'" />
                <div v-if="!uploaderDisplayed">
@@ -47,12 +47,10 @@
    import { CategoryMgr, CATEGORY_NONE } from 'src/managers/CategoryMgr'
    import { ImageMgr } from 'src/managers/ImageMgr'
    import { ItemMgr, ItemStatus } from 'src/managers/ItemMgr'
-   import { TagMgr, TagCategory } from 'src/managers/TagMgr'
+   import { TagMgr } from 'src/managers/TagMgr'
    import { StorageMgr } from 'src/managers/StorageMgr'
    import { SaleType, UI, Colors } from 'src/utils/Constants'
    
-   const NONE = "(none)"
-
 	export default {
       props: ['type', 'item', 'dropId', 'categoryId'], // one of dropId/categoryId will be specified for add
 		data() {
@@ -66,7 +64,7 @@
 					saleType: SaleType.DEFAULT,
                primaryImage: { isHorizontal: false },
             },
-            primaryTagName: "",
+            uiTags: null,
             uploaderDisplayed: false,
 				statusOptions: [ ItemStatus.PRIVATE, ItemStatus.SETUP, ItemStatus.AVAILABLE, ItemStatus.DROPPING, ItemStatus.HOLD, ItemStatus.SOLD ],
             saleTypeOptions: [ SaleType.DEFAULT, SaleType.BID, SaleType.BUY ],
@@ -79,8 +77,7 @@
          ...mapGetters('color', Colors),
          isEdit() { return this.type == UI.EDIT },
          artistOptions() { return CategoryMgr.categoryOptions(this.getPublicCategories) },
-         tagMap() { return TagMgr.getNameToTagMap(this.getTags(TagCategory.PRIMARY)) },
-         tagOptions() { return TagMgr.getNames(this.tagMap.values()).concat([UI.NONE])  }, 
+         uiTagOptions() { return TagMgr.getUiTags(this.getTags) }, 
          dropOptions() { return this.getDrops },
       },
 		methods: {
@@ -107,12 +104,13 @@
 
             if (this.itemToSubmit.category && CategoryMgr.isNone(this.itemToSubmit.category)) { this.itemToSubmit.category = null }
             
-            if (this.primaryTagName) {
-               const tag = this.primaryTagName == NONE ? 
-                  { id:"", name: "", category: TagCategory.PRIMARY } : this.tagMap.get(this.primaryTagName)
-               TagMgr.setTag(this.itemToSubmit, tag) 
+            this.itemToSubmit.tags = []
+            for (var uiTag of TagMgr.sortUiTags(this.uiTags)) {
+               this.itemToSubmit.tags.push({ id: uiTag.value, name: uiTag.label, sortName: uiTag.sortName }) 
             }
-            
+            this.itemToSubmit.tags.sort((a, b) => (a.sortName < b.sortName) ? -1 : 1)
+            this.itemToSubmit.tagIds = TagMgr.getTagIdArray(this.itemToSubmit.tags)
+
             // delete prev primaryImage files if they have changed
             if (this.isEdit) {
                const prevFilePath = this.item.primaryImage ? this.item.primaryImage.filePath : null
@@ -160,11 +158,7 @@
                this.itemToSubmit = Object.assign({}, this.item) 
                this.itemToSubmit.primaryImage = Object.assign({}, this.item.primaryImage) // item copy not deep               
                this.itemToSubmit.category = this.item.category ? Object.assign({}, this.item.category) : CATEGORY_NONE
-
-               // copy maps to make vuex happy 
-               if (this.itemToSubmit.tagIds) { this.itemToSubmit.tagIds = {...this.item.tagIds} }
-               if (this.itemToSubmit.tagNames) { this.itemToSubmit.tagNames = {...this.item.tagNames} }
-               this.primaryTagName = TagMgr.primaryName(this.itemToSubmit)
+               this.uiTags = TagMgr.getUiTags(this.itemToSubmit.tags) 
             }
             else { 
                if (this.dropId) { this.itemToSubmit.dropId = this.dropId }

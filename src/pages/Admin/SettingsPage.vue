@@ -1,7 +1,7 @@
 <template>
-  <q-page padding>  
-     <div class="text-h6">Settings</div>
-	  <q-card class="form-card flat">
+  <q-page>  
+     <div class="text-h6 q-mt-sm q-ml-md">Settings</div>
+	  <q-card flat>
 			<q-card-section>
 				<div class="row q-mb-sm q-gutter-sm">
                <q-input v-model="settingToUpdate.companyName" label="Company Name" filled class="col-4" />
@@ -26,7 +26,7 @@
             <email-settings-edit :emailSetting="emailPurchaseFail" />
             <email-settings-edit :emailSetting="emailWinningBid" />
          </q-card-section>
-			<q-card-actions >
+			<q-card-actions class="q-ml-md">
 				<q-btn @click="reset" label="Reset" color="grey" />
 				<q-btn @click="submitUpdate" label="Save" color="primary" />
 			</q-card-actions>

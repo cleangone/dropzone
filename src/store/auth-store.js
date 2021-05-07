@@ -31,10 +31,10 @@ const actions = {
    logoutUser() { firebaseAuth.signOut() },
 
    handleAuthStateChange({commit, dispatch}) { 
-      console.log('handleAuthStateChange')
+      // console.log('handleAuthStateChange')
       firebaseAuth.onAuthStateChanged(user => {
          if (user) { 
-            console.log('handleAuthStateChange: logged in', user)
+            // console.log('handleAuthStateChange: logged in', user)
             commit ('setUserId', user.uid)  
             commit ('setIsAnon', user.isAnonymous)
             if (!user.isAnonymous) {

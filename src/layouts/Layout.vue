@@ -42,12 +42,13 @@
                   :path="'/category/' + category.id" :label="category.name" 
                   :avatarImage="category.primaryImage ? category.primaryImage.thumbUrl : null" 
                   :topLabel="category.topLineName" :botLabel="category.bottomLineName"/>
+               <div class="q-pb-md"/>
             </q-expansion-item>                
             <q-expansion-item v-if="loggedIn" label="My Account" icon="account_circle" :content-inset-level="0.25" expand-separator>  
                <layout-item path="/account"   label="Account"   iconName="account_circle"/>
                <layout-item path="/favorites" label="Favorites" iconName="favorite" />    
                <layout-item path="/actions"   label="History"   iconName="history"/>           
-               <layout-item path="/invoices"  label="Invoices"  iconName="shopping_cart"/>           
+               <layout-item path="/invoices"  label="Invoices"  iconName="shopping_cart" class="q-pb-md"/>           
             </q-expansion-item>
             <q-expansion-item v-if="userIsAdmin" label="Admin" icon="settings" :content-inset-level="0.25" expand-separator>
                <layout-item path="/admin/drops"      label="Drops"      iconName="get_app"/>
@@ -128,7 +129,7 @@
                }
             }
             else {
-               console.log("userIsLoggedIn: none")
+               // console.log("userIsLoggedIn: none")
                if (this.boundUserId != null) { 
                   // console.log("unbinding userId " + this.boundUserId)
                   this.unbindUserActions() 
@@ -142,7 +143,7 @@
                // wait 2 secs to let auth settle, and then anon login if not logged in
                setTimeout(() => { 
                   if (!this.loggedIn && !this.anonLoggedIn) {
-                     console.log("userIsLoggedIn: logging in anon user")
+                     // console.log("userIsLoggedIn: logging in anon user")
                      this.loginAnonUser()
                   }
                }, 2000) 

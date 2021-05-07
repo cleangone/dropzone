@@ -15,7 +15,7 @@
          <q-select v-model="artist" label="Artist" :options="artistOptions" option-value="id" option-label="name" filled />
       </div>  
       <div class="q-mb-sm">
-         <q-select v-model="primaryTagName" label="Category" :options="tagOptions" filled class="col"/>
+         <q-select v-model="uiTags" label="Tags" :options="uiTagOptions" multiple filled class="col"/>
       </div>  
       <div class="q-mb-sm">
          <q-select v-model="saleType" label="Sale Type" :options="saleTypeOptions" filled/>
@@ -33,13 +33,11 @@
 
 <script>
 	import { mapGetters, mapActions } from 'vuex'
-	import { CategoryMgr, CATEGORY_NONE } from 'src/managers/CategoryMgr'
+	import { CategoryMgr } from 'src/managers/CategoryMgr'
    import { ItemMgr, ItemStatus } from 'src/managers/ItemMgr'
-   import { TagMgr, TagCategory } from 'src/managers/TagMgr'
-   import { SaleType, UI } from 'src/utils/Constants'
+   import { TagMgr } from 'src/managers/TagMgr'
+   import { SaleType } from 'src/utils/Constants'
    
-   const NONE = "(none)"
-
 	export default {
       props: ['items'],
 		data() {
@@ -49,7 +47,8 @@
             trimLeadingZero: false,
             status: "",
             artist: "",
-            primaryTagName: "",
+            uiTags: null,
+            origCommonTagIds: null,
             saleType: "",
             deleteItems: false,
 				statusOptions: [ ItemStatus.PRIVATE, ItemStatus.SETUP, ItemStatus.AVAILABLE, ItemStatus.HOLD, ItemStatus.SOLD ],
@@ -59,10 +58,8 @@
       computed: {
          ...mapGetters('category', ['getPublicCategories']),
          ...mapGetters('tag', ['getTags']),
-         // artistMap() { return this.getTagMap(TagCategory.ARTIST) },
          artistOptions() { return CategoryMgr.categoryOptions(this.getPublicCategories) },
-         tagMap() { return TagMgr.getNameToTagMap(this.getTags(TagCategory.PRIMARY)) },
-         tagOptions() { return TagMgr.getNames(this.tagMap.values()).concat([UI.NONE]) }, 
+         uiTagOptions() { return TagMgr.getUiTags(this.getTags) }, 
       },
       methods: {
          ...mapActions('item', ['updateItems', 'deleteItem']),
@@ -72,8 +69,9 @@
                return
             }
 
+            const selectedTags = TagMgr.getTags(this.uiTags)                    
             const itemUpdates = []
-            this.items.forEach(item => {
+            for (let item of this.items) { 
                let update = { }
                if (this.nameFind.length && this.nameReplace.length && item.name.includes(this.nameFind)) { 
                   console.log("replace '" + this.nameFind + "' with '" + this.nameReplace + "'")
@@ -103,19 +101,26 @@
                if (this.saleType.length) { update.saleType = this.saleType }
                if (this.artist) { update.category = CategoryMgr.isNone(this.artist) ? null : this.artist }
 
-               if (this.primaryTagName.length) { 
-                  update.tagIds = Object.assign({}, item.tagIds) 
-                  update.tagNames = Object.assign({}, item.tagNames) 
-      
-                  const tag = this.primaryTagName == NONE ? { id:"", name: "", category: TagCategory.PRIMARY } : this.tagMap.get(this.primaryTagName)
-                  TagMgr.setTag(update, tag)          
+
+               if (selectedTags) { 
+                  update.tags = []
+                  if (item.tags) {
+                     for (var tag of item.tags) {
+                        if (!this.origCommonTagIds.has(tag.id)) { update.tags.push(tag) }
+                     }
+                  }
+                  for (var tag of selectedTags) {
+                     if (!TagMgr.hasTag(update, tag.id)) { update.tags.push(tag) }
+                  }
+                  update.tags.sort((a, b) => (a.sortName < b.sortName) ? -1 : 1)
+                  update.tagIds = TagMgr.getTagIdArray(update.tags)
                }
 
                if (Object.keys(update).length) { 
                   update.id = item.id 
                   itemUpdates.push(update)
                }
-            })
+            }
 
             if (itemUpdates.length) { this.updateItems(itemUpdates) }
             this.$emit('close')
@@ -130,6 +135,27 @@
          },
          cancel() { this.$emit('close') }
 		},
+      mounted() {
+         // slight delay because param update propagating as modal being popped up
+         setTimeout(() => {  
+            let origCommonTags = null
+            for (let item of this.items) {   
+               if (origCommonTags == null) { 
+                  origCommonTags = item.tags ? Array.from(item.tags) : []
+               }
+               else {
+                  const prevTags = origCommonTags
+                  origCommonTags = []
+                  const currItemTagIds = TagMgr.getTagIds(item.tags)
+                  for (let tag of prevTags) {   
+                     if (currItemTagIds.has(tag.id)) { origCommonTags.push(tag) }
+                  }
+               }
+            }
+            this.uiTags = TagMgr.getUiTags(origCommonTags)
+            this.origCommonTagIds =TagMgr.getTagIds(origCommonTags)
+         }, 100)  
+		}
 	}
 </script>
 

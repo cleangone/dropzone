@@ -61,41 +61,47 @@
 				return recentItems
          },
          recentItemsTagId() { return RECENT_ITEMS_TAG_ID },
-         tags() {  // return [{ id, name }]
+         tags() {  
             let tags = []
             let tagIds = []
             let hasGeneralTag = false
+
             this.displayItems.forEach(item => { 
-               let primaryId = TagMgr.primaryId(item)
-               if (primaryId.length) { 
-                  if (!tagIds.includes(primaryId)) { 
-                     tagIds.push(primaryId)
-                     tags.push({ id: primaryId, name: TagMgr.primaryName(item) }) 
-                  } 
+               if (item.tags && item.tags.length) {
+                  for (var tag of item.tags) {
+                     if (!tagIds.includes(tag.id)) { 
+                        tagIds.push(tag.id)
+                        tags.push(tag) 
+                     } 
+                  }
                }
                else { hasGeneralTag = true }
             })
           
-            // todo - not using tag.sortName
-            tags.sort((a, b) => (a.name < b.name) ? -1 : 1)
+            tags.sort((a, b) => (a.sortName < b.sortName) ? -1 : 1)
             if (hasGeneralTag) { tags.push( { id: GENERAL_TAG_ID, name: "General" }) } // general is last
             return tags
          },
          tagIdToItemsMap() { 
-            let map = new Map()
+            let tagIdToItems = new Map() 
             this.displayItems.forEach(item => { 
-               let primaryId = TagMgr.primaryId(item)
-               if (!primaryId.length) { primaryId = GENERAL_TAG_ID }
-               if (!map.has(primaryId)) { map.set(primaryId, []) }
-               
-               map.get(primaryId).push(item)
+               if (item.tags && item.tags.length) {
+                  for (var tag of item.tags) {
+                     if (!tagIdToItems.has(tag.id)) { tagIdToItems.set(tag.id, []) }
+                     tagIdToItems.get(tag.id).push(item)
+                  }
+               }
+               else {
+                  if (!tagIdToItems.has(GENERAL_TAG_ID)) { tagIdToItems.set(GENERAL_TAG_ID, []) }
+                  tagIdToItems.get(GENERAL_TAG_ID).push(item)
+               }
             })
             
-            map.forEach((items, tagId) => { // (value, key) iterator
+            tagIdToItems.forEach((items, tagId) => { // (value, key) iterator
                SessionMgr.setTagDisplayItems(tagId, items)
             }) 
 
-            return map
+            return tagIdToItems
          },
          recentItemsExpanded() { return this.initialExpandedTagId == RECENT_ITEMS_TAG_ID },
       },

@@ -48,8 +48,10 @@
 			}
 		},
 		mounted() {
-         console.log("UserEdit mounted",  this.user)
-			setTimeout(() => { this.userToUpdate = Object.assign({}, this.user) }, 100)  // user param update propagating as modal being popped up
+         console.log("UserEdit mounted", this.user)
+			setTimeout(() => { // user param update propagating as modal being popped up
+            this.userToUpdate = Object.assign({}, this.user) 
+         }, 100)  
 		}
 	}
 </script>

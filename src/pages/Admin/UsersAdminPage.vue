@@ -18,7 +18,7 @@
     				<q-btn v-if="acceptTexts(props.row)" icon="textsms" @click="promptForText(props.row)" size="sm" flat dense/>
   				</q-td>
 				<q-td slot="body-cell-edit" slot-scope="props" :props="props">
-    				<q-btn icon="edit" @click="edit(props.row.id)" size="sm" flat dense/>
+    				<q-btn icon="edit" @click="edit(props.row)" size="sm" flat dense/>
   				</q-td>
 			</q-table>
 		</div>
@@ -39,10 +39,9 @@
 </template>
 
 <script>
-	import { date } from 'quasar'
-   import { mapGetters, mapActions } from 'vuex'
+	import { mapGetters, mapActions } from 'vuex'
    import { SmsMgr } from 'src/managers/SmsMgr'
-   import { formatTightPhone, unformatPhone } from 'src/utils/Utils'
+   import { formatTightPhone } from 'src/utils/Utils'
 
 	export default {
 		data() {
@@ -68,6 +67,7 @@
 					{ name: 'errorEmail', label: 'Error Email', align: 'center', field: 'errorEmail',    format: val => val ? 'Yes' : '' }, 
 					{ name: 'edit' },
 				],
+ 			   userToEdit: null,
 			}
 		},
 		computed: {
@@ -91,12 +91,12 @@
             }
             return dispUsers
          },
- 			userToEdit() { return this.getUser(this.userIdToEdit) },
+ 			// userToEdit() { return this.getUser(this.userIdToEdit) },
 		},
 		methods: {
          ...mapActions('sms', ['createOutboundSms']),
-         edit(userId) {
-				this.userIdToEdit = userId
+         edit(user) {
+				this.userToEdit = user
 				this.showEditModal = true
          },
          formatPhone(phone) { return formatTightPhone(phone) }, 

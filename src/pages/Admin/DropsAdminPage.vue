@@ -2,7 +2,7 @@
    <q-page>
 		<div class="q-pa-sm absolute full-width full-height">
 			<q-table title="Drops" :data="getDrops" :columns="columns" :visible-columns="visibleColumns" row-key="name" @row-click="onRowClick"
-            no-data-label="No Drops" :filter="tableDataFilter" :pagination.sync="pagination" :dense="$q.screen.lt.md" class="q-mb-sm">
+            no-data-label="No Drops" :filter="tableDataFilter" :pagination.sync="pagination" :dense="$q.screen.lt.md" class="q-mb-sm" flat>
 				<template v-slot:top-right>
 				   <q-space />
 					<q-input borderless dense debounce="300" v-model="tableDataFilter" placeholder="Search">

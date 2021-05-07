@@ -21,7 +21,7 @@ const mutations = {
 
 const actions = {
    bindUserCarts: firestoreAction(({ bindFirestoreRef, commit }, userId) => {
-      console.log("bindUserCarts", userId)
+      // console.log("bindUserCarts", userId)
       bindFirestoreRef('userCarts', collection().where('userId', '==', userId)) 
       commit('setUserId', userId) 
    }),
@@ -47,7 +47,7 @@ const actions = {
       showPositiveNotify("Item added to cart")
    },
    addItemIdsToCart({ state }, itemIds) { 
-      console.log("addItemIdsToCart", itemId)
+      // console.log("addItemIdsToCart", itemIds)
       // console.log("addItemIdsToCart: " + state.userCarts.length + " carts")
       if (!itemIds || !itemIds.length) { return }
       

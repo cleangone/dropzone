@@ -1,10 +1,10 @@
 <template>
    <q-page>
 		<div class="q-pa-sm absolute full-width full-height">
-			<q-table title="Primary Tags" :data="tags" 
+			<q-table title="Tags" :data="tags" 
 				:columns="columns" :visible-columns="visibleColumns" row-key="id" :filter="tableDataFilter" 
-            no-data-label="No Categories" :pagination.sync="pagination"
-				:dense="$q.screen.lt.md" class="q-mb-sm">
+            no-data-label="No tags" :pagination.sync="pagination"
+				:dense="$q.screen.lt.md" flat class="q-mb-sm">
 				<template v-slot:top-right>
 				   <q-space />
 					<q-input borderless dense debounce="300" v-model="tableDataFilter" placeholder="Search">
@@ -12,14 +12,15 @@
 					</q-input>
 				</template>
             <q-td slot="body-cell-actions" slot-scope="props" :props="props"> 
-	            <q-btn icon="edit"   @click="edit(props.row.id)"        @click.stop size="sm" flat dense color="primary" />
+	            <q-btn icon="edit"   @click="edit(props.row)"           @click.stop size="sm" flat dense color="primary" />
     				<q-btn icon="delete" @click="promptToDelete(props.row)" @click.stop size="sm" flat dense color="red" />
   				</q-td> 
 			</q-table>
-		 	<q-btn @click="showAddModal=true" icon="add" unelevated color="primary"/>
-	   </div>
-		<q-dialog v-model="showAddModal">	
-			<tag-add-edit :category="category" @close="showAddModal=false" />
+		 	<q-btn @click="add()" icon="add" unelevated color="primary"/>
+	      <div style="height: 50px; width: 10px;"  :class="green"/>
+		</div>
+      <q-dialog v-model="showAddModal">	
+			<tag-add-edit @close="showAddModal=false" />
 		</q-dialog>
 		<q-dialog v-model="showEditModal">
 			<tag-add-edit :tag="tagToEdit" @close="showEditModal=false" />
@@ -29,40 +30,43 @@
 
 <script>
 	import { mapGetters, mapActions } from 'vuex'
-   import { TagCategory } from 'src/managers/TagMgr.js'
+   import { Colors } from 'src/utils/Constants'
    
 	export default {
 		data() {
 	  		return {
 				showAddModal: false,
 				showEditModal: false,
-				tagIdToEdit: '',
+				tagToEdit: null,
 				tableDataFilter: '',
 				visibleColumns: [ 'name', 'sort', 'actions'],
  				columns: [
-               { name: 'name',    label: 'Name',      align: 'left',   field: 'name',     sortable: true },
-				 	{ name: 'sort',    label: 'Sort Name', align: 'left',   field: 'sortName', sortable: true },
+               { name: 'name', label: 'Name',      align: 'left', field: 'name',     sortable: true },
+				 	{ name: 'sort', label: 'Sort Name', align: 'left', field: 'sortName', sortable: true },
 					{ name: 'actions' }
             ],
             pagination: { rowsPerPage: 30 },
 			}
 		},
 		computed: {
-         ...mapGetters('tag', ['tagsExist', 'getTags', 'getTag']),
-         category() { return TagCategory.PRIMARY },
-			tags() { 
+         ...mapGetters('tag', ['getTags']),
+         ...mapGetters('color', Colors),
+         tags() { 
             let tags = []
-            for (var tag of this.getTags(this.category) ) {
+            for (var tag of this.getTags ) {
                tags.push(Object.assign({}, tag) ) 
             }
             return tags
          },
-			tagToEdit() { return this.getTag(this.tagIdToEdit) },
 		},
 		methods: {
          ...mapActions('tag', ['deleteTag']),
-      	edit(tagId) {
-            this.tagIdToEdit = tagId
+      	add() {
+            this.tagToEdit = null
+				this.showEditModal = true
+         },
+         edit(tag) {
+            this.tagToEdit = tag
 				this.showEditModal = true
          },
 			promptToDelete(tag) {

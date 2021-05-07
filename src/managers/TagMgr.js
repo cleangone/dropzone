@@ -1,26 +1,25 @@
-export const TagCategory = {
-   PRIMARY: 'Primary',
-}
+/*
+   tag
+      id 
+      name
+      category
+      sortName
+*/
 
 export class TagMgr {   
-   static hasTag(container, tag) { return TagMgr.getId(container, tag.category) == tag.id }
-   static primaryId(container)   { return TagMgr.getId(container,   TagCategory.PRIMARY) }	
-   static primaryName(container) { return TagMgr.getName(container, TagCategory.PRIMARY) }	
-   
-   static tagsWithLinks(tags) { 
-      const tagsWithLinks = []
-      tags.forEach(tag => { if (tag.showLink) { tagsWithLinks.push(tag) } })
-      return tagsWithLinks
-   }
+   static hasTag(container, tagId) { 
+      if (container.tags) {
+         for (var tag of container.tags) {
+            if (tag.id == tagId) { return true }
+         }
+      }
 
+      return false
+   }
+   
    static getId(container, category) { 
       if (!container.tagIds) { return "" }
       return container.tagIds[category] ? container.tagIds[category] : ""
-   }
-
-   static getName(container, key) { 
-      if (!container.tagNames) { return "" }
-      return container.tagNames[key] ? container.tagNames[key] : "" 
    }
    
    static setTag(container, tag) { 
@@ -48,5 +47,43 @@ export class TagMgr {
          names.push(tag.name)
       }
       return names
+   }
+
+   static getTagIds(tags) { 
+      let tagIds = new Set()
+      if (tags) {
+         for (var tag of tags) {
+            tagIds.add(tag.id)
+         }
+      }
+      return tagIds
+   }
+
+   static getTagIdArray(tags) { return Array.from(TagMgr.getTagIds(tags)) }
+
+   static getTags(uiTags) { 
+      if (!uiTags) { return [] }
+
+      const tags = []
+      for (var uiTag of uiTags) {
+         tags.push({ id: uiTag.value, name: uiTag.label, sortName: uiTag.sortName })         
+      }
+      return tags
+   }
+
+   static getUiTags(tags) { 
+      if (!tags) { return [] }
+
+      const uiTags = []
+      for (var tag of tags) {
+         uiTags.push({ label: tag.name, value: tag.id, sortName: tag.sortName }) 
+      }
+      return uiTags
+   }
+
+   static sortUiTags(uiTags) { 
+      const sortedTags = Array.from(uiTags)
+      sortedTags.sort((a, b) => (a.sortName < b.sortName) ? -1 : 1)
+      return sortedTags
    }
 }

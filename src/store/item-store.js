@@ -156,7 +156,7 @@ const getters = {
       // console.log("getItemsWithTag", tag)
       let items = []
       state.items.forEach(item => {
-         if (ItemMgr.isActive(item) && TagMgr.hasTag(item, tag)) { items.push(item) }
+         if (ItemMgr.isActive(item) && TagMgr.hasTag(item, tag.id)) { items.push(item) }
       })
 
       items.sort((a, b) => (a.sortName > b.sortName) ? 1 : -1)
