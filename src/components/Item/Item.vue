@@ -51,7 +51,7 @@
                <div v-else-if="userIsWinningBidder" class="text-bold" style="line-height: 1.5em">You are the winning bidder</div> 
                <div v-else-if="userHasRequested" class="text-bold">You have requested</div>                
                <div v-else-if="isDropping">
-                  <item-timer :item="item"/>
+                  <item-timer :item="item" :tagId="tagId"/>
                   <div v-if="userIsHighBidder" class="text-bold bg-green q-px-xs">You are High Bidder</div>
                   <div v-if="userHasHigherMax" class="text-bold bg-green q-px-xs">Max bid {{ userMaxBid }}</div>
                   <div v-if="userIsOutbid"     class="text-bold bg-red-5 q-px-xs">You have been outbid</div> 

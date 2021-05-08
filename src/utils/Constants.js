@@ -42,6 +42,7 @@ export const UI = {
 }
 
 export const Versions = [
+   "v1.3.2  - 5/7/21",   // Fix bid countdown problem when thumb is on page twice in diff categories
    "v1.3.1  - 5/7/21",   // Fix quasar build css chunk ordering warning for ItemThumb.vue
    "v1.3.0  - 5/7/21",   // Multiple tags per item
    "v1.2.3  - 5/5/21",   // Base artist recent art on their most recent item avail date, add ItemMgr.getAvailable(...)

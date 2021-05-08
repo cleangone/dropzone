@@ -8,10 +8,11 @@
 	var timeouts = {};
 	
 	export default {
-		props: ['item'], 
+		props: ['item', 'tagId'], // tagId used when the same thumb is on a page multiple times in diff tag groups
 		data() {
 			return {
-				timerSeconds: 0
+				timerSeconds: 0,
+            timeoutId: null
 			}
 		},
 		computed: {
@@ -33,20 +34,22 @@
 		watch: {
 			dropDoneDate: { handler(value) { this.setTimerSeconds() }}, // data is twitchy - watch will report blips not in db
 			timerSeconds: { handler(value) {
-				// console.log("watch timerSeconds", value)
-				let timeout = timeouts[this.item.id]
+				let timeout = timeouts[this.timeoutId]
 				if (timeout != null) { 
                clearTimeout(timeout) 
-               Vue.delete(timeouts, this.item.id)
+               Vue.delete(timeouts, timeoutId)
             }
 				
 				if (value > 0) {
-					// console.log("Timer changed " + value)
-				   let timeout = setTimeout(() => { this.timerSeconds-- }, 1000) 
-               Vue.set(timeouts, this.item.id, timeout) }
+					// set a timeout for 1 sec to update timerSeconds, which will drive this watch notification again
+				   let timeout = setTimeout(() => { this.setTimerSeconds() }, 1000) 
+               Vue.set(timeouts, timeoutId, timeout) }
 			}}
       },
-		mounted() { this.setTimerSeconds() }
+		mounted() { 
+         this.timeoutId = this.tagId + (this.item.id ? this.item.id : "")
+         this.setTimerSeconds() 
+      }
 	}
 </script>
 
