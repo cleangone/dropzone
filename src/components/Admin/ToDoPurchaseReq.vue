@@ -1,13 +1,18 @@
 <template>
-   <q-table title="Purchase Requests" :data="getRequestedItems" row-key="name" :columns="columns" :visible-columns="visibleColumns" 
-         no-data-label="No open requests" :pagination.sync="pagination" :dense="$q.screen.lt.md" flat >
-      <q-td slot="body-cell-drop" slot-scope="props" :props="props"> 
-         {{ getDropIdToNameDropMap.get(props.row.dropId) }}
-      </q-td>
-      <q-td slot="body-cell-bidreq" slot-scope="props" :props="props"> 
-         <a :href="'#/admin/reqs/' + props.row.id + '/' + returnRoute">{{ requestText(props.row) }}</a>
-      </q-td>
-   </q-table>
+   <div>
+      <div class="row q-mt-md q-ml-sm">
+         <span class="text-h6 col-9">Purchase Requests to be Accepted</span>
+      </div>
+      <q-table :data="getRequestedItems" row-key="name" :columns="columns" :visible-columns="visibleColumns" 
+            :pagination.sync="pagination" :dense="$q.screen.lt.md" flat >
+         <q-td slot="body-cell-drop" slot-scope="props" :props="props"> 
+            {{ getDropIdToNameDropMap.get(props.row.dropId) }}
+         </q-td>
+         <q-td slot="body-cell-bidreq" slot-scope="props" :props="props"> 
+            <a :href="'#/admin/reqs/' + props.row.id + '/' + returnRoute">{{ requestText(props.row) }}</a>
+         </q-td>
+      </q-table>
+   </div>
 </template>
 
 <script>

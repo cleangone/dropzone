@@ -37,13 +37,15 @@ export class UserMgr {
    }
 
    static getInfo(user) { 
-      let info = UserMgr.fullName(user)
-      if (info.length > 0) { info += ", " }
+      let fullName = UserMgr.fullName(user)
+      let email = user.authEmailCopy
 
-      if (UserMgr.exists(user.authEmailCopy)) { info += user.authEmailCopy }
-      else if (UserMgr.exists(user.anonUserEmail)) { info += (user.anonUserEmail + " (Anon User)") }
+      if (UserMgr.exists(user.anonUserEmail)) { 
+         fullName += " (Anon User)"
+         email = user.anonUserEmail
+      }
       
-      return info      
+      return { fullName: fullName, email: email }      
    }
 
    static fullName(user) { 

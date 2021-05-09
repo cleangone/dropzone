@@ -32,9 +32,7 @@
       <q-drawer id="drawer" v-model="showDrawer" :breakpoint="767" :width="210" bordered
          :mini="drawerMini" :overlay="$q.platform.is.mobile ? true : false"
          @mouseover="drawerMouseover=true" @mouseout="drawerMouseover=false">
-         <q-list>
-            <layout-item v-if="userIsAdmin && todosExist" primary :class="activeItemsClass"
-               path="/admin/todo" label="ToDo" iconName="fas fa-check-circle" />  
+         <q-list> 
             <layout-item v-if="currentUserActionsExist" primary :class="activeItemsClass"
                path="/current" label="Current Activity" iconName="fas fa-gavel" />          
             <q-expansion-item v-model="artistsExpanded" label="Artists" icon="brush" expand-separator>
@@ -50,7 +48,8 @@
                <layout-item path="/actions"   label="History"   iconName="history"/>           
                <layout-item path="/invoices"  label="Invoices"  iconName="shopping_cart" class="q-pb-md"/>           
             </q-expansion-item>
-            <q-expansion-item v-if="userIsAdmin" label="Admin" icon="settings" :content-inset-level="0.25" expand-separator>
+            <q-expansion-item v-if="userIsAdmin" label="Admin" icon="settings" :content-inset-level="0.25" expand-separator>               
+               <layout-item v-if="todosExist" path="/admin/todo" label="ToDo" iconName="fas fa-check-circle"/>
                <layout-item path="/admin/drops"      label="Drops"      iconName="get_app"/>
                <layout-item path="/admin/categories" label="Artists"    iconName="brush"/>
                <layout-item path="/admin/users"      label="Users"      iconName="group"/>
@@ -69,11 +68,18 @@
       </q-page-container>
 
       <q-footer class="footer q-px-xs q-py-none">
-         <q-tabs indicator-color="transparent" class="row q-my-none q-py-none q-px-none">
+         <q-tabs v-if="userIsAdmin" indicator-color="transparent" class="row q-my-none q-py-none q-px-none">
+            <footer-tab                   icon="get_app"             label="Drops"    to="/admin/drops"      tabClass="col-2" /> 
+            <footer-tab                   icon="brush"               label="Artists"  to="/admin/categories" tabClass="col-2" /> 
+            <footer-tab v-if="todosExist" icon="fas fa-check-circle" label="ToDo"     to="/admin/todo"       tabClass="col text-yellow" /> 
+            <footer-tab                   icon="group"               label="Users"    to="/admin/users"      tabClass="col-2" /> 
+            <footer-tab                   icon="shopping_cart"       label="Invoices" to="/admin/invoices"   tabClass="col-2" /> 
+         </q-tabs>
+         <q-tabs v-else indicator-color="transparent"  class="row q-my-none q-py-none q-px-none">
             <q-route-tab icon="home" to="/" size="sm" class="q-pa-none q-ma-none" dense />    
             <span class="col"/>
             <q-route-tab v-if="currentUserActionsExist" icon="fas fa-gavel" to="/current" size="sm" class="q-pa-none q-ma-none" dense />    
-         </q-tabs>
+         </q-tabs>   
       </q-footer>
 
       <q-dialog v-model="userHasAlert">
@@ -106,7 +112,7 @@
          ...mapGetters('category', ['getPublicCategories']),
          ...mapGetters('current', ['currentActivityExists']),
          ...mapGetters('invoice', ['invoicesExist']),
-         ...mapGetters('item', ['requestedItemsExist']),
+         ...mapGetters('item', ['requestedItemsExist', 'holdItemsExist']),
          ...mapGetters('user', ['getUser', 'isAdmin']),
          drawerMini() { return this.$q.platform.is.mobile ? false : (!this.drawerLockedOpen && !this.drawerMouseover) },
          drawerOverlay() { return this.$q.platform.is.mobile ? true : false },
@@ -171,7 +177,7 @@
             return null
          },
          userHasAlert() { return this.userAlert != null },
-         todosExist() { return this.requestedItemsExist },
+         todosExist() { return this.requestedItemsExist || this.holdItemsExist },
          currentUserActionsExist() { 
             const yesterday = new Date().getTime() - 1000*60*60*24 // 24 hours ago in millis
             for (var action of this.getUserActions(this.userId)) {
@@ -226,6 +232,7 @@
       components: {
          'layout-item' : require('layouts/LayoutItem.vue').default,
          'list-item'   : require('layouts/ListItem.vue').default,
+         'footer-tab'  : require('layouts/FooterTab.vue').default,
          'user-alert'  : require('components/User/UserAlert.vue').default,
       },
       created() {

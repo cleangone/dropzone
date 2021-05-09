@@ -10,6 +10,12 @@
             <q-table :data="bids"  :columns="columns" :visible-columns="visibleColumns" row-key="name" 
                :filter="tableDataFilter" :pagination.sync="pagination" :hide-pagination="hidePagination"
                :dense="$q.screen.lt.md" class="q-mb-sm" flat>
+               <q-td slot="body-cell-fullName" slot-scope="props" :props="props">
+    				   {{ userFullName(props.row.userId) }}
+  				   </q-td>
+               <q-td slot="body-cell-email" slot-scope="props" :props="props">
+    				   {{ userEmail(props.row.userId) }}
+  				   </q-td>
             </q-table>
          </div>
       </div>
@@ -19,7 +25,8 @@
 <script>
 	import { date } from 'quasar'
    import { mapGetters } from 'vuex'
-   import { Colors, ItemDisplayType } from 'src/utils/Constants.js'
+   import { UserMgr } from 'src/managers/UserMgr'
+   import { ItemDisplayType } from 'src/utils/Constants'
    import { dollars } from 'src/utils/Utils'
 
 	export default {
@@ -27,9 +34,10 @@
 	  		return {
 				itemId: '',
 				tableDataFilter: '',
-				visibleColumns: [ 'name', 'amount', 'result', 'date'],
- 				columns: [ 
+				columns: [ 
     				{ name: 'name',   label: 'Bidder', align: 'left',   field: 'userNickname', sortable: true },
+               { name: 'fullName', label: 'Full Name', align: 'left',               sortable: true },
+				 	{ name: 'email',  label: 'Email',  align: 'left',                    sortable: true },
 				 	{ name: 'amount', label: 'Amount', align: 'right',  field: 'amount', sortable: true, format: val => dollars(val) },
 					{ name: 'date',   label: 'Date',   align: 'center', field: 'date',   sortable: true, format: val => date.formatDate(val, 'MMM D, h:mm:ss a') }
 				],
@@ -38,10 +46,14 @@
          }
 		},
 		computed: {
+         ...mapGetters('auth', ['userId']),
+         ...mapGetters('user', ['isAdmin', 'getUsers']),
 			...mapGetters('item', ['getItem']),
          item() { return this.getItem(this.itemId) },
+         userIdToInfo() { return UserMgr.getUserIdToInfo(this.getUsers) },
+         visibleColumns() { return ['name'].concat(this.adminColumns).concat(['amount', 'result', 'date']) },
+         adminColumns() { return this.isAdmin(this.userId) ? ['fullName', 'email'] : [] },
          imageW() { return "width: " + (this.item.isHorizontal ? this.hImageWidth : this.vImageWidth) },	
-         
          itemDivWidth() { return this.item.isHorizontal ? 200 : 350 },
          displayType() { return ItemDisplayType.BID },
          bids() { 
@@ -74,6 +86,10 @@
             this.hidePagination = (bids.length <25)
             return bids
 			}
+      },
+      methods: {
+         userFullName(userId) { return this.userIdToInfo.get(userId).fullName },
+         userEmail(userId) { return this.userIdToInfo.get(userId).email },
       },
       components: {
 	  	   'item' : require('components/Item/Item.vue').default,

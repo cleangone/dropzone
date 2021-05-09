@@ -11,7 +11,10 @@
                :filter="tableDataFilter" :pagination.sync="pagination" :hide-pagination="hidePagination"
                :dense="$q.screen.lt.md" class="q-mb-sm" flat>
                <q-td slot="body-cell-name" slot-scope="props" :props="props">
-    				   {{ userInfo(props.row) }}
+    				   {{ userFullName(props.row.userId) }}
+  				   </q-td>
+               <q-td slot="body-cell-email" slot-scope="props" :props="props">
+    				   {{ userEmail(props.row.userId) }}
   				   </q-td>
                <q-td slot="body-cell-status" slot-scope="props" :props="props"> 
                   <q-btn v-if="itemIsRequested" @click="acceptReq(props.row)" label="Accept" size="sm" color="primary" dense/>   
@@ -26,8 +29,8 @@
 <script>
 	import { date } from 'quasar'
    import { mapGetters, mapActions } from 'vuex'
-   import { ItemMgr } from 'src/managers/ItemMgr'
    import { UserMgr } from 'src/managers/UserMgr'
+   import { ItemMgr } from 'src/managers/ItemMgr'
    import { Colors, ItemDisplayType } from 'src/utils/Constants.js'
    
 	export default {
@@ -37,10 +40,11 @@
             returnRoute: null,
             requestAccepted: false,
 				tableDataFilter: '',
-				visibleColumns: [ 'name', 'date', 'status'],
+				visibleColumns: [ 'name', 'email', 'date', 'status'],
  				columns: [ 
-    				{ name: 'name', label: 'Requester', align: 'left',                  sortable: true },
-				 	{ name: 'date', label: 'Date',      align: 'center', field: 'date', sortable: true, format: val => date.formatDate(val, 'MMM D, h:mm:ss.SSS a') },
+    				{ name: 'name',  label: 'Requester', align: 'left',                  sortable: true },
+				 	{ name: 'email', label: 'Email',     align: 'left',                  sortable: true },
+				 	{ name: 'date',  label: 'Date',      align: 'center', field: 'date', sortable: true, format: val => date.formatDate(val, 'MMM D, h:mm:ss.SSS a') },
                { name: 'status' }
 				],
             pagination: { rowsPerPage: 25 },
@@ -70,7 +74,8 @@
       methods: {
          ...mapActions('action', ['acceptPurchaseRequest']),
          requestedIsAccepted(actionId) { return this.item.acceptedPurchaseReqId == actionId },
-         userInfo(request) { return this.userIdToInfo.get(request.userId) },
+         userFullName(userId) { return this.userIdToInfo.get(userId).fullName },
+         userEmail(userId) { return this.userIdToInfo.get(userId).email },
          acceptReq(purchaseReq) { 
             this.requestAccepted = true
             this.acceptPurchaseRequest( {

@@ -17,9 +17,10 @@
          </span>
 		</div>
 		<div class="q-mt-xs absolute full-width full-height" :class="green">
-         <q-table title="Items" :data="displayItems" 
-            :columns="columns" :visible-columns="visibleColumns" row-key="name" :filter="tableDataFilter" no-data-label="No Items"
-            selection="multiple" :selected.sync="selectedRowItems" :pagination.sync="pagination" :dense="$q.screen.lt.md" class="q-mb-sm">
+         <q-table title="Items" :data="displayItems" :columns="columns" :visible-columns="visibleColumns" row-key="name" 
+            :filter="tableDataFilter" no-data-label="No Items"
+            selection="multiple" :selected.sync="selectedRowItems" 
+            :pagination.sync="pagination" :dense="$q.screen.lt.md" flat class="q-mb-sm q-ml-sm">
 				<template v-slot:top-right>
 					<q-input borderless dense debounce="300" v-model="tableDataFilter" placeholder="Search">
 						<template v-slot:append><q-icon name="search"/></template>
@@ -201,7 +202,7 @@
 		   edit() { return UI.EDIT },
 		},
 		methods: {
-			...mapActions('item', ['bindItems', 'deleteItem']),
+			...mapActions('item', ['deleteItem']),
 			editDrop() { },
          editItem(itemId) {
 				this.itemIdToEdit = itemId

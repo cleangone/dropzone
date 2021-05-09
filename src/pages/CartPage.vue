@@ -10,7 +10,8 @@
             or 
             <q-btn label="Enter Shipping Info" @click="updateAnonUser()" color="primary" class="q-ml-sm"/>
          </div>
-         <q-card v-if="!loggedIn && (editAnonUser || anonUserUpdated)" class="form-card flat q-mt-md">
+         <q-card v-if="!loggedIn && (editAnonUser || anonUserUpdated)" class="form-card flat q-mt-md" 
+            :style="'width:' + userInfoWidth">
             <q-card-section>
                <div v-if="editAnonUser" class="row">
                   <div class="col q-gutter-sm">
@@ -76,6 +77,7 @@
          ...mapGetters('item', ['getItems']),
          user() { return this.getUser(this.userId) }, // can be anon or regular
          displayType() { return ItemDisplayType.CART },
+         userInfoWidth() { return this.$q.screen.width > 600 ? "600px" : "75%"},
          cartItemsExist() { return this.cartSize > 0 },
          cartItems() { 
             let items = this.getItems(this.getCartItemIds)

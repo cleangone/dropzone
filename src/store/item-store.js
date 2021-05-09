@@ -9,16 +9,28 @@ const MILLIS_PER_DAY = 1000*60*60*24
 
 const state = { 
    items: [], 
+   requestedItems: [],
+   holdItems: [],
    recentItems: [],
+   dropItems: [],
 }
 
 const actions = {
    bindItems: firestoreAction(({ bindFirestoreRef }) => { 
-      return bindFirestoreRef('items', collection()) 
+      bindFirestoreRef('items', collection()) 
+      bindFirestoreRef('requestedItems', collection().where('status', '==', ItemStatus.REQUESTED))
+      bindFirestoreRef('holdItems', collection().where('status', '==', ItemStatus.HOLD))
    }),
    bindRecentItems: firestoreAction(({ bindFirestoreRef }) => {
       const daysAgo = Date.now() - MILLIS_PER_DAY * MAX_DAYS_AGO
       bindFirestoreRef('recentItems', collection().where('sortedCreateDate', '>', daysAgo))
+   }),
+   bindDropItems: firestoreAction(({ bindFirestoreRef, state }, dropId) => { 
+      // console.log("bindDropItems", dropId)
+      if (!state.dropItems || !state.dropItems.length || state.dropItems[0].dropId != dropId) {
+         console.log("bindDropItems: binding drop", dropId)
+         bindFirestoreRef('dropItems', collection().where('dropId', '==', dropId))
+      }
    }),
    setItem: firestoreAction((context, item) => { 
       if (!item.id) {
@@ -94,13 +106,8 @@ function setThumbUrl(item, retry) {
 const getters = {
    itemsExist: state => { return state.items && state.items.length > 0 },
    recentItemsExist: state => { return state.recentItems && state.recentItems.length > 0 },
-   requestedItemsExist: state => { 
-      for (var item of state.items) { 
-         if (item.status == ItemStatus.REQUESTED) { return true } 
-      }
-      
-      return false
-   },
+   requestedItemsExist: state => { return state.requestedItems.length > 0 },
+   holdItemsExist: state =>      { return state.holdItems.length > 0 },
    getItems: state => itemIds => {   
       // console.log("getItems", itemIds)
       let items = []
@@ -126,11 +133,17 @@ const getters = {
       return items
    },
    getItemsInDrop: state => dropId => { 
-      // console.log("getItemsInDrop", state.items)
+      // console.log("getItemsInDrop", dropId)
       let items = []
-      state.items.forEach(item => {
-         if (item.dropId == dropId) { items.push(item) }
-      })
+      if (state.dropItems && state.dropItems.length && state.dropItems[0].dropId ==  dropId) {
+         // console.log("getItemsInDrop: using dropItems", dropId)
+         items = [...state.dropItems]
+      }
+      else {
+         state.items.forEach(item => {
+            if (item.dropId == dropId) { items.push(item) }
+         })
+      }
 
       items.sort((a, b) => (a.sortName > b.sortName) ? 1 : -1)
       return items
@@ -143,15 +156,10 @@ const getters = {
       })
       return items
    },
-   getRequestedItems: state => { 
-      let items = []
-      state.items.forEach(item => {
-         if (item.status == ItemStatus.REQUESTED) { items.push(item) }
-      })
-
-      // items.sort((a, b) => (a.lastUserActivityDate > b.lastUserActivityDate) ? 1 : -1)
-      return items
-   },
+   
+   getRequestedItems: state => { return state.requestedItems },
+   getHoldItems: state => { return state.holdItems },
+   
    getActiveItemsWithTag: state => tag => { 
       // console.log("getItemsWithTag", tag)
       let items = []
@@ -192,5 +200,5 @@ export default {
 	namespaced: true,
 	state,
 	actions,
-	getters
+   getters
 }

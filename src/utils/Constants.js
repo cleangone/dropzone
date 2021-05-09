@@ -42,6 +42,7 @@ export const UI = {
 }
 
 export const Versions = [
+   "v1.4.0  - 5/9/21",   // Sep binding of drop, req, hold items; admin footer; admin sees full bidder info on bids page
    "v1.3.2  - 5/7/21",   // Fix bid countdown problem when thumb is on page twice in diff categories
    "v1.3.1  - 5/7/21",   // Fix quasar build css chunk ordering warning for ItemThumb.vue
    "v1.3.0  - 5/7/21",   // Multiple tags per item

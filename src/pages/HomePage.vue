@@ -11,14 +11,10 @@
 
 <script>
    import { mapGetters, mapActions } from 'vuex'
-   import { DropMgr, HomeGroup } from 'src/managers/DropMgr'
+   import { DropMgr } from 'src/managers/DropMgr'
    import { Colors } from 'src/utils/Constants'
 
 	export default {
-      data() {
-			return {
-         }
-		},
 		computed: {
          ...mapGetters('drop', ['getDrops']),
          ...mapGetters('setting', ['getSetting']),
@@ -37,10 +33,17 @@
 
             primaryDrops.sort((a, b)   => (DropMgr.homePosition(a) < DropMgr.homePosition(b) ? -1 : 1))
             secondaryDrops.sort((a, b) => (DropMgr.homePosition(a) < DropMgr.homePosition(b) ? -1 : 1))
+
+            const primaryDropId = primaryDrops && primaryDrops.length ? primaryDrops[0].id : null
+            if (primaryDropId) { this.bindDropItems(primaryDropId) }
+
             return { primary: primaryDrops, secondary: secondaryDrops}
          },
          hasTwitterId() { return this.twitterId && this.twitterId.length > 0 },
          twitterId() { return this.getSetting.twitterId },
+      },
+      methods: {
+         ...mapActions('item', ['bindDropItems']),
       },
       components: {
          'drop' : require('components/Drop/Drop.vue').default,
