@@ -9,7 +9,7 @@
             <q-btn v-if="userIsLoggedIn" icon-right="account_circle" :label="userDisplayName" flat dense >
                <q-menu content-class="bg-white">
                   <q-list dense style="min-width: 100px">
-                     <list-item path="/gallery"   label="Gallery" />
+                     <list-item path="/portfolio" label="Portfolio" />
                      <list-item path="/favorites" label="Favorites" />    
                      <list-item path="/actions"   label="History" />           
                      <list-item path="/invoices"  label="Invoices" />
@@ -19,8 +19,8 @@
                   </q-list>
                </q-menu>
             </q-btn>        
-            <q-btn v-else icon-right="account_circle" :to="loginPage" label="Login" dense flat />
-            <q-btn icon="shopping_cart" to="/cart" dense flat >
+            <q-btn v-else icon-right="account_circle" :to="loginPage" :label="loginDisplay" dense flat />
+            <q-btn v-if="showCart" icon="shopping_cart" to="/cart" dense flat >
                <q-badge v-if="cartItemsExist" color="blue" floating>{{cartItemCount}}</q-badge>
             </q-btn>
          </q-toolbar>
@@ -58,6 +58,7 @@
                <layout-item path="/admin/invoices"   label="Invoices"   iconName="shopping_cart"/>
                <layout-item path="/admin/tags"       label="Tags"       iconName="topic"/>
                <layout-item path="/admin/settings"   label="Settings"   iconName="settings"/>
+               <q-toggle label="Admin Footer" v-model="showAdminFooter" color="blue" />
             </q-expansion-item>
             <layout-item v-if="showAppInstall" path="/install" label="Install" iconName="get_app"/>
          </q-list>
@@ -70,7 +71,8 @@
          <router-view />
       </q-page-container>
 
-      <q-footer class="footer q-px-xs q-py-none">
+      <!-- now only showing footer to admin -->
+      <q-footer v-if="userIsAdmin && showAdminFooter" class="footer q-px-xs q-py-none">
          <q-tabs v-if="userIsAdmin" indicator-color="transparent" class="row q-my-none q-py-none q-px-none">
             <footer-tab                   icon="get_app"             label="Drops"    to="/admin/drops"      tabClass="col-2" /> 
             <footer-tab                   icon="brush"               label="Artists"  to="/admin/categories" tabClass="col-2" /> 
@@ -106,7 +108,8 @@
             drawerMouseover: false,
             boundUserId: null,
             unboundCartItemIds: [],
-            cancelledAlertIds: []
+            cancelledAlertIds: [],
+            showAdminFooter: true,
          }
       },
       computed: {
@@ -172,7 +175,11 @@
             }
             return isAdmin 
          },
-         userDisplayName() { return this.user.firstName ? this.user.firstName : this.user.authEmailCopy },
+         largeScreen() { return this.$q.screen.width > 450 },
+         userDisplayName() { return this.largeScreen ? 
+            (this.user.firstName ? this.user.firstName : this.user.authEmailCopy) : ""  },
+         loginDisplay() { return this.largeScreen ? "Login" : "" },
+         showCart() { return this.largeScreen || this.cartItemsExist },         
          userAlert() { 
             if (this.loggedIn && this.user.alerts) { 
                for (var alert of this.user.alerts) {

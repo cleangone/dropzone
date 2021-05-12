@@ -43,6 +43,7 @@ export const UI = {
 }
 
 export const Versions = [
+   "v1.5.2  - 5/12/21",  // Misc updates to clean up small mobile screen 
    "v1.5.1  - 5/11/21",  // Update firebase.json to deploy from dist/pwa instead of dist/spa  
    "v1.5.0  - 5/11/21",  // Initial app intall infra, initial user portfolio; user only sees invoices that have been sent
    "v1.4.0  - 5/9/21",   // Sep binding of drop, req, hold items; admin footer; admin sees full bidder info on bids page

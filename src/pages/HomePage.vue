@@ -1,6 +1,7 @@
 <template>
 	<q-page class="row justify-center" :class="pageClass">
-      <div class="col-1 q-mt-none q-gutter-y-md" style="width: 400px" :class="blue"> 
+      <div class="col-1 q-mt-none q-gutter-y-md" :style="mainColWidth" :class="blue"> 
+         <!-- {{ $q.screen.width }}, {{ $q.screen.height }} -->
          <install-app-banner />
          <drop v-for="(drop, key) in visibleDrops.primary" :key="'prime'+key" :drop="drop" />
          <twitter v-if="hasTwitterId" :twitterId="twitterId" style="width: 400px" />
@@ -20,6 +21,13 @@
          ...mapGetters('drop', ['getDrops']),
          ...mapGetters('setting', ['getSetting']),
          ...mapGetters('color', Colors),
+
+         // todo - doesn't work because drop image width drives col
+         // need to do a lot of work on small sizing - dynamic width of images, remove padding in main panel 
+         mainColWidth() { 
+            return "width:400px" 
+            // "width:" + (this.$q.screen.width < 400 ? this.$q.screen.width: 400) + "px" 
+            },
          pageClass() { 
             return (this.$q.platform.is.mobile ? "q-pa-sm q-gutter-xs " : "q-pa-md q-gutter-md ") + this.pink
          },
