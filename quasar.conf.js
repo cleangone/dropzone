@@ -25,6 +25,7 @@ module.exports = function (ctx) {
       components: [
         'QAvatar',
         'QBadge',
+        'QBanner',
         'QBtn', 'QBtnToggle',
         'QDate',
         'QDrawer',
@@ -77,6 +78,7 @@ module.exports = function (ctx) {
       plugins: [
         'Notify',
         'Dialog',
+        'LocalStorage',
         'SessionStorage',
       ]
 
@@ -114,16 +116,16 @@ module.exports = function (ctx) {
       // workboxPluginMode: 'InjectManifest',
       // workboxOptions: {}, // only for NON InjectManifest
       manifest: {
-        // name: 'Quasar App',
-        // short_name: 'Quasar-PWA',
-        // description: 'Best PWA App in town!',
+        name: 'Dropzone Comic Art',
+        short_name: 'Dropzone',
+        description: 'Comic art on your phone',
         display: 'standalone',
         orientation: 'portrait',
         background_color: '#ffffff',
         theme_color: '#027be3',
         icons: [
           {
-            'src': 'statics/icons/icon-128x128.png',
+            'src': 'statics/icons/favicon-128x128.png',
             'sizes': '128x128',
             'type': 'image/png'
           },

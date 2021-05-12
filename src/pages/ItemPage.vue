@@ -1,7 +1,9 @@
 <template>
 	<q-page class="q-pa-sm" :class="pink"> 
 		<!-- have to wait for item if user followed an external link directly to this page -->
-      <div v-if="itemsExist" v-touch-swipe.mouse="handleSwipe" class="column" :class="orange">
+      <!-- todo - keydown semi-works - user has to click on page for focus first -->
+      <div v-if="itemsExist" class="column" :class="orange" tabindex="0" 
+         v-touch-swipe.mouse="handleSwipe" @keydown.left="prev()" @keydown.right="next()" >
          <item :item="item" :displayType="displayTypeFull" :prev="prevItem" :next="nextItem" class="self-center"/>
       </div>
 	</q-page>
@@ -52,9 +54,11 @@
          },
       },
 		methods: {
+         prev() { if (this.prevItem) { this.$router.push("/item/" + this.prevItem.id) } },
+         next() { if (this.nextItem) { this.$router.push("/item/" + this.nextItem.id) } },
          handleSwipe({ evt, ...info }) {
-            if (isSwipeLeft(info) && this.nextItem)       { this.$router.push("/item/" + this.nextItem.id) }
-            else if (isSwipeRight(info) && this.prevItem) { this.$router.push("/item/" + this.prevItem.id) }
+            if (isSwipeLeft(info)) { this.next() }
+            else if (isSwipeRight(info)) { this.prev() }
          }
       },
 		components: {

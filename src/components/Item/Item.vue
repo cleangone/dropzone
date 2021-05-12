@@ -137,12 +137,13 @@
          itemsCollection() { return SessionMgr.getDisplayItemsDesc() },
          itemsCollectionName() { return this.itemsCollection.name },
          itemsCollectionRouterLink() { 
-            if (SessionMgr.isHome(this.itemsCollection))          { return { name: Route.HOME } }
-            else if (SessionMgr.isRecent(this.itemsCollection))   { return { name: Route.RECENT } }
-            else if (SessionMgr.isCurrent(this.itemsCollection))  { return { name: Route.CURRENT } }
-            else if (SessionMgr.isFavorite(this.itemsCollection)) { return { name: Route.FAVORITE } }
-            else if (SessionMgr.isDrop(this.itemsCollection))     { return { name: Route.DROP, params: { id: this.itemsCollection.id } } }
-            else if (SessionMgr.isCategory(this.itemsCollection)) { 
+            if (SessionMgr.isHome(this.itemsCollection))           { return { name: Route.HOME } }
+            else if (SessionMgr.isRecent(this.itemsCollection))    { return { name: Route.RECENT } }
+            else if (SessionMgr.isCurrent(this.itemsCollection))   { return { name: Route.CURRENT } }
+            else if (SessionMgr.isFavorite(this.itemsCollection))  { return { name: Route.FAVORITE } }
+            else if (SessionMgr.isPortfolio(this.itemsCollection)) { return { name: Route.PORTFOLIO } }
+            else if (SessionMgr.isDrop(this.itemsCollection))      { return { name: Route.DROP, params: { id: this.itemsCollection.id } } }
+            else if (SessionMgr.isCategory(this.itemsCollection))  { 
                const tagId = SessionMgr.getCategoryTag()
                return { name: Route.CATEGORY, params: { id: this.itemsCollection.id, tagId: tagId } }
             }

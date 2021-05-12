@@ -4,19 +4,13 @@
 			<q-table title="Invoices" :data="invoices" 
 				:columns="columns" :visible-columns="visibleColumns" 
 				row-key="id" :filter="tableDataFilter" :pagination.sync="pagination"
-            no-data-label="No invoices"
-				:dense="$q.screen.lt.md" class="q-mb-sm">
+            no-data-label="No invoices" :dense="$q.screen.lt.md" class="q-mb-sm" flat>
 				<template v-slot:top-right>
 					<q-space />					
 					<q-input borderless dense debounce="300" v-model="tableDataFilter" placeholder="Search">
 						<template v-slot:append><q-icon name="search"/></template>
 					</q-input>
-				</template>            
-            <template v-slot:header="props">
-               <q-tr :props="props">
-                  <q-th v-for="col in props.cols" :key="col.name" :props="props">{{ col.label }}</q-th>
-               </q-tr>
-            </template>
+				</template>         
             <template v-slot:body="props">
                <q-tr :props="props">
                   <q-td v-for="col in props.cols" :key="col.name" :props="props">
@@ -25,6 +19,7 @@
                </q-tr>
             </template>
          </q-table>
+         <div style="height: 75px"/>
 		</div>
   	</q-page>
 </template>
@@ -37,13 +32,13 @@
 		data() {
 	  	   return {
 			   tableDataFilter: '',
-            visibleColumns: ['name', 'total', 'status', 'tracking', 'sentDate'],
+            visibleColumns: ['name', 'date', 'total', 'status', 'tracking'],
  				columns: [
-               { name: 'name',     label: 'Name',      align: 'left',   field: 'name',        sortable: true },
-					{ name: 'total',    label: 'Total',     align: 'right',  field: 'total',       sortable: true, format: val => dollars(val) },
-					{ name: 'status',   label: 'Status',    align: 'center', field: 'status',      sortable: true },
+               { name: 'name',     label: 'Name',      align: 'left',   field: 'name',     sortable: true },
+				   { name: 'date', label: 'Received Date', align: 'left',   field: 'sentDate', sortable: true },
+            	{ name: 'total',    label: 'Total',     align: 'right',  field: 'total',    sortable: true, format: val => dollars(val) },
+					{ name: 'status',   label: 'Status',    align: 'center', field: 'status',   sortable: true },
                { name: 'tracking', label: 'Tracking',  align: 'center', field: 'tracking' },
-               { name: 'sentDate', label: 'Sent Date', align: 'left',   field: 'sentDate',     sortable: true },
             ],
             pagination: { rowsPerPage: 30 },
 			}
@@ -52,7 +47,11 @@
          ...mapGetters('auth', ['userId']),
          ...mapGetters('invoice', ['getUserInvoices']),
          invoices() { 
-            try { return this.getUserInvoices(this.userId) } 
+            try { 
+               let invoices = this.getUserInvoices(this.userId) 
+               invoices.sort((a, b) => (a.sentDate > b.sentDate) ? -1 : 1)
+               return invoices
+            } 
             catch (error)
             {
                console.log("Invoices ERROR", error)

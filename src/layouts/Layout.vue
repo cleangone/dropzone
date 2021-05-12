@@ -9,10 +9,11 @@
             <q-btn v-if="userIsLoggedIn" icon-right="account_circle" :label="userDisplayName" flat dense >
                <q-menu content-class="bg-white">
                   <q-list dense style="min-width: 100px">
-                     <list-item path="/account"   label="Account" />
+                     <list-item path="/gallery"   label="Gallery" />
                      <list-item path="/favorites" label="Favorites" />    
                      <list-item path="/actions"   label="History" />           
                      <list-item path="/invoices"  label="Invoices" />
+                     <list-item path="/account"   label="Settings" />
                      <q-separator />
                      <q-item clickable v-close-popup><q-item-section @click="logoutUser">Logout</q-item-section></q-item>
                   </q-list>
@@ -34,29 +35,31 @@
          @mouseover="drawerMouseover=true" @mouseout="drawerMouseover=false">
          <q-list> 
             <layout-item v-if="currentUserActionsExist" primary :class="activeItemsClass"
-               path="/current" label="Current Activity" iconName="fas fa-gavel" />          
+               path="/current" label="Current Activity" iconName="fas fa-gavel" />
             <q-expansion-item v-model="artistsExpanded" label="Artists" icon="brush" expand-separator>
                <layout-item v-for="(category, key) in getPublicCategories" :key="key" 
                   :path="'/category/' + category.id" :label="category.name" 
                   :avatarImage="category.primaryImage ? category.primaryImage.thumbUrl : null" 
                   :topLabel="category.topLineName" :botLabel="category.bottomLineName"/>
                <div class="q-pb-md"/>
-            </q-expansion-item>                
+            </q-expansion-item>
             <q-expansion-item v-if="loggedIn" label="My Account" icon="account_circle" :content-inset-level="0.25" expand-separator>  
-               <layout-item path="/account"   label="Account"   iconName="account_circle"/>
+               <layout-item path="/portfolio" label="Portfolio" iconName="work"/>
                <layout-item path="/favorites" label="Favorites" iconName="favorite" />    
                <layout-item path="/actions"   label="History"   iconName="history"/>           
-               <layout-item path="/invoices"  label="Invoices"  iconName="shopping_cart" class="q-pb-md"/>           
+               <layout-item path="/invoices"  label="Invoices"  iconName="shopping_cart" />           
+               <layout-item path="/account"   label="Settings"  iconName="account_circle" class="q-pb-md"/>
             </q-expansion-item>
             <q-expansion-item v-if="userIsAdmin" label="Admin" icon="settings" :content-inset-level="0.25" expand-separator>               
                <layout-item v-if="todosExist" path="/admin/todo" label="ToDo" iconName="fas fa-check-circle"/>
-               <layout-item path="/admin/drops"      label="Drops"      iconName="get_app"/>
+               <layout-item path="/admin/drops"      label="Drops"      iconName="system_update"/>
                <layout-item path="/admin/categories" label="Artists"    iconName="brush"/>
                <layout-item path="/admin/users"      label="Users"      iconName="group"/>
                <layout-item path="/admin/invoices"   label="Invoices"   iconName="shopping_cart"/>
                <layout-item path="/admin/tags"       label="Tags"       iconName="topic"/>
                <layout-item path="/admin/settings"   label="Settings"   iconName="settings"/>
             </q-expansion-item>
+            <layout-item v-if="showAppInstall" path="/install" label="Install" iconName="get_app"/>
          </q-list>
          <q-list class="fixed-bottom">
             <q-item-label header class="text-caption">{{ version }}</q-item-label>       
@@ -90,6 +93,7 @@
 
 <script>
    import { mapGetters, mapActions } from 'vuex'
+   import { LocalStorageMgr, InstallStatus } from 'src/managers/storage/LocalStorageMgr'
    import { Route, Versions } from 'src/utils/Constants'
    
    export default {
@@ -114,6 +118,7 @@
          ...mapGetters('invoice', ['invoicesExist']),
          ...mapGetters('item', ['requestedItemsExist', 'holdItemsExist']),
          ...mapGetters('user', ['getUser', 'isAdmin']),
+         ...mapGetters('install', ['canInstallApp', 'installStatusExists', 'getInstallStatus']),
          drawerMini() { return this.$q.platform.is.mobile ? false : (!this.drawerLockedOpen && !this.drawerMouseover) },
          drawerOverlay() { return this.$q.platform.is.mobile ? true : false },
          user() { return this.getUser(this.userId)},
@@ -192,6 +197,7 @@
          },
          cartItemsExist() { return this.cartItemCount > 0 },
          cartItemCount() { return this.cartSize },
+         showAppInstall() { return this.canInstallApp || this.installStatusExists },
          version() { return Versions[0] },
       },
       methods: {
@@ -206,6 +212,7 @@
          ...mapActions('setting', ['bindSettings']),
          ...mapActions('tag',     ['bindTags']),
          ...mapActions('user',    ['bindUsers']),
+         ...mapActions('install', ['setDeferredPrompt', 'setInstallStatus']),
          toggleDrawerLock() { 
             if (this.$q.platform.is.mobile) {
                this.showDrawer = !this.showDrawer
@@ -229,12 +236,6 @@
             if (this.$route.path != "/") { this.$router.push("/") }
          },
       },
-      components: {
-         'layout-item' : require('layouts/LayoutItem.vue').default,
-         'list-item'   : require('layouts/ListItem.vue').default,
-         'footer-tab'  : require('layouts/FooterTab.vue').default,
-         'user-alert'  : require('components/User/UserAlert.vue').default,
-      },
       created() {
          if (this.$q.platform.is.mobile) { this.showDrawer = false }
          this.bindDrops()
@@ -244,6 +245,23 @@
          this.bindSettings()
          this.bindTags()
          this.bindUsers()
+
+         // local storage for device-specific state, store for async responsivness 
+         this.setInstallStatus(LocalStorageMgr.getAppInstall())
+         window.addEventListener('beforeinstallprompt', (e) => {
+            console.log('Processing beforeinstallprompt event')
+            e.preventDefault() // prevent mini-infobar from appearing on mobile
+            this.setDeferredPrompt(e)
+            if (this.getInstallStatus == InstallStatus.INSTALLED) {
+               this.setInstallStatus(LocalStorageMgr.setAppInstall("")) // presence of prompt overrides installed state
+            }
+         })
+      },
+      components: {
+         'layout-item' : require('layouts/LayoutItem.vue').default,
+         'list-item'   : require('layouts/ListItem.vue').default,
+         'footer-tab'  : require('layouts/FooterTab.vue').default,
+         'user-alert'  : require('components/User/UserAlert.vue').default,
       },
   }
 

@@ -10,6 +10,7 @@ import color    from './color-store'
 import current  from './current-store'
 import drop     from './drop-store'
 import error    from './error-store'
+import install  from './install-store'
 import invoice  from './invoice-store'
 import item     from './item-store'
 import setting  from './setting-store'
@@ -30,6 +31,7 @@ export default function () {
          current,
          drop,
          error,
+         install,
          invoice,
          item,
          setting,

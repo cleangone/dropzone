@@ -43,8 +43,8 @@
                </template>
             </template>
          </q-table>
+         <div style="height: 75px"/>
 		</div>
-
 		<q-dialog v-model="showEditModal">
 			<invoice-add-edit :type="edit" :invoice="invoiceToEdit" @close="showEditModal=false" />
 		</q-dialog>

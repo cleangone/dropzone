@@ -1,18 +1,17 @@
 <template>
    <span>
-      <!-- userName, name, total (formatted), status, tracking, sentDate -->
       <span v-if="col.name == 'name'">
          {{ col.value }} 
-         <!-- todo - tooltip not showing -->
-         <q-btn @click="showInvoice()" icon="pageview" size="sm" color="primary" flat dense /> 
-            <!-- <q-tooltip>View Invoice</q-tooltip> -->
-         <!-- </q-btn>       -->
+         <q-btn @click="showInvoice()" icon="pageview" size="sm" color="primary" flat dense> 
+            <q-tooltip content-class="bg-black" :offset="[5, 5]">Show invoice</q-tooltip>
+         </q-btn>      
       </span>
       <span v-else-if="col.name == 'tracking'"> 
          {{ invoice.carrier }}
          <a v-if="hasTrackingLink" :href="trackingLink" target=”_blank”>{{ invoice.tracking }}</a>
          <span v-else>{{ invoice.tracking }}</span>
       </span>
+      <span v-else-if="col.name == 'date'">{{ sentDate }}</span>
       <span v-else-if="col.name == 'sentDate'">
          {{ sentDate }}
          <span v-if="isAdmin">
@@ -30,7 +29,6 @@
 
 <script>
    import { mapActions } from 'vuex'
-   import { date } from 'quasar'
    import { InvoiceMgr } from 'src/managers/InvoiceMgr.js'
    import { formatDateOptYear } from 'src/utils/DateUtils'
 

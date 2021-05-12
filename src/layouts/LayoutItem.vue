@@ -1,8 +1,8 @@
 <template>
    <q-item clickable :to="path" exact :dense="dense">
       <q-item-section v-if="iconName || avatarImage" avatar class="q-pa-none" :class="orange">
-         <q-icon v-if="iconName" :name="iconName"/>
-         <q-avatar v-else square rounded :class="blue"><img :src="avatarImage"></q-avatar>
+         <q-avatar v-if="avatarImage" square rounded :class="blue"><img :src="avatarImage"></q-avatar>
+         <q-icon v-else :name="iconName"/>
       </q-item-section>
       <q-item-section :class="yellow">
          <q-item-label v-if="splitLabel" :class="itemClass">{{ topLabel }}<br>{{ botLabel }}</q-item-label>

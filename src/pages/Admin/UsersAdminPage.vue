@@ -6,8 +6,8 @@
          <q-checkbox v-model="showAnonUsers" label="Anon Users"  class="text-grey-10 q-pl-md" color="grey-10" dense/>
       </div>
 		<div class="q-px-sm absolute full-width full-height">
-			<q-table :columns="columns" :visible-columns="visibleColumns" :data="users" no-data-label="No users"
-            row-key="name" :filter="tableDataFilter" flat>
+			<q-table :columns="columns" :visible-columns="visibleColumns" :data="users" 
+            row-key="name" :filter="tableDataFilter" :pagination.sync="pagination" flat>
 				<template v-slot:top-right>
 					<q-input borderless dense debounce="300" v-model="tableDataFilter" placeholder="Search">
 						<template v-slot:append><q-icon name="search"/></template>
@@ -21,6 +21,7 @@
     				<q-btn icon="edit" @click="edit(props.row)" size="sm" flat dense/>
   				</q-td>
 			</q-table>
+         <div style="height: 75px"/>
 		</div>
 		<q-dialog v-model="showEditModal">
 			<user-edit :user="userToEdit" @close="showEditModal=false" />
@@ -67,6 +68,7 @@
 					{ name: 'errorEmail', label: 'Error Email', align: 'center', field: 'errorEmail',    format: val => val ? 'Yes' : '' }, 
 					{ name: 'edit' },
 				],
+            pagination: { rowsPerPage: 25 },
  			   userToEdit: null,
 			}
 		},

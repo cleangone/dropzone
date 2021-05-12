@@ -3,19 +3,6 @@ import { firestore } from 'boot/firebase'
 import { uid } from 'quasar'
 import { InvoiceSendStatus } from 'src/managers/InvoiceMgr.js'
    
-/*
-   invoice
-      id
-      userId
-      updatedDate
-      items[] - id, name, price
-      status: created, updated, sent, paid, shipped
-      subTotal
-      shippingCharge
-      priceAdjustment
-      total
-*/
-
 const state = {   
     invoices: [],
     userInvoices: []
@@ -62,14 +49,15 @@ const getters = {
       return invoices
    },
    getUserInvoices: state => userId => {  // pass in userId as double-check
+      const invoices = []
       for (var invoice of state.userInvoices) {
          if (invoice.userId != userId) { throw new Error(
             "Error in getUserInvoices.  Specified userId " + 
                userId + " different than invoice[id:" + invoice.id +  ", userId:" + invoice.userId + "]") 
          }
+         else if (invoice.sendStatus == InvoiceSendStatus.SENT) { invoices.push(invoice) }
       }
-
-      return state.userInvoices
+      return invoices
    },
    getInvoice: state => invoiceId => {
       for (var invoice of state.invoices) {

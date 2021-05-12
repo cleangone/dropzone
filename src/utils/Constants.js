@@ -8,18 +8,19 @@ export const ItemDisplayType = {
 }
 
 export const Route = {
-   HOME:     'Home',
-   DROP:     'Drop',
-   ITEM:     'Item',
-   CART:     'Cart',
-   CATEGORY: 'Category',
-   RECENT:   'Recent Updates',
-   CURRENT:  'Current Activity',
-   FAVORITE: 'Favorite',
-   LOGIN:    'Login',
-   REGISTER: 'Register',
-   FORGOT:   'Forgot Password',
-   TODO:     'ToDo',
+   HOME:      'Home',
+   DROP:      'Drop',
+   ITEM:      'Item',
+   CART:      'Cart',
+   CATEGORY:  'Category',
+   RECENT:    'Recent Updates',
+   CURRENT:   'Current Activity',
+   PORTFOLIO: 'Portfolio',
+   FAVORITE:  'Favorites',
+   LOGIN:     'Login',
+   REGISTER:  'Register',
+   FORGOT:    'Forgot Password',
+   TODO:      'ToDo',
 }
 
 export const SaleType = {
@@ -42,6 +43,8 @@ export const UI = {
 }
 
 export const Versions = [
+   "v1.5.1  - 5/11/21",  // Update firebase.json to deploy from dist/pwa instead of dist/spa  
+   "v1.5.0  - 5/11/21",  // Initial app intall infra, initial user portfolio; user only sees invoices that have been sent
    "v1.4.0  - 5/9/21",   // Sep binding of drop, req, hold items; admin footer; admin sees full bidder info on bids page
    "v1.3.2  - 5/7/21",   // Fix bid countdown problem when thumb is on page twice in diff categories
    "v1.3.1  - 5/7/21",   // Fix quasar build css chunk ordering warning for ItemThumb.vue

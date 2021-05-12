@@ -1,6 +1,7 @@
 <template>
 	<q-page class="row justify-center" :class="pageClass">
       <div class="col-1 q-mt-none q-gutter-y-md" style="width: 400px" :class="blue"> 
+         <install-app-banner />
          <drop v-for="(drop, key) in visibleDrops.primary" :key="'prime'+key" :drop="drop" />
          <twitter v-if="hasTwitterId" :twitterId="twitterId" style="width: 400px" />
          <drop v-for="(drop, key) in visibleDrops.secondary" :key="'second'+key" :drop="drop" />
@@ -15,7 +16,7 @@
    import { Colors } from 'src/utils/Constants'
 
 	export default {
-		computed: {
+      computed: {
          ...mapGetters('drop', ['getDrops']),
          ...mapGetters('setting', ['getSetting']),
          ...mapGetters('color', Colors),
@@ -49,6 +50,7 @@
          'drop' : require('components/Drop/Drop.vue').default,
          'recent-items' : require('components/Item/RecentItems.vue').default,
          'twitter' : require('components/General/Twitter.vue').default,
+         'install-app-banner' : require('components/General/InstallAppBanner.vue').default,
       },
 	}
 </script>

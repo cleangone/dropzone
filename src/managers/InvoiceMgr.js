@@ -1,6 +1,25 @@
 import { dollars } from 'src/utils/Utils'
 import { format_M_DD_YY, format_MMM_D, format_MMM_D_YYYY, toMillis } from 'src/utils/DateUtils'
       
+
+/*
+   invoice
+      id
+      name
+      items[ { id, name, price } ]
+      userId
+      userFullName
+      status: created, revised, paid in full, partial payment, shipped
+      sendStatus: sending, sent
+      html
+      subTotal
+      shippingCharge
+      priceAdjustment
+      total
+      createdDate
+      updatedDate
+*/
+
 export const InvoiceStatus = {
    CREATED:      'Created',
    REVISED:      'Revised',
