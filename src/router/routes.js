@@ -18,7 +18,7 @@ const routes = [
          createRoute('/cart',                'CartPage',                 Route.CART),
          createRoute('/install',             'InstallPage'),
          createRoute('/current',             'User/CurrentActivityPage', Route.CURRENT),
-         createRoute('/portfolio',           'User/PortfolioPage',       Route.PORTFOLIO),
+         createRoute('/activity',            'User/ActivityPage',        Route.ACTIVITY),
          createRoute('/account',             'User/AccountPage'),
          createRoute('/favorites',           'User/FavoritesPage',       Route.FAVORITE),
          createRoute('/actions',             'User/ActionsPage'),

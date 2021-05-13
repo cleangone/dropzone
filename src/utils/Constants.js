@@ -15,7 +15,7 @@ export const Route = {
    CATEGORY:  'Category',
    RECENT:    'Recent Updates',
    CURRENT:   'Current Activity',
-   PORTFOLIO: 'Portfolio',
+   ACTIVITY:  'Activity',
    FAVORITE:  'Favorites',
    LOGIN:     'Login',
    REGISTER:  'Register',
@@ -43,6 +43,7 @@ export const UI = {
 }
 
 export const Versions = [
+   "v1.5.3  - 5/12/21",  // Replace Portfolio with Activity, which uses same core as Current Activity
    "v1.5.2  - 5/12/21",  // Misc updates to clean up small mobile screen 
    "v1.5.1  - 5/11/21",  // Update firebase.json to deploy from dist/pwa instead of dist/spa  
    "v1.5.0  - 5/11/21",  // Initial app intall infra, initial user portfolio; user only sees invoices that have been sent

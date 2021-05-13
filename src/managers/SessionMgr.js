@@ -22,10 +22,11 @@ export class SessionMgr {
    static setHomeItemsDesc()             { SessionMgr.setDisplayItemsDesc({ route: Route.HOME,      name: Route.HOME }) }
    static setDropItemsDesc(name, id)     { SessionMgr.setDisplayItemsDesc({ route: Route.DROP,      name: name, id: id }) }
    static setCategoryItemsDesc(name, id) { SessionMgr.setDisplayItemsDesc({ route: Route.CATEGORY,  name: name, id: id }) }
-   static setRecentItemsDesc()           { SessionMgr.setDisplayItemsDesc({ route: Route.RECENT,    name: Route.RECENT }) }
-   static setCurrentItemsDesc()          { SessionMgr.setDisplayItemsDesc({ route: Route.CURRENT,   name: Route.CURRENT }) }
-   static setPortfolioDesc()             { SessionMgr.setDisplayItemsDesc({ route: Route.PORTFOLIO, name: Route.PORTFOLIO }) }
-   static setFavoriteItemsDesc()         { SessionMgr.setDisplayItemsDesc({ route: Route.FAVORITE,  name: Route.FAVORITE }) }
+   static setRecentItemsDesc()           { SessionMgr.setRouteItemsDesc(Route.RECENT) }
+   static setCurrentDesc()               { SessionMgr.setRouteItemsDesc(Route.CURRENT) }
+   static setActivityDesc()              { SessionMgr.setRouteItemsDesc(Route.ACTIVITY) }
+   static setFavoriteItemsDesc()         { SessionMgr.setRouteItemsDesc(Route.FAVORITE) }
+   static setRouteItemsDesc(route)       { SessionMgr.setDisplayItemsDesc({ route: route, name: route }) }
    
    static getDisplayItemsDesc()     { return SessionMgr.get('DisplayItemsDesc')}
    static setDisplayItemsDesc(desc) { return SessionMgr.set('DisplayItemsDesc', desc)}
@@ -35,6 +36,6 @@ export class SessionMgr {
    static isCategory(displayItemsDesc)  { return displayItemsDesc.route == Route.CATEGORY }
    static isRecent(displayItemsDesc)    { return displayItemsDesc.route == Route.RECENT }
    static isCurrent(displayItemsDesc)   { return displayItemsDesc.route == Route.CURRENT }
-   static isPortfolio(displayItemsDesc) { return displayItemsDesc.route == Route.PORTFOLIO }
+   static isActivity(displayItemsDesc)  { return displayItemsDesc.route == Route.ACTIVITY }
    static isFavorite(displayItemsDesc)  { return displayItemsDesc.route == Route.FAVORITE }
 }

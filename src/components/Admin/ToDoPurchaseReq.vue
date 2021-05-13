@@ -25,7 +25,7 @@
       data() {
 	  		return {
             returnRoute: Route.TODO,
-            visibleColumns: [ 'name', 'reqDate', 'drop', 'category', 'price', 'bidreq', 'status'],
+            visibleColumns: [ 'name', 'reqDate', 'drop', 'category', 'price', 'bidreq'],
  				columns: [
         			{ name: 'id', field: 'id' },
 				 	{ name: 'name',     label: 'Name',      align: 'left',   field: 'name',            sortable: true },
@@ -35,8 +35,7 @@
 				 	{ name: 'category', label: 'Artist',    align: 'center', field: 'category',        sortable: true, format: val => val ? val.name : "" },
 				 	{ name: 'price',    label: 'Price',     align: 'right',  field: 'startPrice',      sortable: true, format: val => dollars(val) }, 
 					{ name: 'bidreq',   label: 'Bid/Req',   align: 'center' },
-					{ name: 'status',   label: 'Status',    align: 'center', field: 'status' },
-			   ],
+				],
             pagination: { rowsPerPage: 50 },
 			}
 		},

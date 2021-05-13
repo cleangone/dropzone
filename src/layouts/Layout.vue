@@ -9,7 +9,7 @@
             <q-btn v-if="userIsLoggedIn" icon-right="account_circle" :label="userDisplayName" flat dense >
                <q-menu content-class="bg-white">
                   <q-list dense style="min-width: 100px">
-                     <list-item path="/portfolio" label="Portfolio" />
+                     <list-item path="/activity"  label="Activity" />
                      <list-item path="/favorites" label="Favorites" />    
                      <list-item path="/actions"   label="History" />           
                      <list-item path="/invoices"  label="Invoices" />
@@ -44,7 +44,7 @@
                <div class="q-pb-md"/>
             </q-expansion-item>
             <q-expansion-item v-if="loggedIn" label="My Account" icon="account_circle" :content-inset-level="0.25" expand-separator>  
-               <layout-item path="/portfolio" label="Portfolio" iconName="work"/>
+               <layout-item path="/activity"  label="Activity"  iconName="fas fa-gavel"/>
                <layout-item path="/favorites" label="Favorites" iconName="favorite" />    
                <layout-item path="/actions"   label="History"   iconName="history"/>           
                <layout-item path="/invoices"  label="Invoices"  iconName="shopping_cart" />           
@@ -73,18 +73,18 @@
 
       <!-- now only showing footer to admin -->
       <q-footer v-if="userIsAdmin && showAdminFooter" class="footer q-px-xs q-py-none">
-         <q-tabs v-if="userIsAdmin" indicator-color="transparent" class="row q-my-none q-py-none q-px-none">
-            <footer-tab                   icon="get_app"             label="Drops"    to="/admin/drops"      tabClass="col-2" /> 
+         <q-tabs indicator-color="transparent" class="row q-my-none q-py-none q-px-none">
+            <footer-tab                   icon="system_update"       label="Drops"    to="/admin/drops"      tabClass="col-2" /> 
             <footer-tab                   icon="brush"               label="Artists"  to="/admin/categories" tabClass="col-2" /> 
             <footer-tab v-if="todosExist" icon="fas fa-check-circle" label="ToDo"     to="/admin/todo"       tabClass="col text-yellow" /> 
             <footer-tab                   icon="group"               label="Users"    to="/admin/users"      tabClass="col-2" /> 
             <footer-tab                   icon="shopping_cart"       label="Invoices" to="/admin/invoices"   tabClass="col-2" /> 
          </q-tabs>
-         <q-tabs v-else indicator-color="transparent"  class="row q-my-none q-py-none q-px-none">
+         <!-- <q-tabs v-else indicator-color="transparent"  class="row q-my-none q-py-none q-px-none">
             <q-route-tab icon="home" to="/" size="sm" class="q-pa-none q-ma-none" dense />    
             <span class="col"/>
             <q-route-tab v-if="currentUserActionsExist" icon="fas fa-gavel" to="/current" size="sm" class="q-pa-none q-ma-none" dense />    
-         </q-tabs>   
+         </q-tabs>    -->
       </q-footer>
 
       <q-dialog v-model="userHasAlert">

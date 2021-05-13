@@ -28,7 +28,7 @@
       data() {
 	  		return {
             returnRoute: Route.TODO,
-            visibleColumns: [ 'name', 'date', 'buyer', 'drop', 'price', 'status'],
+            visibleColumns: [ 'name', 'date', 'buyer', 'drop', 'price'],
  				columns: [
         			{ name: 'name',   label: 'Name',   align: 'left',   field: 'name',       sortable: true },
 				 	{ name: 'buyer',  label: 'Buyer',  align: 'left',   field: 'buyerId',    sortable: true, format: val => this.userName(val) },
@@ -36,8 +36,7 @@
                                                   align: 'center', field: 'userUpdatedDate', sortable: true, format: val => formatDateTimeOptYear(val) },
 					{ name: 'drop',   label: 'Drop',   align: 'center',                      sortable: true },
 				 	{ name: 'price',  label: 'Price',  align: 'right',  field: 'startPrice', sortable: true, format: val => dollars(val) }, 
-					{ name: 'status', label: 'Status', align: 'center', field: 'status' },
-			   ],
+				],
             selectedRowItems: [],
             pagination: { rowsPerPage: 20 },
             selectedBuyer: null,
