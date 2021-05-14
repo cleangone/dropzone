@@ -1,12 +1,11 @@
 <template>
   <q-page>
-      <div class="q-pt-md q-pl-md text-h6">Purchase Requests - {{ item.name }}</div>
+      <div class="q-pt-md q-pl-md text-h6">Purchase Requests - {{ item.name }} {{acceptedRequestId}}</div>
 		<div class="row">
          <div class="q-pa-sm" :class="'width: ' + itemDivWidth">
             <item :item="item" :displayType="displayType" class="q-pa-sm col-2"/>
          </div>
          <div class="q-pa-sm col">
-         <!-- todo - long table scrolls off bottom -->
             <q-table :data="reqs" :columns="columns" :visible-columns="visibleColumns" row-key="name" 
                :filter="tableDataFilter" :pagination.sync="pagination" :hide-pagination="hidePagination"
                :dense="$q.screen.lt.md" class="q-mb-sm" flat>
@@ -17,10 +16,12 @@
     				   {{ userEmail(props.row.userId) }}
   				   </q-td>
                <q-td slot="body-cell-status" slot-scope="props" :props="props"> 
-                  <q-btn v-if="itemIsRequested" @click="acceptReq(props.row)" label="Accept" size="sm" color="primary" dense/>   
+                  <q-btn v-if="itemCanBeAccepted" @click="acceptReq(props.row)" label="Accept" size="sm" color="primary" dense/>   
                   <span v-else-if="requestedIsAccepted(props.row.actionId)">Accepted</span>   
+                  <span v-else-if="acceptedRequestId == props.row.actionId">Accepting</span>   
                </q-td>
             </q-table>
+            <div style="height: 75px"/>
          </div>
       </div>
   	</q-page>
@@ -31,14 +32,14 @@
    import { mapGetters, mapActions } from 'vuex'
    import { UserMgr } from 'src/managers/UserMgr'
    import { ItemMgr } from 'src/managers/ItemMgr'
-   import { Colors, ItemDisplayType } from 'src/utils/Constants.js'
+   import { ItemDisplayType } from 'src/utils/Constants.js'
    
 	export default {
 		data() {
 	  		return {
 				itemId: '',
             returnRoute: null,
-            requestAccepted: false,
+            acceptedRequestId: null,
 				tableDataFilter: '',
 				visibleColumns: [ 'name', 'email', 'date', 'status'],
  				columns: [ 
@@ -55,12 +56,12 @@
 			...mapGetters('item', ['getItem']),
          ...mapGetters('user', ['getUsers']),
          item() { return this.getItem(this.itemId) },
-         itemIsRequested() {             
+         itemCanBeAccepted() {             
             const requested = ItemMgr.isRequested(this.item)
-            if (!requested && this.returnRoute && this.requestAccepted) { 
-               this.$router.push({ name: this.returnRoute }) 
+            if (!requested && this.returnRoute && this.acceptedRequestId) { 
+               this.$router.push({ name: this.returnRoute }) // an accept was submitted, and an item is no longer requested 
             }
-            return requested 
+            return requested && (this.acceptedRequestId == null) // can accept if item requested and a req not already accepted
          },
          imageW() { return "width: " + (this.item.isHorizontal ? this.hImageWidth : this.vImageWidth) },	
          itemDivWidth() { return this.item.isHorizontal ? 200 : 350 },
@@ -73,11 +74,15 @@
       },
       methods: {
          ...mapActions('action', ['acceptPurchaseRequest']),
-         requestedIsAccepted(actionId) { return this.item.acceptedPurchaseReqId == actionId },
+         requestedIsAccepted(actionId) { 
+            if (this.item.acceptedPurchaseReqId != actionId ) { return false }
+            this.acceptedRequestId = null
+            return true
+         },
          userFullName(userId) { return this.userIdToInfo.get(userId).fullName },
          userEmail(userId) { return this.userIdToInfo.get(userId).email },
          acceptReq(purchaseReq) { 
-            this.requestAccepted = true
+            this.acceptedRequestId = purchaseReq.actionId
             this.acceptPurchaseRequest( {
                itemId: this.item.id, itemName: this.item.name, amount: purchaseReq.amount, refActionId: purchaseReq.actionId, 
                userId: purchaseReq.userId, userNickname: purchaseReq.userNickname 

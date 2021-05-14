@@ -35,7 +35,7 @@
             <q-input label="Avatar Bottom Line Name" v-model="categoryToSubmit.bottomLineName" class="col" filled/>
          </div>
          <div class="row q-mb-sm q-gutter-sm" :class="purple" >
-            <description-edit :container="categoryToSubmit" class="col" />
+            <description-edit :container="categoryToSubmit" showExtended=true class="col" />
          </div>	
    </q-card-section>
 

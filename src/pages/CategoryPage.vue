@@ -8,7 +8,16 @@
          <div v-if="thumbExists" class="q-mr-xs" :class="blue">
             <q-img :src="category.primaryImage.thumbUrl" style="width: 150px" class="image-centered" basic contain />
          </div>
-         <div v-if="category.description" v-html="category.description" class="col q-mt-none" :class="green"  />
+         <div v-if="category.description" class="col q-mt-none">
+            <div v-html="category.description" />
+            <div v-if="category.descriptionExtended && category.descriptionExtended.length > 0" class="q-mt-none" >
+               <div v-if="showDescriptionExtended">
+                  <div v-html="category.descriptionExtended" class="q-mt-sm"/>
+                  <q-btn label="Less..." @click="showDescriptionExtended=false" color="blue" padding="0px 0px" no-caps flat dense />
+               </div>
+               <q-btn v-else label="More..." @click="showDescriptionExtended=true" color="blue" padding="0px 0px" no-caps flat dense />
+            </div>
+         </div>
       </div>
       <div class="row q-mt-sm" :class="yellow">
          <toggle :toggleContainer="showItemsToggleContainer" />   
@@ -41,6 +50,7 @@
             categoryId: "",
             initialExpandedTagId: RECENT_ITEMS_TAG_ID, 
             showVideo: false,
+            showDescriptionExtended: false,
             showItemsToggleContainer: {},
         }
 		},

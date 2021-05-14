@@ -86,14 +86,15 @@
 				if (ItemMgr.isSetup(this.itemToSubmit) || ItemMgr.isAvailable(this.itemToSubmit)) {
                this.itemToSubmit.buyPrice = 0 
                this.itemToSubmit.buyDate = 0 
+               this.itemToSubmit.buyerId = ''
+               this.itemToSubmit.buyerName = ''
                this.itemToSubmit.numberOfPurchaseReqs = 0
-               this.itemToSubmit.purchaseReqs = null,
+               this.itemToSubmit.purchaseReqs = [],
+               this.itemToSubmit.acceptedPurchaseReqId = null
+               this.itemToSubmit.numberOfBids = 0
                this.itemToSubmit.bidderIds = []
                this.itemToSubmit.currBid = null,
                this.itemToSubmit.prevBids = null,
-               this.itemToSubmit.numberOfBids = 0
-               this.itemToSubmit.buyerId = ''
-               this.itemToSubmit.buyerName = ''
                this.itemToSubmit.dropDoneDate = 0 
 
                // old items do not have sortedCreateDate

@@ -5,7 +5,7 @@
          <q-select label="Select Buyer" v-model="selectedBuyer" :options="buyerOptions" class="col" dense/>
       </div>
       <q-table :data="displayItems" row-key="name" :columns="columns" :visible-columns="visibleColumns" 
-            selection="multiple" :selected.sync="selectedRowItems" 
+            selection="multiple" :selected.sync="selectedRowItems" @row-click="rowClicked"
             :pagination.sync="pagination" :dense="$q.screen.lt.md" flat >
          <q-td slot="body-cell-drop" slot-scope="props" :props="props"> 
             {{ getDropIdToNameDropMap.get(props.row.dropId) }}
@@ -89,6 +89,17 @@
       },
 		methods: {
          userName(userId) { return this.userIdToName.get(userId) },
+         rowClicked (evt, row) {
+            const index = this.selectedRowIndex(row)
+            if (index == -1 ) { this.selectedRowItems.push(row) }
+            else { this.selectedRowItems.splice(index, 1) }
+         },
+         selectedRowIndex(row) {
+            for (var i=0; i<this.selectedRowItems.length; i++) {
+               if (this.selectedRowItems[i].id == row.id ) { return i }
+            }
+            return -1
+         },
 		   invoiceModalClosed() { 
             this.showInvoiceModal = false 
             this.selectedRowItems = []

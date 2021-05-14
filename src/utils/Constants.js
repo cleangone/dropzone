@@ -43,6 +43,7 @@ export const UI = {
 }
 
 export const Versions = [
+   "v1.5.4  - 5/13/21",  // Make ToDo rows clickable, mark accepted request Accepting when in process
    "v1.5.3  - 5/12/21",  // Replace Portfolio with Activity, which uses same core as Current Activity
    "v1.5.2  - 5/12/21",  // Misc updates to clean up small mobile screen 
    "v1.5.1  - 5/11/21",  // Update firebase.json to deploy from dist/pwa instead of dist/spa  

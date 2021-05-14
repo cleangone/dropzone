@@ -83,12 +83,15 @@
                   if (ItemMgr.isSetup(update) || ItemMgr.isAvailable(update)) {
                      update.buyPrice = 0 
                      update.buyDate = 0 
-                     update.bidderIds = []
-                     update.numberOfBids = 0
-                     update.currBid = null,
-                     update.prevBids = null,
                      update.buyerId = ''
                      update.buyerName = ''
+                     update.numberOfPurchaseReqs = 0
+                     update.purchaseReqs = [],
+                     update.acceptedPurchaseReqId = null
+                     update.numberOfBids = 0
+                     update.bidderIds = []
+                     update.currBid = null,
+                     update.prevBids = null,
                      update.dropDoneDate = 0 
                      
                      // old items do not have sortedCreateDate
