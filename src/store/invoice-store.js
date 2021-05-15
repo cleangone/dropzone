@@ -1,7 +1,7 @@
 import { firestoreAction } from 'vuexfire'
 import { firestore } from 'boot/firebase'
-import { uid } from 'quasar'
-import { InvoiceSendStatus } from 'src/managers/InvoiceMgr.js'
+import { InvoiceSendStatus } from 'src/managers/InvoiceMgr'
+import { dateUid } from 'src/utils/Utils'
    
 const state = {   
     invoices: [],
@@ -23,7 +23,7 @@ const actions = {
    }),
    createInvoice: firestoreAction((context, invoice) => {
       // console.log("createInvoice", invoice)
-      invoice.id = uid()
+      invoice.id = dateUid()
       collection().doc(invoice.id).set(invoice)
    }),
    setInvoice: firestoreAction((context, invoice) => {

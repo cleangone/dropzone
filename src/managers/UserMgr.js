@@ -55,6 +55,15 @@ export class UserMgr {
       else return ""
    }
 
+   static lookupFullName(userLookup, userId) { 
+      const user = userLookup ? userLookup.get(userId) : null
+      return user ? user.fullName : "" 
+   }
+   static lookupAcceptsEmail(userLookup, userId) { 
+      const user = userLookup ? userLookup.get(userId) : null
+      return user ? user.acceptsEmail : false
+   }
+
    static isOutbid(alert)  { return alert.alertType == AlertType.OUTBID } 
    static isLateBid(alert) { return alert.alertType == AlertType.LATE_BID } 
    

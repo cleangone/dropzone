@@ -11,15 +11,8 @@
          <a v-if="hasTrackingLink" :href="trackingLink" target=”_blank”>{{ invoice.tracking }}</a>
          <span v-else>{{ invoice.tracking }}</span>
       </span>
-      <span v-else-if="col.name == 'date'">{{ sentDate }}</span>
-      <span v-else-if="col.name == 'sentDate'">
-         {{ sentDate }}
-         <span v-if="isAdmin">
-            <q-btn v-if="needToSend" @click="send()" label="Send" size="xs" color="primary" dense/>   
-            <q-btn v-else-if="needToResend" @click="send()" icon="replay" size="sm" color="primary" flat dense/>            
-         </span>
-      </span>
-      <span v-else>{{ col.value  }}</span>
+      <span v-else-if="col.name == 'date' || col.name == 'sentDate'">{{ sentDate }}</span>
+      <span v-else>{{ col.value }}</span>
 
       <q-dialog v-model="showModal">
 			<invoice-display :invoice="invoice" @close="showModal=false" />
@@ -28,12 +21,11 @@
 </template>
 
 <script>
-   import { mapActions } from 'vuex'
    import { InvoiceMgr } from 'src/managers/InvoiceMgr.js'
    import { formatDateOptYear } from 'src/utils/DateUtils'
 
 	export default {
-      props: ['invoice', 'col', 'isAdmin'],
+      props: ['invoice', 'col'],
       data() {
 	  	   return {
 			   showModal: false,
@@ -43,13 +35,9 @@
          sentDate() { return InvoiceMgr.isSending(this.invoice) ? "Sending" : formatDateOptYear(this.invoice.sentDate) },         
          hasTrackingLink() { return InvoiceMgr.hasTrackingLink(this.invoice) },  
          trackingLink() { return InvoiceMgr.getTrackingLink(this.invoice) }, 
-         needToSend() { return !this.invoice.sentDate },
-         needToResend() { return InvoiceMgr.needToResend(this.invoice) },
       },
 		methods: {
-         ...mapActions('invoice', ['sendInvoice']),         
          showInvoice() { this.showModal = true },
-         send() { this.sendInvoice(this.invoice.id) },
       },
       components: {
 			'invoice-display' : require('components/Invoice/InvoiceDisplay.vue').default,

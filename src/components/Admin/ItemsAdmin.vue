@@ -83,6 +83,7 @@
 <script>
    import { mapGetters, mapActions } from 'vuex'
    import { SessionStorage } from 'quasar'
+   import { UserMgr } from 'src/managers/UserMgr'   
    import { ItemMgr } from 'src/managers/ItemMgr'
    import { UI, Colors } from 'src/utils/Constants'
    import { dollars } from 'src/utils/Utils'
@@ -114,7 +115,7 @@
 				 	{ name: 'drop',     label: 'Drop',             align: 'center', field: 'tempDrop',  sortable: true },
 				 	{ name: 'tags',     label: 'Tags',             align: 'center', field: 'tempTags',  sortable: true },
 				 	{ name: 'saleType', label: 'Sale Type',        align: 'center', field: 'saleType',  sortable: true },
-					{ name: 'buyerId',  label: 'Buyer',            align: 'left',   field: 'buyerId',   sortable: true, format: val => this.userName(val) },
+					{ name: 'buyerId',  label: 'Buyer',            align: 'left',   field: 'buyerId',   sortable: true, format: val => this.userFullName(val) },
 					{ name: 'price',    label:'Start/Final Price', align: 'right',                      sortable: true },
 					{ name: 'bidreq',   label: 'Bid/Req',          align: 'center',                     sortable: true },
 					{ name: 'status',   label: 'Status',           align: 'center', field: 'status',    sortable: true },
@@ -127,7 +128,7 @@
          ...mapGetters('category', ['getCategory']),
          ...mapGetters('drop', ['getDropIdToNameDropMap']),
          ...mapGetters('item', ['itemsExist', 'getItemsWithCategory']),
-         ...mapGetters('user', ['getUserIdToName']),
+         ...mapGetters('user', ['getUserLookup']),
          ...mapGetters('color', Colors),
 			visibleColumns() { 
             const columns = [...this.displayColumns]
@@ -175,7 +176,7 @@
          itemToEdit() { return this.itemIdToEdit ? getItem(this.items, this.itemIdToEdit) : null },
          itemsExist() { return this.items.length > 0 },
          rowsSelected() { return this.selectedRowItems.length > 0 },
-         userIdToName() { return this.getUserIdToName },
+         userLookup() { return this.getUserLookup },
 			showInvoiceButton() { 
             if (this.selectedRowItems.length == 0) { return false } 
             
@@ -214,7 +215,7 @@
             if (row.buyPrice && (row.buyPrice != row.startPrice)) { text += ("/" + dollars(row.buyPrice))}
             return text 
          },
-         userName(userId) { return this.userIdToName.get(userId) },
+         userFullName(userId) { return UserMgr.lookupFullName(this.userLookup, userId) },
 			promptToDeleteItem(itemId, name) {
 				this.$q.dialog({title: 'Confirm', message: 'Delete ' + name + '?', persistent: true,			
 	        		ok: { push: true }, cancel: { push: true, color: 'grey' }

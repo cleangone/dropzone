@@ -20,6 +20,7 @@
 
 <script>
    import { mapGetters } from 'vuex'    
+   import { UserMgr } from 'src/managers/UserMgr'   
    import { Route, Colors } from 'src/utils/Constants'
    import { dollars } from 'src/utils/Utils'
    import { formatDateTimeOptYear, localTimezone } from 'src/utils/DateUtils'
@@ -31,7 +32,7 @@
             visibleColumns: [ 'name', 'date', 'buyer', 'drop', 'price'],
  				columns: [
         			{ name: 'name',   label: 'Name',   align: 'left',   field: 'name',       sortable: true },
-				 	{ name: 'buyer',  label: 'Buyer',  align: 'left',   field: 'buyerId',    sortable: true, format: val => this.userName(val) },
+				 	{ name: 'buyer',  label: 'Buyer',  align: 'left',   field: 'buyerId',    sortable: true, format: val => this.userFullName(val) },
 					{ name: 'date',   label: 'Date ' + localTimezone(), 
                                                   align: 'center', field: 'userUpdatedDate', sortable: true, format: val => formatDateTimeOptYear(val) },
 					{ name: 'drop',   label: 'Drop',   align: 'center',                      sortable: true },
@@ -44,11 +45,11 @@
 			}
 		},
 		computed: {
-         ...mapGetters('user', ['getUserIdToName']),
+         ...mapGetters('user', ['getUserLookup']),
          ...mapGetters('drop', ['getDropIdToNameDropMap']), // only called once even though in table row iteration
          ...mapGetters('item', ['getHoldItems']),
          ...mapGetters('color', Colors),
-         userIdToName() { return this.getUserIdToName },
+         userLookup() { return this.getUserLookup },
          buyerOptions() {
             // return ["Bill", "Dan", ""]
 
@@ -58,7 +59,7 @@
             }
             const buyers = []
             for (var buyerId of buyerIds) {
-               buyers.push({ label: this.userName(buyerId), value: buyerId })
+               buyers.push({ label: this.userFullName(buyerId), value: buyerId })
             }
             buyers.sort((a, b) => (a.label < b.label) ? -1 : 1)
             buyers.push({ label: "", value: null })
@@ -88,7 +89,7 @@
          },
       },
 		methods: {
-         userName(userId) { return this.userIdToName.get(userId) },
+         userFullName(userId) { return UserMgr.lookupFullName(this.userLookup, userId) },
          rowClicked (evt, row) {
             const index = this.selectedRowIndex(row)
             if (index == -1 ) { this.selectedRowItems.push(row) }

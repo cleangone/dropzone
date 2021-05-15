@@ -38,15 +38,16 @@ const getters = {
          if (user.id == userId) { return user.isAdmin }
       }
    },
-   getUserIdToName() {
-      let userIdToName = new Map()
+   getUserLookup() {
+      let userLookup = new Map()
       state.users.forEach(user => { 
-         let userName = (user.firstName || user.lastName) ?
+         let userFullName = (user.firstName || user.lastName) ?
             (user.firstName ? user.firstName : "") + (user.firstName && user.lastName ? " " : "") + (user.lastName ? user.lastName : "") :
             user.authEmailCopy
-         userIdToName.set(user.id, userName)
+         const acceptsEmail = user.email ? user.email : false
+         userLookup.set(user.id, { fullName: userFullName,  acceptsEmail: acceptsEmail })
       })
-      return userIdToName
+      return userLookup
    },
 }
 

@@ -43,6 +43,7 @@ export const UI = {
 }
 
 export const Versions = [
+   "v1.5.5  - 5/15/21",  // Update InvoicesAdminPage status, display of Shipped and userAcceptsEmail, make invoice.id a dateUid
    "v1.5.4  - 5/13/21",  // Make ToDo rows clickable, mark accepted request Accepting when in process
    "v1.5.3  - 5/12/21",  // Replace Portfolio with Activity, which uses same core as Current Activity
    "v1.5.2  - 5/12/21",  // Misc updates to clean up small mobile screen 
