@@ -44,8 +44,9 @@ const getters = {
          let userFullName = (user.firstName || user.lastName) ?
             (user.firstName ? user.firstName : "") + (user.firstName && user.lastName ? " " : "") + (user.lastName ? user.lastName : "") :
             user.authEmailCopy
+         const email = user.authEmailCopy ? user.authEmailCopy : user.anonUserEmail
          const acceptsEmail = user.email ? user.email : false
-         userLookup.set(user.id, { fullName: userFullName,  acceptsEmail: acceptsEmail })
+         userLookup.set(user.id, { fullName: userFullName, email: email, acceptsEmail: acceptsEmail })
       })
       return userLookup
    },

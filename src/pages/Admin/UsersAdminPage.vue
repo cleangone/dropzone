@@ -56,16 +56,14 @@
             userText: '',
 				tableDataFilter: '',
 				columns: [
-        			{ name: 'id', field: 'id' },
-				 	{ name: 'email',      label: 'Email',       align: 'left',   field: 'authEmailCopy', sortable: true },
-				 	{ name: 'anonEmail',  label: 'Anon Email',  align: 'left',   field: 'anonUserEmail', sortable: true },
-				 	{ name: 'firstName',  label: 'First Name',  align: 'left',   field: 'firstName',     sortable: true },
-				 	{ name: 'lastName',   label: 'Last Name',   align: 'left',   field: 'lastName',      sortable: true },
-					{ name: 'nickname',   label: 'Nickname',    align: 'left',   field: 'nickname',      sortable: true },
+        			{ name: 'email',      label: 'Email',       align: 'left',   field: 'tempEmail',  sortable: true },
+				 	{ name: 'firstName',  label: 'First Name',  align: 'left',   field: 'firstName',  sortable: true },
+				 	{ name: 'lastName',   label: 'Last Name',   align: 'left',   field: 'lastName',   sortable: true },
+					{ name: 'nickname',   label: 'Nickname',    align: 'left',   field: 'nickname',   sortable: true },
+					{ name: 'sendEmail',  label: 'Email',       align: 'center', field: 'email',      format: val => val ? 'Yes' : '' }, 
 					{ name: 'phone',      label: 'Phone',       align: 'center', field: 'phone' },     
-					{ name: 'sendEmail',  label: 'Email',       align: 'center', field: 'email',         format: val => val ? 'Yes' : '' }, 
-					{ name: 'admin',      label: 'Permissions', align: 'center', field: 'isAdmin',       sortable: true, sort: (a, b) => a - b, format: val => val ? 'Admin' : '' }, 
-					{ name: 'errorEmail', label: 'Error Email', align: 'center', field: 'errorEmail',    format: val => val ? 'Yes' : '' }, 
+					{ name: 'admin',      label: 'Permissions', align: 'center', field: 'isAdmin',    sortable: true, sort: (a, b) => a - b, format: val => val ? 'Admin' : '' }, 
+					{ name: 'errorEmail', label: 'Error Email', align: 'center', field: 'errorEmail', format: val => val ? 'Yes' : '' }, 
 					{ name: 'edit' },
 				],
             pagination: { rowsPerPage: 25 },
@@ -75,26 +73,23 @@
 		computed: {
 			...mapGetters('user', ['getUsers', 'getUser']),
 			visibleColumns() { 
-            let cols = []
-            if (this.showRegUsers)  { cols = cols.concat(['email']) }
-            if (this.showAnonUsers) { cols = cols.concat(['anonEmail']) }
-            cols = cols.concat(['firstName', 'lastName', 'nickname'])
-            if (this.showRegUsers)  { cols = cols.concat(['phone', 'sendEmail', 'admin', 'errorEmail']) }
+            let cols = ['email', 'firstName', 'lastName', 'nickname', 'sendEmail']
+            if (this.showRegUsers) { cols = cols.concat(['phone', 'admin', 'errorEmail']) }
             return cols.concat(['edit'])
          },
          users() { 
-            if (this.showRegUsers && this.showAnonUsers) { return this.getUsers }
-
             let dispUsers = []
             for (var user of this.getUsers) {
+               const dispUser = Object.assign({}, user)
+               dispUser.tempEmail = user.authEmailCopy ? user.authEmailCopy : user.anonUserEmail
                if ((this.showRegUsers && user.authEmailCopy) || (this.showAnonUsers && user.anonUserEmail)) { 
-                  dispUsers.push(user) 
+                  dispUsers.push(dispUser) 
                }  
             }
+            dispUsers.sort((a, b) => (a.tempEmail > b.tempEmail) ? 1 : -1)
             return dispUsers
          },
- 			// userToEdit() { return this.getUser(this.userIdToEdit) },
-		},
+ 		},
 		methods: {
          ...mapActions('sms', ['createOutboundSms']),
          edit(user) {

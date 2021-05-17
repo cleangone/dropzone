@@ -59,6 +59,10 @@ export class UserMgr {
       const user = userLookup ? userLookup.get(userId) : null
       return user ? user.fullName : "" 
    }
+   static lookupEmail(userLookup, userId) { 
+      const user = userLookup ? userLookup.get(userId) : null
+      return user ? user.email : "" 
+   }
    static lookupAcceptsEmail(userLookup, userId) { 
       const user = userLookup ? userLookup.get(userId) : null
       return user ? user.acceptsEmail : false

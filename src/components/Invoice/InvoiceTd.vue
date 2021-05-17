@@ -32,7 +32,10 @@
 			}
 		},
       computed: {
-         sentDate() { return InvoiceMgr.isSending(this.invoice) ? "Sending" : formatDateOptYear(this.invoice.sentDate) },         
+         sentDate() { 
+            return InvoiceMgr.isSending(this.invoice) || InvoiceMgr.isSendError(this.invoice) ? 
+               this.invoice.sendStatus : formatDateOptYear(this.invoice.sentDate) 
+         },         
          hasTrackingLink() { return InvoiceMgr.hasTrackingLink(this.invoice) },  
          trackingLink() { return InvoiceMgr.getTrackingLink(this.invoice) }, 
       },

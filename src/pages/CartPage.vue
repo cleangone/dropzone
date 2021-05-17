@@ -105,6 +105,7 @@
             this.editAnonUser = true
          },
          persistAnonUser() {
+            this.anonUserToUpdate.email = true
             this.setUser(this.anonUserToUpdate)
             this.editAnonUser = false
          },

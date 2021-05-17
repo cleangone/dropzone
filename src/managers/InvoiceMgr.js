@@ -30,7 +30,8 @@ export const InvoiceStatus = {
 
 export const InvoiceSendStatus = {
    SENDING: 'Sending',
-   SENT:    'Sent'
+   SENT:    'Sent',
+   ERROR:   'Send Error'
 }
 
 const InvoiceCarrier = {
@@ -46,6 +47,7 @@ export class InvoiceMgr {
    static isShipped(invoice)  { return invoice.status == InvoiceStatus.SHIPPED }
    static isSending(invoice)  { return invoice.sendStatus == InvoiceSendStatus.SENDING }
    static isSent(invoice)     { return invoice.sendStatus == InvoiceSendStatus.SENT }
+   static isSendError(invoice){ return invoice.sendStatus == InvoiceSendStatus.ERROR }
    
    static getCarriers() { return [ InvoiceCarrier.USPS_PRIORITY, InvoiceCarrier.FEDEX ] }
    static isUspsPriority(invoice) { return invoice.carrier == InvoiceCarrier.USPS_PRIORITY }

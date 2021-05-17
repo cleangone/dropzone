@@ -118,6 +118,7 @@
          ...mapGetters('cart', ['cartSize', 'getCartItemIds']),
          ...mapGetters('category', ['getPublicCategories']),
          ...mapGetters('current', ['currentActivityExists']),
+         ...mapGetters('error', ['visibleEmailErrorsExist']),
          ...mapGetters('invoice', ['invoicesExist']),
          ...mapGetters('item', ['requestedItemsExist', 'holdItemsExist']),
          ...mapGetters('user', ['getUser', 'isAdmin']),
@@ -172,6 +173,7 @@
             if (isAdmin) {
                if (!this.actionsExist) { this.bindActions() }
                if (!this.invoicesExist) { this.bindInvoices() }
+               this.bindEmailErrors()
             }
             return isAdmin 
          },
@@ -189,7 +191,7 @@
             return null
          },
          userHasAlert() { return this.userAlert != null },
-         todosExist() { return this.requestedItemsExist || this.holdItemsExist },
+         todosExist() { return this.requestedItemsExist || this.holdItemsExist || this.visibleEmailErrorsExist},
          currentUserActionsExist() { 
             const yesterday = new Date().getTime() - 1000*60*60*24 // 24 hours ago in millis
             for (var action of this.getUserActions(this.userId)) {
@@ -213,6 +215,7 @@
          ...mapActions('cart',    ['bindUserCarts', 'unbindUserCarts', 'addItemIdsToCart']),
          ...mapActions('current', ['setCurrentActivity']),
          ...mapActions('drop',    ['bindDrops']),
+         ...mapActions('error',   ['bindEmailErrors']),
          ...mapActions('category',['bindCategories']),         
          ...mapActions('invoice', ['bindInvoices', 'bindUserInvoices', 'unbindUserInvoices']),
          ...mapActions('item',    ['bindItems', 'bindRecentItems']),
