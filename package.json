@@ -7,8 +7,9 @@
   "author": "Danny Connell <sendstufftodanny@gmail.com>",
   "private": true,
   "scripts": {
-    "test": "echo \"No test specified\" && exit 0"
-  },
+   "test": "echo \"No test specified\" && exit 0",
+   "icons": "icongenie generate -i DropzoneD.png --skip-trim --theme-color 000000"
+},
   "dependencies": {
     "@quasar/extras": "^1.9.7",
     "firebase": "^7.16.1",
