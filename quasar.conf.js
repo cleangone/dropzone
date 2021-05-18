@@ -113,8 +113,8 @@ module.exports = function (ctx) {
     },
 
     pwa: {
-      // workboxPluginMode: 'InjectManifest',
-      // workboxOptions: {}, // only for NON InjectManifest
+      workboxPluginMode: 'GenerateSW', // GenerateSW or InjectManifest
+      workboxOptions: {}, // only for NON InjectManifest
       manifest: {
         name: 'Dropzone Comic Art',
         short_name: 'Dropzone',

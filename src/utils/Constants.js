@@ -43,6 +43,7 @@ export const UI = {
 }
 
 export const Versions = [
+   "v1.5.8  - 5/19/21",  // Initial service worker attempt (failed - need quasar/app v2.x), updated icon 
    "v1.5.7  - 5/17/21",  // Updated icons
    "v1.5.6  - 5/17/21",  // Initial handling of failed emails
    "v1.5.5  - 5/15/21",  // Update InvoicesAdminPage status, display of Shipped and userAcceptsEmail, make invoice.id a dateUid
