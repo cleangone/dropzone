@@ -1,3 +1,3 @@
 # Quasar App
 
-> WIP
+Moved to drop2 private repo
